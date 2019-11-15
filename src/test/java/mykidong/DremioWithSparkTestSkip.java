@@ -51,6 +51,11 @@ public class DremioWithSparkTestSkip {
         Dataset<Row> jdbcDs = sparkSession.read()
                 .jdbc(url, "\"mc-hive\".\"default\".student", properties);
 
-        jdbcDs.show();
+        System.out.println("size: " + jdbcDs.count());
+        
+        for(Row row : jdbcDs.collectAsList())
+        {
+            System.out.println("row: " + row.toString());
+        }
     }
 }
