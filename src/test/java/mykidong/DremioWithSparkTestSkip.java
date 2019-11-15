@@ -17,6 +17,8 @@ public class DremioWithSparkTestSkip {
     @Test
     public void processDataFromDremio() throws Exception
     {
+        String tableName = System.getProperty("tableName", "\"@mykidong\".\"join-test\"");
+
         // spark configuration for local mode.
         SparkConf sparkConf = new SparkConf().setAppName(DremioWithSparkTestSkip.class.getName());
         sparkConf.setMaster("local[2]");
@@ -49,7 +51,7 @@ public class DremioWithSparkTestSkip {
         properties.setProperty("password", "icarus0337");
 
         Dataset<Row> jdbcDs = sparkSession.read()
-                .jdbc(url, "\"mc-hive\".\"default\".student", properties);
+                .jdbc(url, tableName, properties);
 
         System.out.println("size: " + jdbcDs.count());
 
