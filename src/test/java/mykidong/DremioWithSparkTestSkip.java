@@ -17,7 +17,7 @@ public class DremioWithSparkTestSkip {
     @Test
     public void processDataFromDremio() throws Exception
     {
-        String tableName = System.getProperty("tableName", "\"@mykidong\".\"join-test\"");
+        String tableName = System.getProperty("tableName", "\"mc-hive\".\"default\".\"student\"");
 
         // spark configuration for local mode.
         SparkConf sparkConf = new SparkConf().setAppName(DremioWithSparkTestSkip.class.getName());
