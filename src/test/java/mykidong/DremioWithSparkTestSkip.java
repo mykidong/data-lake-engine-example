@@ -52,7 +52,7 @@ public class DremioWithSparkTestSkip {
                 .jdbc(url, "\"mc-hive\".\"default\".student", properties);
 
         System.out.println("size: " + jdbcDs.count());
-        
+
         for(Row row : jdbcDs.collectAsList())
         {
             System.out.println("row: " + row.toString());
