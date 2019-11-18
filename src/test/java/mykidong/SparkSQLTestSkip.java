@@ -21,6 +21,7 @@ public class SparkSQLTestSkip {
         // spark configuration for local mode.
         SparkConf sparkConf = new SparkConf().setAppName(SparkSQLTestSkip.class.getName());
         sparkConf.setMaster("local[2]");
+        sparkConf.set("spark.sql.hive.metastore.version", "3.1.0");
 
         SparkSession spark = SparkSession
                 .builder()
