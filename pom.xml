@@ -9,8 +9,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- spring -->
-        <spring.version>5.1.9.RELEASE</spring.version>
+		<!-- spring -->
+		<spring.version>5.1.9.RELEASE</spring.version>
 
 		<!-- testing -->
 		<junit.version>4.12</junit.version>
@@ -24,12 +24,12 @@
 		<!-- confluent -->
 		<confluent.version>5.0.1</confluent.version>
 
-        <!-- scala -->
-        <scala.version>2.11.11</scala.version>
-        <scala.binary.version>2.11</scala.binary.version>
+		<!-- scala -->
+		<scala.version>2.11.11</scala.version>
+		<scala.binary.version>2.11</scala.binary.version>
 
-        <!-- spark -->
-        <spark.version>2.3.2</spark.version>
+		<!-- spark -->
+		<spark.version>2.3.2</spark.version>
 
 		<!-- hive -->
 		<hive.version>3.1.0</hive.version>
@@ -42,17 +42,17 @@
 	</properties>
 
 	<dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.dremio</groupId>
 			<artifactId>dremio-jdbc-driver</artifactId>
@@ -68,53 +68,63 @@
 			<artifactId>kafka-schema-registry</artifactId>
 			<version>${confluent.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_${scala.binary.version}</artifactId>
-            <version>${spark.version}</version>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_${scala.binary.version}</artifactId>
+			<version>${spark.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-client</artifactId>
 				</exclusion>
 			</exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_${scala.binary.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-compiler</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-reflect</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-actors</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scalap</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
+		</dependency>
 		<dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-hive_${scala.binary.version}</artifactId>
-            <version>2.3.2</version>
-            <scope>provided</scope>
-        </dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-sql_${scala.binary.version}</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-compiler</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-reflect</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-actors</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scalap</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-hive_${scala.binary.version}</artifactId>
+			<version>2.3.2</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.spark-project.hive</groupId>
+					<artifactId>hive-exec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.spark-project.hive</groupId>
+					<artifactId>hive-metastore</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>hive</groupId>
 			<artifactId>standalone-metastore</artifactId>
@@ -130,7 +140,7 @@
 			<artifactId>hadoop-client</artifactId>
 			<version>${hadoop.version}</version>
 		</dependency>
-    </dependencies>
+	</dependencies>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -156,10 +166,10 @@
 					<encoding>utf-8</encoding>
 				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.1</version>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.1</version>
 				<executions>
 					<execution>
 						<id>install-dremio-jdbc</id>
@@ -192,7 +202,7 @@
 						</configuration>
 					</execution>
 				</executions>
-            </plugin>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -213,7 +223,7 @@
 			<resource>
 				<directory>src/test/resources</directory>
 				<targetPath>target/test-classes</targetPath>
-                <filtering>false</filtering>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 	</build>
