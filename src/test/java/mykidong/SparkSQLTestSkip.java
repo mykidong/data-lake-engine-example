@@ -41,11 +41,11 @@ public class SparkSQLTestSkip {
 
         // read parquet.
         Dataset<Row> parquetDs = spark.read().format("parquet")
-                .load("hdfs://mc/test-parquet");
+                .load("hdfs://mc/test-event-parquet");
 
         // create persistent parquet table with external path.
         parquetDs.write().format("parquet")
-                .option("path", "hdfs://mc/test-parquet-table")
+                .option("path", "hdfs://mc/test-event-parquet-table")
                 .mode(SaveMode.Overwrite)
                 .saveAsTable("test_parquet_table");
 
