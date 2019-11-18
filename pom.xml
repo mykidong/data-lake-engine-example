@@ -148,6 +148,16 @@
 			<artifactId>hadoop-hdfs</artifactId>
 			<version>2.7.6</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.tez</groupId>
+			<artifactId>tez-dag</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tez</groupId>
+			<artifactId>tez-common</artifactId>
+			<version>0.9.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
