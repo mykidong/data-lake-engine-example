@@ -23,7 +23,6 @@ public class SparkSQLTestSkip {
         SparkConf sparkConf = new SparkConf().setAppName(SparkSQLTestSkip.class.getName());
         sparkConf.setMaster("local[2]");
         sparkConf.set("spark.sql.warehouse.dir", "/spark-hive-warehouse");
-        sparkConf.set("hive.metastore.uris","thrift://mc-m01.opasnet.io:10016");
 
         SparkSession spark = SparkSession
                 .builder()
@@ -44,8 +43,14 @@ public class SparkSQLTestSkip {
             String value = hadoopProps.getProperty(key);
             hadoopConfiguration.set(key, value);
         }
+        
+        // hive configuration.
+        Properties hiveProps = PropertiesLoaderUtils.loadProperties(new ClassPathResource("hive-conf.properties"));
+        for (String key : hiveProps.stringPropertyNames()) {
+            String value = hiveProps.getProperty(key);
+            hadoopConfiguration.set(key, value);
+        }
 
-        System.out.println("hadoop confs: " + spark.sparkContext().hadoopConfiguration().toString());
 
         // read parquet.
         Dataset<Row> parquetDs = spark.read().format("parquet")
