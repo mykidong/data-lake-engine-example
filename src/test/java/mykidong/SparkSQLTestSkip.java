@@ -49,6 +49,6 @@ public class SparkSQLTestSkip {
                 .mode(SaveMode.Overwrite)
                 .saveAsTable("test_parquet_table");
 
-        
+
     }
 }
