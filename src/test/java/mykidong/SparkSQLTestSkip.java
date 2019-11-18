@@ -33,18 +33,17 @@ public class SparkSQLTestSkip {
 
 
         Configuration hadoopConfiguration = spark.sparkContext().hadoopConfiguration();
-        hadoopConfiguration.set("fs.defaultFS", "hdfs://mc-m01.opasnet.io:8020");
 
-//        // set hadoop configuration.
-//
-//        // hadoop configuration.
-//        Resource resource = new ClassPathResource("hadoop-conf.properties");
-//        Properties hadoopProps = PropertiesLoaderUtils.loadProperties(resource);
-//
-//        for (String key : hadoopProps.stringPropertyNames()) {
-//            String value = hadoopProps.getProperty(key);
-//            hadoopConfiguration.set(key, value);
-//        }
+        // set hadoop configuration.
+
+        // hadoop configuration.
+        Resource resource = new ClassPathResource("hadoop-conf.properties");
+        Properties hadoopProps = PropertiesLoaderUtils.loadProperties(resource);
+
+        for (String key : hadoopProps.stringPropertyNames()) {
+            String value = hadoopProps.getProperty(key);
+            hadoopConfiguration.set(key, value);
+        }
 
         System.out.println("hadoop confs: " + spark.sparkContext().hadoopConfiguration().toString());
 
