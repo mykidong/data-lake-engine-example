@@ -24,6 +24,8 @@ public class SparkSQLTestSkip {
         sparkConf.set("spark.sql.warehouse.dir", "/spark-hive-warehouse");
         sparkConf.set("hive.metastore.uris","thrift://mc-m01.opasnet.io:10016");
 
+        Class.forName("org.apache.hive.jdbc.HiveDriver");
+
         SparkSession spark = SparkSession
                 .builder()
                 .config(sparkConf)
