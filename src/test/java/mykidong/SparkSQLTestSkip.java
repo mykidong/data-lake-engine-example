@@ -45,7 +45,7 @@ public class SparkSQLTestSkip {
 
         // read parquet.
         Dataset<Row> parquetDs = spark.read().format("parquet")
-                .load("hdfs://mc/test-event-parquet");
+                .load("/test-event-parquet");
 
         // create persistent parquet table with external path.
         parquetDs.write().format("parquet")
