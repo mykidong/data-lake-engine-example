@@ -107,16 +107,6 @@
             <artifactId>spark-hive_${scala.binary.version}</artifactId>
             <version>2.3.2</version>
             <scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.spark-project.hive</groupId>
-					<artifactId>hive-exec</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.spark-project.hive</groupId>
-					<artifactId>hive-metastore</artifactId>
-				</exclusion>
-			</exclusions>
         </dependency>
 		<dependency>
 			<groupId>org.apache.hive</groupId>
