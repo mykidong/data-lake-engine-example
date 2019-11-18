@@ -7,6 +7,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -16,8 +17,10 @@ import java.util.Properties;
 
 public class SparkSQLTestSkip {
 
-    @Test
-    public void saveAsTable() throws Exception
+    private SparkSession spark;
+
+    @Before
+    public void init() throws Exception
     {
         // spark configuration for local mode.
         SparkConf sparkConf = new SparkConf().setAppName(SparkSQLTestSkip.class.getName());
@@ -25,7 +28,7 @@ public class SparkSQLTestSkip {
         sparkConf.set("spark.sql.warehouse.dir", "/spark-hive-warehouse");
         sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar");
 
-        SparkSession spark = SparkSession
+        spark = SparkSession
                 .builder()
                 .config(sparkConf)
                 .enableHiveSupport()
@@ -51,8 +54,11 @@ public class SparkSQLTestSkip {
             String value = hiveProps.getProperty(key);
             hadoopConfiguration.set(key, value);
         }
+    }
 
-
+    @Test
+    public void saveAsTable() throws Exception
+    {
         // read parquet.
         Dataset<Row> parquetDs = spark.read().format("parquet")
                 .load("/test-event-parquet");
@@ -64,5 +70,13 @@ public class SparkSQLTestSkip {
                 .saveAsTable("test_parquet_table");
 
 
+    }
+
+    @Test
+    public void readFromPersistentTable() throws Exception
+    {
+        spark.sql("select * from test_parquet_table limit 10").show();
+
+        spark.sql("select itemId, baseProperties.ts from test_parquet_table").show();
     }
 }
