@@ -32,7 +32,7 @@
         <spark.version>2.3.2</spark.version>
 
 		<!-- hive -->
-		<hive.version>3.1.0</hive.version>
+		<hive.version>3.1.1</hive.version>
 
 		<!-- hive meta store -->
 		<hive.metastore.version>standalone-metastore-1.21.2.3.1.4.0-315-hive3</hive.metastore.version>
