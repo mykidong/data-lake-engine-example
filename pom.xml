@@ -39,6 +39,15 @@
 
 		<!-- hadoop -->
 		<hadoop.version>3.1.1</hadoop.version>
+
+		<!-- hadoop old version for spark 2.3.2 -->
+		<hadoop.old.version.for.spark>2.7.0</hadoop.old.version.for.spark>
+
+		<!-- hive old version for spark 2.3.2 -->
+		<hive.old.version.for.spark>1.2.1</hive.old.version.for.spark>
+
+		<!-- tez -->
+		<tez.version>0.9.1</tez.version>
 	</properties>
 
 	<dependencies>
@@ -69,22 +78,6 @@
 			<version>${confluent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-core_${scala.binary.version}</artifactId>
-			<version>${spark.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.hadoop</groupId>
-					<artifactId>hadoop-client</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-sql_${scala.binary.version}</artifactId>
-			<version>${spark.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-compiler</artifactId>
 			<version>${scala.version}</version>
@@ -111,13 +104,26 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_${scala.binary.version}</artifactId>
+			<version>${spark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-sql_${scala.binary.version}</artifactId>
+			<version>${spark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-hive_${scala.binary.version}</artifactId>
-			<version>2.3.2</version>
+			<version>${spark.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-jdbc</artifactId>
-			<version>1.2.1</version>
+			<version>${hive.old.version.for.spark}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.hadoop</groupId>
@@ -132,31 +138,31 @@
 					<artifactId>guava</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-exec</artifactId>
-			<version>1.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-client</artifactId>
-			<version>2.7.6</version>
+			<version>${hive.old.version.for.spark}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>2.7.6</version>
+			<version>${hadoop.old.version.for.spark}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tez</groupId>
 			<artifactId>tez-dag</artifactId>
-			<version>0.9.1</version>
+			<version>${tez.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tez</groupId>
 			<artifactId>tez-common</artifactId>
-			<version>0.9.1</version>
+			<version>${tez.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>
