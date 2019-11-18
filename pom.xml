@@ -121,17 +121,10 @@
 			<version>${hive.metastore.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.hive</groupId>
-			<artifactId>hive-jdbc</artifactId>
-			<version>${hive.version}</version>
-		</dependency>
-		<!--
-		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-client</artifactId>
 			<version>${hadoop.version}</version>
 		</dependency>
-		-->
     </dependencies>
 	<build>
 		<pluginManagement>
