@@ -25,6 +25,7 @@ public class SparkSQLTestSkip {
         SparkSession spark = SparkSession
                 .builder()
                 .config(sparkConf)
+                .enableHiveSupport()
                 .getOrCreate();
 
         // hadoop configuration.
