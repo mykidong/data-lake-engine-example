@@ -108,11 +108,6 @@
             <version>2.3.2</version>
             <scope>provided</scope>
         </dependency>
-		<dependency>
-			<groupId>org.apache.hive</groupId>
-			<artifactId>hive-metastore</artifactId>
-			<version>${hive.version}</version>
-		</dependency>
     </dependencies>
 	<build>
 		<pluginManagement>
