@@ -43,6 +43,8 @@ public class SparkSQLTestSkip {
             hadoopConfiguration.set(key, value);
         }
 
+        System.out.println("hadoop confs: " + spark.sparkContext().hadoopConfiguration().toString());
+
         // read parquet.
         Dataset<Row> parquetDs = spark.read().format("parquet")
                 .load("/test-event-parquet");
