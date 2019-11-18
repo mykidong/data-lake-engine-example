@@ -23,6 +23,8 @@ public class SparkSQLTestSkip {
         SparkConf sparkConf = new SparkConf().setAppName(SparkSQLTestSkip.class.getName());
         sparkConf.setMaster("local[2]");
         sparkConf.set("spark.sql.warehouse.dir", "/spark-hive-warehouse");
+        sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar");
+        sparkConf.set("spark.sql.hive.metastore.version", "3.0");
 
         SparkSession spark = SparkSession
                 .builder()
@@ -43,7 +45,7 @@ public class SparkSQLTestSkip {
             String value = hadoopProps.getProperty(key);
             hadoopConfiguration.set(key, value);
         }
-        
+
         // hive configuration.
         Properties hiveProps = PropertiesLoaderUtils.loadProperties(new ClassPathResource("hive-conf.properties"));
         for (String key : hiveProps.stringPropertyNames()) {
