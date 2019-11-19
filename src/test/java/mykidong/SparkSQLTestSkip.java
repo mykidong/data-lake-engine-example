@@ -26,6 +26,7 @@ public class SparkSQLTestSkip {
         // spark configuration for local mode.
         SparkConf sparkConf = new SparkConf().setAppName(SparkSQLTestSkip.class.getName());
         sparkConf.setMaster("local[2]");
+        sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse");
         sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar");
 
         spark = SparkSession
