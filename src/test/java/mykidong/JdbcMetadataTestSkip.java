@@ -45,16 +45,16 @@ public class JdbcMetadataTestSkip {
         ResultSet rs = connection.prepareStatement("describe formatted test.without_copying_file").executeQuery();
         while (rs.next())
         {
-            String columnName = rs.getString(1);
+            String columnName = rs.getString(2);
 
             if(columnName.contains("Detailed Table Information"))
             {
                 continue;
             }
 
-            String dataType = rs.getString(2);
+            String dataType = rs.getString(1);
 
-            log.info("column name: {}, data type: {}" + columnName, dataType);
+            log.info("column name: {}, data type: {} " + columnName, dataType);
         }
     }
 }
