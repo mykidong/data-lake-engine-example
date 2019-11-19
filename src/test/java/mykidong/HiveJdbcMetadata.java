@@ -44,28 +44,29 @@ public class HiveJdbcMetadata {
             String columnName = rs.getString(1);
             String dataType = rs.getString(2);
 
-            log.info("columnName: [" + columnName + "], dataType: [" + dataType + "]");
-
             if(columnName == null || dataType == null)
             {
                 continue;
             }
 
-            if(!columnName.trim().equals("") && !dataType.trim().equals("") && !columnName.trim().contains("#") && isDDL)
+            if(!columnName.trim().equals("") && !columnName.trim().contains("#") && isDDL)
             {
                 ddlMap.put(columnName, dataType);
+
+                log.info("in ddlmap, columnName: [" + columnName + "], dataType: [" + dataType + "]");
             }
 
 
-            if(columnName.trim().contains("Detailed Table Information") || dataType.trim().contains("Detailed Table Information"))
+            if(columnName.trim().contains("Detailed Table Information") || columnName.trim().contains("Storage Information"))
             {
                 isDDL = false;
                 continue;
             }
 
-            if(!columnName.trim().equals("") && !dataType.trim().equals("") && !columnName.trim().contains("#") && !isDDL)
+            if(!columnName.trim().equals("") && !columnName.trim().contains("#") && !isDDL)
             {
                 extraInfoMap.put(columnName, dataType);
+                log.info("in extramap, columnName: [" + columnName + "], dataType: [" + dataType + "]");
             }
         }
 
