@@ -104,8 +104,8 @@ public class SparkSQLTestSkip {
         Dataset<Row> parquetDs = spark.read().format("parquet")
                 .load("/test-event-parquet");
 
-        // create persistent parquet table.
-        // file location: hdfs://mc-m01.opasnet.io:8020/apps/spark/warehouse/test_parquet_table2
+        // create persistent parquet table in a db.
+        // file location: hdfs://mc/spark-warehouse/test.db/test_parquet_table_in_db
         parquetDs.write().format("parquet")
                 .mode(SaveMode.Overwrite)
                 .saveAsTable("test.test_parquet_table_in_db");
@@ -118,13 +118,21 @@ public class SparkSQLTestSkip {
     {
         String path = "/test-event-parquet";
 
-        // read just one parquet file to get schema info.
-        Dataset<Row> parquetDs = spark.read().format("parquet")
-                .load(path);
+        String query = "";
+        query += "CREATE EXTERNAL TABLE IF NOT EXISTS test.event (";
+        query += "   itemId          STRING,";
+        query += "    quantity        INT,";
+        query += "    price           BIGINT,";
+        query += "    baseProperties   STRUCT<uid:             STRING,";
+        query += "                            eventType:       STRING,";
+        query += "                            version:         STRING,";
+        query += "                            ts:              BIGINT>";
 
-        StructType schema = parquetDs.schema();
+        query += ")";
+        query += "STORED AS PARQUET";
+        query += "LOCATION 'hdfs://mc" + path + "';";
 
-
+        spark.sql(query);
     }
 
 
