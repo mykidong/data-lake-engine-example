@@ -1,5 +1,6 @@
 package mykidong;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mykidong.util.Log4jConfigurer;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class JdbcMetadataTestSkip {
         getColumnsMetadata(getTablesMetadata());    }
 
 
-    private void printGeneralMetadata() throws SQLException {
+    private void printGeneralMetadata() throws Exception {
         log.info("Database Product Name: "
                 + metadata.getDatabaseProductName());
         log.info("Database Product Version: "
@@ -51,7 +52,7 @@ public class JdbcMetadataTestSkip {
         log.info("JDBC Driver: " + metadata.getDriverName());
         log.info("Driver Version: " + metadata.getDriverVersion());
 
-        log.info("meta data: " + metadata.toString());
+        log.info("meta data: " + new ObjectMapper().writeValueAsString(metadata));
     }
 
     private ArrayList<String> getTablesMetadata() throws SQLException {
