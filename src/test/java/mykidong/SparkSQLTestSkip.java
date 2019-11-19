@@ -128,7 +128,7 @@ public class SparkSQLTestSkip {
         query += "                            version:         STRING,";
         query += "                            ts:              BIGINT>";
 
-        query += ")  ";
+        query += ")    ";
         query += "STORED AS PARQUET   ";
         query += "LOCATION 'hdfs://mc" + path + "'";
 
