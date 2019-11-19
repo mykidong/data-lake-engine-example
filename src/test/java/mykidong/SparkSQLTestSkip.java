@@ -230,7 +230,7 @@ public class SparkSQLTestSkip {
 
         String ddl = "";
         int count = 0;
-        for(String columnName : ddlMap.values())
+        for(String columnName : ddlMap.keySet())
         {
             if(count > 0)
             {
