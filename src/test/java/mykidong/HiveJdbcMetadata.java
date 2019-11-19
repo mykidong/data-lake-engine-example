@@ -54,10 +54,12 @@ public class HiveJdbcMetadata {
                 ddlMap.put(columnName, dataType);
 
                 log.info("in ddlmap, columnName: [" + columnName + "], dataType: [" + dataType + "]");
+
+                continue;
             }
 
 
-            if(columnName.trim().contains("Detailed Table Information") || columnName.trim().contains("Storage Information"))
+            if(columnName.trim().contains("#") && (columnName.trim().contains("Detailed Table Information") || columnName.trim().contains("Storage Information")))
             {
                 isDDL = false;
                 continue;
