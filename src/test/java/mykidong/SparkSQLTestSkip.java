@@ -7,6 +7,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.StructType;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -78,10 +79,36 @@ public class SparkSQLTestSkip {
         Dataset<Row> parquetDs = spark.read().format("parquet")
                 .load("/test-event-parquet");
 
-        // create persistent parquet table with external path.
+        // create persistent parquet table.
+        // file location: hdfs://mc-m01.opasnet.io:8020/apps/spark/warehouse/test_parquet_table2
         parquetDs.write().format("parquet")
                 .mode(SaveMode.Overwrite)
                 .saveAsTable("test_parquet_table2");
+    }
+
+
+    @Test
+    public void createDatabase() throws Exception
+    {
+        String database = "test";
+
+        spark.sql("CREATE DATABASE IF NOT EXISTS " + database);
+    }
+
+
+
+    @Test
+    public void createHiveTable() throws Exception
+    {
+        String path = "/test-event-parquet";
+
+        // read just one parquet.
+        Dataset<Row> parquetDs = spark.read().format("parquet")
+                .load("/test-event-parquet");
+
+        StructType schema = parquetDs.schema();
+
+
     }
 
 
