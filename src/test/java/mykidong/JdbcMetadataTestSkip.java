@@ -1,13 +1,15 @@
 package mykidong;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mykidong.util.Log4jConfigurer;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -60,8 +62,6 @@ public class JdbcMetadataTestSkip {
         // receive the Type of the object in a String array.
         rs = metadata.getTables(null, null, null, table);
 
-        log.info("rs: " + new ObjectMapper().writeValueAsString(rs));
-
         tables = new ArrayList();
         while (rs.next()) {
             tables.add(rs.getString("TABLE_NAME"));
@@ -83,6 +83,5 @@ public class JdbcMetadataTestSkip {
             }
             log.info("\n");
         }
-
     }
 }

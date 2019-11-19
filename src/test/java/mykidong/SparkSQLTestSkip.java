@@ -172,6 +172,9 @@ public class SparkSQLTestSkip {
 
         jdbcDs.show(10);
 
+        jdbcDs.printSchema();
+        StructType schema = jdbcDs.schema();
+
         jdbcDs.write().format("parquet")
                 .mode(SaveMode.Overwrite)
                 .saveAsTable("test.azkaban_projects");
@@ -179,27 +182,12 @@ public class SparkSQLTestSkip {
 
 
     @Test
-    public void getMetadataFromHiveViaJdbc() throws Exception
+    public void readSchema() throws Exception
     {
-        // URL parameters
-        String url = "jdbc:hive2://mc-m01.opasnet.io:10016";
+        // read parquet.
+        Dataset<Row> parquetDs = spark.read().format("parquet")
+                .load("/test-event-parquet");
 
-        Properties properties = new Properties();
-        properties.setProperty("user", "hive");
-
-        Connection connection = DriverManager.getConnection(url, properties);
-
-        DatabaseMetaData metaData = connection.getMetaData();
-
-        String[] types = { "TABLE" };
-        ResultSet resultSet = metaData.getTables(null, null, "%", types);
-
-        while (resultSet.next()) {
-            String tableCatalog = resultSet.getString(1);
-            String tableSchema = resultSet.getString(2);
-            String tableName = resultSet.getString(3);
-
-            log.info("catalog: {}, schema: %{}, table: {}", tableCatalog, tableSchema, tableName);
-        }
+        parquetDs.printSchema();
     }
 }
