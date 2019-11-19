@@ -143,4 +143,22 @@ public class SparkSQLTestSkip {
 
         spark.sql("select itemId, baseProperties.ts from test_parquet_table").show();
     }
+
+
+    @Test
+    public void readFromMySQLAndSaveAsTable() throws Exception
+    {
+        Dataset<Row> jdbcDs = spark.read().format("jdbc")
+                .option("url", "jdbc:mysql://mc-m02.opasnet.io:3306")
+                .option("dbtable", "azkaban.projects")
+                .option("user", "azkaban")
+                .option("password", "azkabanpass")
+                .load();
+
+        jdbcDs.show(10);
+
+        jdbcDs.write().format("parquet")
+                .mode(SaveMode.Overwrite)
+                .saveAsTable("test.azkaban_projects");
+    }
 }
