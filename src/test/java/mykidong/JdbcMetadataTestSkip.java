@@ -47,7 +47,7 @@ public class JdbcMetadataTestSkip {
 
 
         // run explicit query.
-        ResultSet rs = connection.prepareStatement("describe formatted without_copying_file").executeQuery();
+        ResultSet rs = connection.prepareStatement("describe formatted test.without_copying_file").executeQuery();
         while (rs.next())
         {
             log.info("value: " + rs.getString(1));
