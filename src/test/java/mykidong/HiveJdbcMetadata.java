@@ -44,6 +44,8 @@ public class HiveJdbcMetadata {
             String columnName = rs.getString(1);
             String dataType = rs.getString(2);
 
+            log.info("columnName: [" + columnName + "], dataType: [" + dataType + "]");
+
             if(columnName == null || dataType == null)
             {
                 continue;
