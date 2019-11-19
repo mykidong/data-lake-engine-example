@@ -47,7 +47,7 @@ public class JdbcMetadataTestSkip {
                 + metadata.getDatabaseProductName());
         System.out.println("Database Product Version: "
                 + metadata.getDatabaseProductVersion());
-        System.out.println("Logged User: " + metadata.getUserName());
+        
         System.out.println("JDBC Driver: " + metadata.getDriverName());
         System.out.println("Driver Version: " + metadata.getDriverVersion());
         System.out.println("\n");
