@@ -252,7 +252,7 @@ public class SparkSQLTestSkip {
         query += ddl;
         query += ")    ";
         query += "STORED AS PARQUET   ";
-        query += "LOCATION 'hdfs://mc" + location + "'";
+        query += "LOCATION '" + location + "'";
 
         spark.sql("drop table if exists " + newTableName);
         spark.sql(query);
