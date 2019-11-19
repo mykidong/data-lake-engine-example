@@ -121,7 +121,7 @@ public class SparkSQLTestSkip {
         String query = "";
         query += "CREATE EXTERNAL TABLE IF NOT EXISTS test.event (";
         query += "   itemId          STRING,";
-        query += "    quantity        INT,";
+        query += "    quantity        BIGINT,";
         query += "    price           BIGINT,";
         query += "    baseProperties   STRUCT<uid:             STRING,";
         query += "                            eventType:       STRING,";
