@@ -18,6 +18,7 @@ public class JdbcMetadataTestSkip {
     private static Logger log = LoggerFactory.getLogger(JdbcMetadataTestSkip.class);
 
     private DatabaseMetaData metadata;
+    private Connection connection;
 
     @Before
     public void init() throws Exception
@@ -33,7 +34,7 @@ public class JdbcMetadataTestSkip {
         Properties properties = new Properties();
         properties.setProperty("user", "hive");
 
-        Connection connection = DriverManager.getConnection(url, properties);
+        connection = DriverManager.getConnection(url, properties);
 
         metadata = connection.getMetaData();
     }
@@ -42,7 +43,16 @@ public class JdbcMetadataTestSkip {
     public void getMetadataFromHiveViaJdbc() throws Exception
     {
         printGeneralMetadata();
-        getColumnsMetadata(getTablesMetadata());    }
+        getColumnsMetadata(getTablesMetadata());
+
+
+        // run explicit query.
+        ResultSet rs = connection.prepareStatement("describe formatted without_copying_file").executeQuery();
+        while (rs.next())
+        {
+            log.info("value: " + rs.getString(1));
+        }
+    }
 
 
     private void printGeneralMetadata() throws Exception {
