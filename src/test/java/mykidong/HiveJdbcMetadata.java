@@ -44,7 +44,7 @@ public class HiveJdbcMetadata {
             String columnName = rs.getString(1);
             String dataType = rs.getString(2);
 
-            if(!columnName.trim().equals("") && !dataType.trim().equals("") && isDDL)
+            if(!columnName.trim().equals("") && !dataType.trim().equals("") && !columnName.trim().contains("#") && isDDL)
             {
                 ddlMap.put(columnName, dataType);
             }
@@ -56,7 +56,7 @@ public class HiveJdbcMetadata {
                 continue;
             }
 
-            if(!columnName.trim().equals("") && !dataType.trim().equals("") && !isDDL)
+            if(!columnName.trim().equals("") && !dataType.trim().equals("") && !columnName.trim().contains("#") && !isDDL)
             {
                 extraInfoMap.put(columnName, dataType);
             }

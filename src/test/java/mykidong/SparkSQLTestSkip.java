@@ -257,4 +257,54 @@ public class SparkSQLTestSkip {
         spark.sql("drop table if exists " + newTableName);
         spark.sql(query);
     }
+
+
+    @Test
+    public void readSchemaFromHiveAndCreateNewHiveTable2() throws Exception
+    {
+        String tableName = "another_test.new_event";
+
+        String url = "jdbc:hive2://mc-d01.opasnet.io:10000";
+
+        Properties properties = new Properties();
+        properties.put("user", "hive");
+
+        HiveJdbcMetadata hiveJdbcMetadata = new HiveJdbcMetadata(url, properties);
+        HiveJdbcMetadata.HiveMetadataMap hiveMetadataMap = hiveJdbcMetadata.getMetadataFromHive(tableName);
+
+        Map<String, String> ddlMap = hiveMetadataMap.getDdlMap();
+        Map<String, String> extraInfoMap = hiveMetadataMap.getExtraInfoMap();
+
+        log.info("ddl: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(ddlMap)) + "]");
+        log.info("extra: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(extraInfoMap)) + "]");
+
+        String ddl = "";
+        int count = 0;
+        for(String columnName : ddlMap.keySet())
+        {
+            if(count > 0)
+            {
+                ddl += "," + columnName + " " + ddlMap.get(columnName);
+            }
+            else
+            {
+                ddl += columnName + " " + ddlMap.get(columnName);
+            }
+            count++;
+        }
+
+        String location = extraInfoMap.get("Location");
+
+        String newTableName = "test.new_event_from_another";
+
+        String query = "";
+        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + newTableName + " (";
+        query += ddl;
+        query += ")    ";
+        query += "STORED AS PARQUET   ";
+        query += "LOCATION '" + location + "'";
+
+        spark.sql("drop table if exists " + newTableName);
+        spark.sql(query);
+    }
 }
