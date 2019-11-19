@@ -72,6 +72,20 @@ public class SparkSQLTestSkip {
     }
 
     @Test
+    public void saveAsTableWithoutPath() throws Exception
+    {
+        // read parquet.
+        Dataset<Row> parquetDs = spark.read().format("parquet")
+                .load("/test-event-parquet");
+
+        // create persistent parquet table with external path.
+        parquetDs.write().format("parquet")
+                .mode(SaveMode.Overwrite)
+                .saveAsTable("test_parquet_table2");
+    }
+
+
+    @Test
     public void readFromPersistentTable() throws Exception
     {
         spark.sql("select * from test_parquet_table limit 10").show();
