@@ -57,7 +57,7 @@ public class HiveJdbcMetadata {
             }
 
 
-            if(columnName.trim().contains("Detailed Table Information"))
+            if(columnName.trim().contains("Detailed Table Information") || columnName.trim().contains(":"))
             {
                 isDDL = false;
                 log.info("isDDL set to " + isDDL);
@@ -67,7 +67,7 @@ public class HiveJdbcMetadata {
 
             if(!columnName.trim().startsWith("#") && !isDDL)
             {
-                extraInfoMap.put(columnName, dataType);
+                extraInfoMap.put(columnName.trim(), dataType.trim());
                 log.info("in extramap, columnName: [" + columnName + "], dataType: [" + dataType + "]");
             }
         }
