@@ -51,16 +51,17 @@ public class JdbcMetadataTestSkip {
         
         log.info("JDBC Driver: " + metadata.getDriverName());
         log.info("Driver Version: " + metadata.getDriverVersion());
-
-        log.info("meta data: " + new ObjectMapper().writeValueAsString(metadata));
     }
 
-    private ArrayList<String> getTablesMetadata() throws SQLException {
+    private ArrayList<String> getTablesMetadata() throws Exception {
         String table[] = { "TABLE" };
         ResultSet rs = null;
         ArrayList<String> tables = null;
         // receive the Type of the object in a String array.
         rs = metadata.getTables(null, null, null, table);
+
+        log.info("rs: " + new ObjectMapper().writeValueAsString(rs));
+
         tables = new ArrayList();
         while (rs.next()) {
             tables.add(rs.getString("TABLE_NAME"));
@@ -69,7 +70,7 @@ public class JdbcMetadataTestSkip {
     }
 
     private void getColumnsMetadata(ArrayList<String> tables)
-            throws SQLException {
+            throws Exception {
         ResultSet rs = null;
         // Print the columns properties of the actual table
         for (String actualTable : tables) {
