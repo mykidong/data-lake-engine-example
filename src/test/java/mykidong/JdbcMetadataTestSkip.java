@@ -1,5 +1,7 @@
 package mykidong;
 
+import com.cedarsoftware.util.io.JsonWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mykidong.util.Log4jConfigurer;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +12,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class JdbcMetadataTestSkip {
@@ -43,18 +47,35 @@ public class JdbcMetadataTestSkip {
     {
         // run explicit query.
         ResultSet rs = connection.prepareStatement("describe formatted test.without_copying_file").executeQuery();
+
+        Map<String, String> ddlMap = new HashMap<>();
+        Map<String, String> extraInfoMap = new HashMap<>();
+
+        boolean isDDL = true;
+
         while (rs.next())
         {
             String columnName = rs.getString(2);
-
-            if(columnName.contains("Detailed Table Information"))
-            {
-                continue;
-            }
-
             String dataType = rs.getString(1);
 
-            log.info("column name: {}, data type: {} " + columnName, dataType);
+            if(!columnName.trim().equals("") && !dataType.trim().equals("") && isDDL)
+            {
+                ddlMap.put(columnName, dataType);
+            }
+
+
+            if(columnName.trim().contains("Detailed Table Information") || dataType.trim().contains("Detailed Table Information"))
+            {
+                isDDL = false;
+            }
+
+            if(!columnName.trim().equals("") && !dataType.trim().equals("") && !isDDL)
+            {
+                extraInfoMap.put(columnName, dataType);
+            }
         }
+
+        log.info("ddl: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(ddlMap)) + "]");
+        log.info("extra: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(extraInfoMap)) + "]");
     }
 }
