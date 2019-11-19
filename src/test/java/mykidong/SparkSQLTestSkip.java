@@ -1,5 +1,6 @@
 package mykidong;
 
+import mykidong.util.Log4jConfigurer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.shims.ShimLoader;
 import org.apache.spark.SparkConf;
@@ -10,6 +11,8 @@ import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.StructType;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -22,11 +25,19 @@ import java.util.Properties;
 
 public class SparkSQLTestSkip {
 
+    private static Logger log = LoggerFactory.getLogger(SparkSQLTestSkip.class);
+
     private SparkSession spark;
 
     @Before
     public void init() throws Exception
     {
+        // init. log4j.
+        Log4jConfigurer log4j = new Log4jConfigurer();
+        log4j.setConfPath("/log4j.xml");
+        log4j.afterPropertiesSet();
+
+
         // spark configuration for local mode.
         SparkConf sparkConf = new SparkConf().setAppName(SparkSQLTestSkip.class.getName());
         sparkConf.setMaster("local[2]");
@@ -188,7 +199,7 @@ public class SparkSQLTestSkip {
             String tableSchema = resultSet.getString(2);
             String tableName = resultSet.getString(3);
 
-            System.out.printf("catalog: %s, schema: %s, table: %s\n", tableCatalog, tableSchema, tableName);
+            log.info("catalog: {}, schema: %{}, table: {}", tableCatalog, tableSchema, tableName);
         }
     }
 }

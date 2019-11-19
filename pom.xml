@@ -51,6 +51,12 @@
 
 		<!-- mysql jdbc -->
 		<mysql-connector.version>5.1.33</mysql-connector.version>
+
+		<!-- logging -->
+		<slf4j.version>1.6.6</slf4j.version>
+		<log4j.version>1.2.17</log4j.version>
+		<log4j-to-slf4j.version>2.8.2</log4j-to-slf4j.version>
+
 	</properties>
 
 	<dependencies>
@@ -171,6 +177,21 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-connector.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-to-slf4j</artifactId>
+			<version>${log4j-to-slf4j.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
