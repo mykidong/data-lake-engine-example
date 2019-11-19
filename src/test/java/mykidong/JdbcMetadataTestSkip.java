@@ -43,14 +43,15 @@ public class JdbcMetadataTestSkip {
 
 
     private void printGeneralMetadata() throws SQLException {
-        System.out.println("Database Product Name: "
+        log.info("Database Product Name: "
                 + metadata.getDatabaseProductName());
-        System.out.println("Database Product Version: "
+        log.info("Database Product Version: "
                 + metadata.getDatabaseProductVersion());
         
-        System.out.println("JDBC Driver: " + metadata.getDriverName());
-        System.out.println("Driver Version: " + metadata.getDriverVersion());
-        System.out.println("\n");
+        log.info("JDBC Driver: " + metadata.getDriverName());
+        log.info("Driver Version: " + metadata.getDriverVersion());
+
+        log.info("meta data: " + metadata.toString());
     }
 
     private ArrayList<String> getTablesMetadata() throws SQLException {
@@ -72,13 +73,13 @@ public class JdbcMetadataTestSkip {
         // Print the columns properties of the actual table
         for (String actualTable : tables) {
             rs = metadata.getColumns(null, null, actualTable, null);
-            System.out.println(actualTable.toUpperCase());
+            log.info(actualTable.toUpperCase());
             while (rs.next()) {
-                System.out.println(rs.getString("COLUMN_NAME") + " "
+                log.info(rs.getString("COLUMN_NAME") + " "
                         + rs.getString("TYPE_NAME") + " "
                         + rs.getString("COLUMN_SIZE"));
             }
-            System.out.println("\n");
+            log.info("\n");
         }
 
     }
