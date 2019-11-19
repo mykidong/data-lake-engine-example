@@ -55,8 +55,8 @@ public class JdbcMetadataTestSkip {
 
         while (rs.next())
         {
-            String columnName = rs.getString(2);
-            String dataType = rs.getString(1);
+            String columnName = rs.getString(1);
+            String dataType = rs.getString(2);
 
             if(!columnName.trim().equals("") && !dataType.trim().equals("") && isDDL)
             {
@@ -67,6 +67,7 @@ public class JdbcMetadataTestSkip {
             if(columnName.trim().contains("Detailed Table Information") || dataType.trim().contains("Detailed Table Information"))
             {
                 isDDL = false;
+                continue;
             }
 
             if(!columnName.trim().equals("") && !dataType.trim().equals("") && !isDDL)
