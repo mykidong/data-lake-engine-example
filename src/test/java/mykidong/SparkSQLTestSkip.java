@@ -180,10 +180,15 @@ public class SparkSQLTestSkip {
 
         DatabaseMetaData metaData = connection.getMetaData();
 
-        ResultSet rs = metaData.getSchemas();
-        while(rs.next())
-        {
-            System.out.println("schema: " + rs.getString(1));
+        String[] types = { "TABLE" };
+        ResultSet resultSet = metaData.getTables(null, null, "%", types);
+
+        while (resultSet.next()) {
+            String tableCatalog = resultSet.getString(1);
+            String tableSchema = resultSet.getString(2);
+            String tableName = resultSet.getString(3);
+
+            System.out.printf("catalog: %s, schema: %s, table: %s\n", tableCatalog, tableSchema, tableName);
         }
     }
 }
