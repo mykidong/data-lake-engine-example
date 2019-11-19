@@ -1,5 +1,7 @@
 package mykidong;
 
+import com.cedarsoftware.util.io.JsonWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mykidong.util.Log4jConfigurer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.shims.ShimLoader;
@@ -21,6 +23,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.Map;
 import java.util.Properties;
 
 public class SparkSQLTestSkip {
@@ -211,18 +214,47 @@ public class SparkSQLTestSkip {
     {
         String tableName = "test.without_copying_file";
 
-        String ddl = spark.sql("select * from " + tableName + " limit 1").schema().toDDL();
+        String url = "jdbc:hive2://mc-m01.opasnet.io:10016";
 
-//        String newTableName = "test.without_copying_file_new";
-//
-//        String query = "";
-//        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + newTableName + " (";
-//        query += ddl;
-//        query += ")    ";
-//        query += "STORED AS PARQUET   ";
-//        query += "LOCATION 'hdfs://mc" + path + "'";
-//
-//        spark.sql("drop table if exists " + newTableName);
-//        spark.sql(query);
+        Properties properties = new Properties();
+        properties.put("user", "hive");
+
+        HiveJdbcMetadata hiveJdbcMetadata = new HiveJdbcMetadata(url, properties);
+        HiveJdbcMetadata.HiveMetadataMap hiveMetadataMap = hiveJdbcMetadata.getMetadataFromHive(tableName);
+
+        Map<String, String> ddlMap = hiveMetadataMap.getDdlMap();
+        Map<String, String> extraInfoMap = hiveMetadataMap.getExtraInfoMap();
+
+        log.info("ddl: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(ddlMap)) + "]");
+        log.info("extra: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(extraInfoMap)) + "]");
+
+        String ddl = "";
+        int count = 0;
+        for(String columnName : ddlMap.values())
+        {
+            if(count > 0)
+            {
+                ddl += "," + columnName + " " + ddlMap.get(columnName);
+            }
+            else
+            {
+                ddl += columnName + " " + ddlMap.get(columnName);
+            }
+            count++;
+        }
+
+        String location = extraInfoMap.get("Location");
+
+        String newTableName = "test.without_copying_file_new";
+
+        String query = "";
+        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + newTableName + " (";
+        query += ddl;
+        query += ")    ";
+        query += "STORED AS PARQUET   ";
+        query += "LOCATION 'hdfs://mc" + location + "'";
+
+        spark.sql("drop table if exists " + newTableName);
+        spark.sql(query);
     }
 }
