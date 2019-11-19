@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Properties;
 
 public class JdbcMetadataTestSkip {
@@ -42,56 +41,20 @@ public class JdbcMetadataTestSkip {
     @Test
     public void getMetadataFromHiveViaJdbc() throws Exception
     {
-        printGeneralMetadata();
-        getColumnsMetadata(getTablesMetadata());
-
-
         // run explicit query.
         ResultSet rs = connection.prepareStatement("describe formatted test.without_copying_file").executeQuery();
         while (rs.next())
         {
-            log.info("value: " + rs.getString(1));
-        }
-    }
+            String columnName = rs.getString(1);
 
-
-    private void printGeneralMetadata() throws Exception {
-        log.info("Database Product Name: "
-                + metadata.getDatabaseProductName());
-        log.info("Database Product Version: "
-                + metadata.getDatabaseProductVersion());
-        
-        log.info("JDBC Driver: " + metadata.getDriverName());
-        log.info("Driver Version: " + metadata.getDriverVersion());
-    }
-
-    private ArrayList<String> getTablesMetadata() throws Exception {
-        String table[] = { "TABLE" };
-        ResultSet rs = null;
-        ArrayList<String> tables = null;
-        // receive the Type of the object in a String array.
-        rs = metadata.getTables(null, null, null, table);
-
-        tables = new ArrayList();
-        while (rs.next()) {
-            tables.add(rs.getString("TABLE_NAME"));
-        }
-        return tables;
-    }
-
-    private void getColumnsMetadata(ArrayList<String> tables)
-            throws Exception {
-        ResultSet rs = null;
-        // Print the columns properties of the actual table
-        for (String actualTable : tables) {
-            rs = metadata.getColumns(null, null, actualTable, null);
-            log.info(actualTable.toUpperCase());
-            while (rs.next()) {
-                log.info(rs.getString("COLUMN_NAME") + " "
-                        + rs.getString("TYPE_NAME") + " "
-                        + rs.getString("COLUMN_SIZE"));
+            if(columnName.contains("Detailed Table Information"))
+            {
+                continue;
             }
-            log.info("\n");
+
+            String dataType = rs.getString(2);
+
+            log.info("column name: {}, data type: {}" + columnName, dataType);
         }
     }
 }
