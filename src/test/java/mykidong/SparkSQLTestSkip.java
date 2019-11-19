@@ -97,15 +97,30 @@ public class SparkSQLTestSkip {
     }
 
 
+    @Test
+    public void saveAsTableWithoutPathInDatabase() throws Exception
+    {
+        // read parquet.
+        Dataset<Row> parquetDs = spark.read().format("parquet")
+                .load("/test-event-parquet");
+
+        // create persistent parquet table.
+        // file location: hdfs://mc-m01.opasnet.io:8020/apps/spark/warehouse/test_parquet_table2
+        parquetDs.write().format("parquet")
+                .mode(SaveMode.Overwrite)
+                .saveAsTable("test.test_parquet_table_in_db");
+    }
+
+
 
     @Test
     public void createHiveTable() throws Exception
     {
         String path = "/test-event-parquet";
 
-        // read just one parquet.
+        // read just one parquet file to get schema info.
         Dataset<Row> parquetDs = spark.read().format("parquet")
-                .load("/test-event-parquet");
+                .load(path);
 
         StructType schema = parquetDs.schema();
 
