@@ -14,6 +14,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.Properties;
 
 public class SparkSQLTestSkip {
@@ -160,5 +164,26 @@ public class SparkSQLTestSkip {
         jdbcDs.write().format("parquet")
                 .mode(SaveMode.Overwrite)
                 .saveAsTable("test.azkaban_projects");
+    }
+
+
+    @Test
+    public void getMetadataFromHiveViaJdbc() throws Exception
+    {
+        // URL parameters
+        String url = "jdbc:hive2://mc-m01.opasnet.io:10016";
+
+        Properties properties = new Properties();
+        properties.setProperty("user", "hive");
+
+        Connection connection = DriverManager.getConnection(url, properties);
+
+        DatabaseMetaData metaData = connection.getMetaData();
+
+        ResultSet rs = metaData.getSchemas();
+        while(rs.next())
+        {
+            System.out.println("schema: " + rs.getString(1));
+        }
     }
 }
