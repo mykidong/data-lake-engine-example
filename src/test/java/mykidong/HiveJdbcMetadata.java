@@ -49,7 +49,7 @@ public class HiveJdbcMetadata {
                 continue;
             }
 
-            if(!columnName.trim().startsWith("#") && isDDL)
+            if(!columnName.trim().startsWith("#") && !columnName.trim().contains(":") && isDDL)
             {
                 ddlMap.put(columnName, dataType);
 
