@@ -131,6 +131,11 @@ public class SparkSQLTestSkip {
 
 
 
+    /**
+     * Since hive is not case-sensitive for column names, Spark is case-sensitive!!!
+     *
+     * @throws Exception
+     */
     @Test
     public void createHiveTable() throws Exception
     {
@@ -154,6 +159,11 @@ public class SparkSQLTestSkip {
     }
 
 
+    /**
+     * Since hive is not case-sensitive for column names, Spark is case-sensitive!!!
+     *
+     * @throws Exception
+     */
     @Test
     public void readFromPersistentTable() throws Exception
     {
@@ -184,6 +194,11 @@ public class SparkSQLTestSkip {
     }
 
 
+    /**
+     * Since hive is not case-sensitive for column names, Spark is case-sensitive!!!
+     *
+     * @throws Exception
+     */
     @Test
     public void createHiveTableWithoutCopyingFile() throws Exception
     {
@@ -196,6 +211,7 @@ public class SparkSQLTestSkip {
                 .load(path);
 
         String ddl = parquetDs.schema().toDDL();
+        log.info("ddl: [" + ddl + "]");
 
         String query = "";
         query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + tableName + " (";
@@ -209,6 +225,11 @@ public class SparkSQLTestSkip {
     }
 
 
+    /**
+     * Since hive is not case-sensitive for column names, Spark is case-sensitive!!!
+     *
+     * @throws Exception
+     */
     @Test
     public void readSchemaFromHiveAndCreateNewHiveTable() throws Exception
     {
@@ -260,6 +281,11 @@ public class SparkSQLTestSkip {
     }
 
 
+    /**
+     * Since hive is not case-sensitive for column names, Spark is case-sensitive!!!
+     *
+     * @throws Exception
+     */
     @Test
     public void readSchemaFromHiveAndCreateNewHiveTable2() throws Exception
     {
@@ -310,31 +336,6 @@ public class SparkSQLTestSkip {
         log.info("create table sql: [" + query + "]");
 
         spark.sql("drop table if exists " + newTableName);
-        spark.sql(query);
-    }
-
-
-    @Test
-    public void createHiveTableWithoutCopyingFile2() throws Exception
-    {
-        String path = "/another_test/test-event-parquet";
-
-        String tableName = "test.new_event_from_another";
-
-        // read parquet.
-        Dataset<Row> parquetDs = spark.read().format("parquet")
-                .load(path);
-
-        String ddl = parquetDs.schema().toDDL();
-
-        String query = "";
-        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + tableName + " (";
-        query += ddl;
-        query += ")    ";
-        query += "STORED AS PARQUET   ";
-        query += "LOCATION 'hdfs://mc" + path + "'";
-
-        spark.sql("drop table if exists " + tableName);
         spark.sql(query);
     }
 }
