@@ -306,29 +306,21 @@ public class SparkSQLTestSkip {
         log.info("ddl: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(ddlMap)) + "]");
         log.info("extra: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(extraInfoMap)) + "]");
 
-        String ddl = "";
-        int count = 0;
-        for(String columnName : ddlMap.keySet())
-        {
-            if(count > 0)
-            {
-                ddl += "," + columnName + " " + ddlMap.get(columnName);
-            }
-            else
-            {
-                ddl += columnName + " " + ddlMap.get(columnName);
-            }
-            count++;
-        }
-
         // hdfs path.
         String location = extraInfoMap.get("Location");
+
+        // read parquet.
+        Dataset<Row> parquetDs = spark.read().format("parquet")
+                .load(location);
+
+        String ddlWithCaseSensitive = parquetDs.schema().toDDL();
+        log.info("ddlWithCaseSensitive: [" + ddlWithCaseSensitive + "]");
 
         String newTableName = "test.new_event_from_another";
 
         String query = "";
         query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + newTableName + " (";
-        query += ddl;
+        query += ddlWithCaseSensitive;
         query += ")    ";
         query += "STORED AS PARQUET   ";
         query += "LOCATION '" + location + "'";
