@@ -49,34 +49,43 @@ public class HiveJdbcMetadata {
                 continue;
             }
 
-            if(!columnName.trim().startsWith("#") && !columnName.trim().contains(":") && isDDL)
-            {
-                ddlMap.put(columnName, dataType);
+            String column = columnName.trim();
 
-                log.info("in ddlmap, columnName: [" + columnName + "], dataType: [" + dataType + "]");
+            if(!column.startsWith("#") && !column.contains(":") && isDDL)
+            {
+                ddlMap.put(column, dataType);
+
+                log.info("in ddlmap, columnName: [" + column + "], dataType: [" + dataType + "]");
             }
 
 
-            if(columnName.trim().contains("Detailed Table Information"))
+            if(column.contains("Detailed Table Information"))
             {
                 isDDL = false;
                 log.info("isDDL set to " + isDDL);
 
                 continue;
             }
-            else if(columnName.trim().contains(":"))
+            else if(column.contains(":"))
             {
                 isDDL = false;
                 log.info("isDDL set to " + isDDL);
 
-                extraInfoMap.put(columnName.trim(), dataType.trim());
-                log.info("in extramap, columnName: [" + columnName + "], dataType: [" + dataType + "]");
+                // remove semicolon.
+                int index = column.indexOf(":");
+                if(index > 0)
+                {
+                    column = column.substring(0, index);
+                }
+
+                extraInfoMap.put(column, dataType.trim());
+                log.info("in extramap, columnName: [" + column + "], dataType: [" + dataType + "]");
             }
 
-            if(!columnName.trim().startsWith("#") && !isDDL)
+            if(!column.startsWith("#") && !isDDL)
             {
-                extraInfoMap.put(columnName.trim(), dataType.trim());
-                log.info("in extramap, columnName: [" + columnName + "], dataType: [" + dataType + "]");
+                extraInfoMap.put(column, dataType.trim());
+                log.info("in extramap, columnName: [" + column + "], dataType: [" + dataType + "]");
             }
         }
 

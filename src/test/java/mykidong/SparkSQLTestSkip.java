@@ -214,6 +214,7 @@ public class SparkSQLTestSkip {
     {
         String tableName = "test.without_copying_file";
 
+        // spark hive metastore for hive 1.2.x.
         String url = "jdbc:hive2://mc-m01.opasnet.io:10016";
 
         Properties properties = new Properties();
@@ -264,6 +265,7 @@ public class SparkSQLTestSkip {
     {
         String tableName = "another_test.new_event";
 
+        // hive metastore 3.x.
         String url = "jdbc:hive2://mc-d01.opasnet.io:10000";
 
         Properties properties = new Properties();
@@ -293,6 +295,7 @@ public class SparkSQLTestSkip {
             count++;
         }
 
+        // hdfs path.
         String location = extraInfoMap.get("Location");
 
         String newTableName = "test.new_event_from_another";
