@@ -344,7 +344,6 @@ public class SparkSQLTestSkip {
 
         Dataset<Row> jdbcDs = spark.read().format("jdbc")
                 .option("url", url)
-                .option("dbtable", table)
                 .option("user", user)
                 .option("password", password)
                 .option("query", "select * from " + table + " limit 1")
