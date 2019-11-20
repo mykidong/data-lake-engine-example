@@ -307,6 +307,8 @@ public class SparkSQLTestSkip {
         query += "STORED AS PARQUET   ";
         query += "LOCATION '" + location + "'";
 
+        log.info("create table sql: [" + query + "]");
+
         spark.sql("drop table if exists " + newTableName);
         spark.sql(query);
     }
