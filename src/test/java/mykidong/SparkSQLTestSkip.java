@@ -287,7 +287,7 @@ public class SparkSQLTestSkip {
      * @throws Exception
      */
     @Test
-    public void readSchemaFromHiveAndCreateNewHiveTable2() throws Exception
+    public void createNewHiveTableForExternalHiveMetastore() throws Exception
     {
         String tableName = "another_test.new_event";
 
@@ -305,6 +305,8 @@ public class SparkSQLTestSkip {
 
         log.info("ddl: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(ddlMap)) + "]");
         log.info("extra: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(extraInfoMap)) + "]");
+
+        // first, read parquet schema from the location path to get DDL.
 
         // hdfs path.
         String location = extraInfoMap.get("Location");
@@ -328,6 +330,52 @@ public class SparkSQLTestSkip {
         log.info("create table sql: [" + query + "]");
 
         spark.sql("drop table if exists " + newTableName);
+        spark.sql(query);
+    }
+
+
+    @Test
+    public void createHiveTableForExternalDB() throws Exception
+    {
+        String url = "jdbc:mysql://mc-m02.opasnet.io:3306";
+        String user = "azkaban";
+        String password = "azkabanpass";
+        String table = "azkaban.projects";
+
+        Dataset<Row> jdbcDs = spark.read().format("jdbc")
+                .option("url", url)
+                .option("dbtable", table)
+                .option("user", user)
+                .option("password", password)
+                .option("query", "select * from " + table + " limit 1")
+                .load();
+
+        jdbcDs.show();
+
+        String ddlWithCaseSensitive = jdbcDs.schema().toDDL();
+        log.info("ddlWithCaseSensitive: [" + ddlWithCaseSensitive + "]");
+
+        String newTable = "test.azkaban_without_copy";
+
+        String query = "";
+        query += "CREATE EXTERNAL TABLE " + newTable;
+        query += "(";
+        query += ddlWithCaseSensitive;
+        query += ")   ";
+        query += "STORED BY 'org.apache.hive.storage.jdbc.JdbcStorageHandler' ";
+        query += "TBLPROPERTIES (";
+        query += "        \"hive.sql.database.type\" = \"MYSQL\",";
+        query += "        \"hive.sql.jdbc.driver\" = \"com.mysql.jdbc.Driver\",";
+        query += "        \"hive.sql.jdbc.url\" = \"" + url + "\",";
+        query += "        \"hive.sql.dbcp.username\" = \"" + user + "\",";
+        query += "        \"hive.sql.dbcp.password\" = \"" + password + "\",";
+        query += "        \"hive.sql.table\" = \"" + table + "\",";
+        query += "        \"hive.sql.dbcp.maxActive\" = \"1\"";
+        query += ")";
+
+        log.info("create table sql: [" + query + "]");
+
+        spark.sql("drop table if exists " + newTable);
         spark.sql(query);
     }
 }
