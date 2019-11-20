@@ -312,4 +312,29 @@ public class SparkSQLTestSkip {
         spark.sql("drop table if exists " + newTableName);
         spark.sql(query);
     }
+
+
+    @Test
+    public void createHiveTableWithoutCopyingFile2() throws Exception
+    {
+        String path = "/another_test/test-event-parquet";
+
+        String tableName = "test.new_event_from_another";
+
+        // read parquet.
+        Dataset<Row> parquetDs = spark.read().format("parquet")
+                .load(path);
+
+        String ddl = parquetDs.schema().toDDL();
+
+        String query = "";
+        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + tableName + " (";
+        query += ddl;
+        query += ")    ";
+        query += "STORED AS PARQUET   ";
+        query += "LOCATION 'hdfs://mc" + path + "'";
+
+        spark.sql("drop table if exists " + tableName);
+        spark.sql(query);
+    }
 }
