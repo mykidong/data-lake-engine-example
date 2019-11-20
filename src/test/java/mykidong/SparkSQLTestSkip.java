@@ -46,6 +46,8 @@ public class SparkSQLTestSkip {
         //sparkConf.setMaster("local[2]");
         sparkConf.setMaster("yarn");
         sparkConf.set("spark.submit.deployMode", "client");
+        sparkConf.set("spark.hadoop.yarn.resourcemanager.hostname", "mc-m02.opasnet.io");
+        sparkConf.set("spark.hadoop.yarn.resourcemanager.address", "mc-m02.opasnet.io:8032");
         sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse");
         sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar");
 
