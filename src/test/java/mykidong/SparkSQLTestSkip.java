@@ -2,7 +2,9 @@ package mykidong;
 
 import com.cedarsoftware.util.io.JsonWriter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import mykidong.reflect.DynamicSparkRunner;
 import mykidong.util.Log4jConfigurer;
+import mykidong.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.shims.ShimLoader;
 import org.apache.spark.SparkConf;
@@ -11,6 +13,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.StructType;
+import org.joor.Reflect;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -25,6 +28,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 public class SparkSQLTestSkip {
 
@@ -384,5 +388,18 @@ public class SparkSQLTestSkip {
 
         spark.sql("drop table if exists " + newTable);
         spark.sql(query);
+    }
+
+    @Test
+    public void runDynamicCompiledSparkCodes() throws Exception
+    {
+        // read java codes.
+        String codes = StringUtils.fileToString("/templates/save-as-table.java");
+
+        DynamicSparkRunner sparkRunner = Reflect.compile(
+                "mykidong.SparkRunner", codes).create().get();
+
+        // run spark codes dynamically.
+        sparkRunner.run(spark);
     }
 }
