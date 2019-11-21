@@ -278,24 +278,6 @@ public class SparkSQLTestSkip {
         spark.sql(query);
     }
 
-
-    @Test
-    public void readCreateTableDDLFromExternalHive() throws Exception
-    {
-        String tableName = "another_test.new_event";
-
-        // hive metastore 3.x.
-        String url = "jdbc:hive2://mc-d01.opasnet.io:10000";
-
-        Properties properties = new Properties();
-        properties.put("user", "hive");
-
-        HiveJdbcMetadata hiveJdbcMetadata = new HiveJdbcMetadata(url, properties);
-        String ddl = hiveJdbcMetadata.getCreateTableDDLFromHive(tableName);
-        log.info("ddl: {}", ddl);
-    }
-
-
     /**
      * Since hive is not case-sensitive for column names, Spark is case-sensitive!!!
      *

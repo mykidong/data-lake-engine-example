@@ -96,27 +96,6 @@ public class HiveJdbcMetadata {
         return hiveMetadataMap;
     }
 
-
-    public String getCreateTableDDLFromHive(String tableWithDatabase) throws Exception
-    {
-        String query = "show create table " + tableWithDatabase;
-
-        // run explicit query.
-        ResultSet rs = connection.prepareStatement(query).executeQuery();
-
-        String ddl = null;
-        while (rs.next()) {
-            ddl = rs.getString(1);
-
-            log.info("1. " + rs.getString(1));
-            log.info("2. " + rs.getString(2));
-
-            break;
-        }
-
-        return ddl;
-    }
-
     public static class HiveMetadataMap
     {
         private Map<String, String> ddlMap;
