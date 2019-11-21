@@ -41,13 +41,14 @@ public class RequestHandlerApplication {
         try {
             httpServer.start();
             log.info("embed http server is running now....");
+
+            Thread.sleep(Long.MAX_VALUE);
         } catch (Exception e)
         {
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }
-
-
+       
         spark.stop();
     }
 }
