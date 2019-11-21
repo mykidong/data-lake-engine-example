@@ -107,6 +107,10 @@ public class HiveJdbcMetadata {
         String ddl = null;
         while (rs.next()) {
             ddl = rs.getString(1);
+
+            log.info("1. " + rs.getString(1));
+            log.info("2. " + rs.getString(2));
+
             break;
         }
 
