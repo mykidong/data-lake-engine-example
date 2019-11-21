@@ -48,7 +48,7 @@ public class RequestHandlerApplication {
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }
-       
+
         spark.stop();
     }
 }
