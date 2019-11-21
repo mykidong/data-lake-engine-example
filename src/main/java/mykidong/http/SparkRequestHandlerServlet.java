@@ -32,11 +32,11 @@ public class SparkRequestHandlerServlet extends HttpServlet {
         String codes = request.getParameter("codes");
         log.info("codes: [" + codes + "]");
 
-        DynamicSparkRunner sparkRunner = Reflect.compile(
-                "mykidong.SparkRunner", codes).create().get();
-
         // run spark codes dynamically.
         try {
+            DynamicSparkRunner sparkRunner = Reflect.compile(
+                    "mykidong.http.SparkRunner", codes).create().get();
+
             sparkRunner.run(spark);
 
             log.info("requested spark job is done...");
