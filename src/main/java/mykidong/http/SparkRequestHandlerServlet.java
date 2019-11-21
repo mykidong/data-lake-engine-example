@@ -41,7 +41,7 @@ public class SparkRequestHandlerServlet extends HttpServlet {
 
             sparkRunner.run(spark);
 
-            log.info("elapsed time: [" + (System.currentTimeMillis() - start) / 1000 + "]s");
+            log.info("elapsed time: [" + (double)(System.currentTimeMillis() - start) / (double)1000 + "]s");
             log.info("requested spark job is done...");
 
             // response.
