@@ -6,7 +6,6 @@ import mykidong.reflect.DynamicSparkRunner;
 import mykidong.util.Log4jConfigurer;
 import mykidong.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.shims.ShimLoader;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -22,13 +21,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.util.Map;
 import java.util.Properties;
-import java.util.function.Supplier;
 
 public class SparkSQLTestSkip {
 
