@@ -64,7 +64,7 @@
 		<joor.version>0.9.12</joor.version>
 
 		<!-- jetty -->
-		<jetty.version>9.4.22.v20191022</jetty.version>
+		<jetty.version>9.3.24.v20180605</jetty.version>
 	</properties>
 
 	<dependencies>
@@ -217,6 +217,16 @@
             <artifactId>joor-java-8</artifactId>
             <version>${joor.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
