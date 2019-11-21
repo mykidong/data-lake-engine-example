@@ -59,6 +59,12 @@
 
 		<!-- json io -->
 		<json-io.version>4.9.0</json-io.version>
+
+		<!-- joor -->
+		<joor.version>0.9.12</joor.version>
+
+		<!-- jetty -->
+		<jetty.version>9.4.3.v20170317</jetty.version>
 	</properties>
 
 	<dependencies>
@@ -209,8 +215,18 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>joor-java-8</artifactId>
-            <version>0.9.12</version>
+            <version>${joor.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
@@ -284,7 +300,48 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.4.1</version>
 			</plugin>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<createDependencyReducedPom>false</createDependencyReducedPom>
+					<shadedArtifactAttached>true</shadedArtifactAttached>
+					<shadedClassifierName>spark-job</shadedClassifierName>
+					<relocations>
+						<relocation>
+							<pattern>com.google</pattern>
+							<shadedPattern>mykidong.shaded.google</shadedPattern>
+							<excludes>
+								<exclude>com.google.common.base.Optional</exclude>
+							</excludes>
+						</relocation>
+					</relocations>
+					<transformers>
+						<transformer
+								implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+						<transformer
+								implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+							<resource>META-INF/spring.handlers</resource>
+						</transformer>
+						<transformer
+								implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+							<resource>META-INF/spring.schemas</resource>
+						</transformer>
+					</transformers>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>org/datanucleus/**</exclude>
+								<exclude>META-INF/*.SF</exclude>
+								<exclude>META-INF/*.DSA</exclude>
+								<exclude>META-INF/*.RSA</exclude>
+							</excludes>
+						</filter>
+					</filters>
+				</configuration>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
