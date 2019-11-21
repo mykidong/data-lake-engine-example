@@ -34,11 +34,14 @@ public class SparkRequestHandlerServlet extends HttpServlet {
 
         // run spark codes dynamically.
         try {
+            long start = System.currentTimeMillis();
+
             DynamicSparkRunner sparkRunner = Reflect.compile(
                     "mykidong.http.SparkRunner", codes).create().get();
 
             sparkRunner.run(spark);
 
+            log.info("elapsed time: [" + (System.currentTimeMillis() - start) / 1000 + "]s");
             log.info("requested spark job is done...");
 
             // response.
