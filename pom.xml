@@ -64,7 +64,7 @@
 		<joor.version>0.9.12</joor.version>
 
 		<!-- jetty -->
-		<jetty.version>9.4.3.v20170317</jetty.version>
+		<jetty.version>9.4.22.v20191022</jetty.version>
 	</properties>
 
 	<dependencies>
