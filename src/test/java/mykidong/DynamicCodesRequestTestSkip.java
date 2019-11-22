@@ -46,6 +46,7 @@ public class DynamicCodesRequestTestSkip {
         HttpPost httpPost = new HttpPost(url);
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("fullClassName", "mykidong.spark.SparkRunner"));
         params.add(new BasicNameValuePair("codes", codes));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 
@@ -67,6 +68,7 @@ public class DynamicCodesRequestTestSkip {
         HttpPost httpPost = new HttpPost(url);
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("fullClassName", "mykidong.spark.CountRunner"));
         params.add(new BasicNameValuePair("codes", codes));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 

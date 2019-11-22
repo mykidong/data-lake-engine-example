@@ -31,6 +31,10 @@ public class SparkRequestHandlerServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
+        // full class name.
+        String fullClassName = request.getParameter("fullClassName");
+        log.info("fullClassName: [" + fullClassName + "]");
+
         // codes parameter.
         String codes = request.getParameter("codes");
         log.info("codes: [" + codes + "]");
@@ -43,7 +47,7 @@ public class SparkRequestHandlerServlet extends HttpServlet {
             long start = System.currentTimeMillis();
 
             DynamicSparkRunner sparkRunner = Reflect.compile(
-                    "mykidong.http.SparkRunner", codes).create().get();
+                    fullClassName, codes).create().get();
 
             String result = sparkRunner.run(spark);
 
