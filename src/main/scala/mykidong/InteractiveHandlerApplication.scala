@@ -10,7 +10,7 @@ import org.slf4j.{Logger, LoggerFactory}
 
 object InteractiveHandlerApplication {
 
-  private val log = LoggerFactory.getLogger(classOf[InteractiveHandlerApplication])
+  private val log = LoggerFactory.getLogger(getClass.getName)
 
   def main(args: Array[String]): Unit = {
 
@@ -24,7 +24,7 @@ object InteractiveHandlerApplication {
     }
 
     // spark configuration.
-    val sparkConf = new SparkConf().setAppName(classOf[InteractiveHandlerApplication].getName)
+    val sparkConf = new SparkConf().setAppName(getClass.getName)
     sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse")
     sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar")
 
