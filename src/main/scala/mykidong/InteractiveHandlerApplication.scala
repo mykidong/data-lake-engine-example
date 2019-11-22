@@ -1,13 +1,17 @@
 package mykidong
 
+import mykidong.component.RequestHandlerApplication
 import mykidong.http.RequestHandlerHttpServer
 import mykidong.util.Log4jConfigurer
 import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.SparkSession
-
+import org.slf4j.{Logger, LoggerFactory}
 
 object InteractiveHandlerApplication {
+
+  private val log = LoggerFactory.getLogger(classOf[InteractiveHandlerApplication])
+
   def main(args: Array[String]): Unit = {
 
     // init. log4j.
