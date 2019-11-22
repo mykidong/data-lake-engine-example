@@ -9,6 +9,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.spark.sql.SparkSession;
 import org.junit.Assert;
 import org.junit.Before;
@@ -70,7 +71,8 @@ public class DynamicCodesRequestTestSkip {
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 
         HttpResponse response = client.execute(httpPost);
-        log.info("response: " + response.getEntity().toString());
+        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        log.info("response: " + responseString);
 
         Assert.assertTrue(response.getStatusLine().getStatusCode() == 200);
     }
