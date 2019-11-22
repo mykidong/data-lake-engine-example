@@ -31,13 +31,16 @@ class CountRunner implements mykidong.reflect.DynamicSparkRunner {
         List<Integer> intList = Arrays.asList(new Integer[]{1, 2, 3, 4, 5, 6, 7, 10, 11});
 
         JavaRDD<Integer> rdd = new JavaSparkContext(spark.sparkContext()).parallelize(intList);
-        int sum = rdd.reduce(new Function2<Integer, Integer, Integer>() {
-            @Override
-            public Integer call(Integer a, Integer b) throws Exception {
-                return a + b;
-            }
-        });
+        int sum = rdd.reduce(new Sum());
 
         return "sum: " + sum;
+    }
+
+    private static class Sum implements Function2<Integer, Integer, Integer>
+    {
+        @Override
+        public Integer call(Integer a, Integer b) throws Exception {
+            return a + b;
+        }
     }
 }
