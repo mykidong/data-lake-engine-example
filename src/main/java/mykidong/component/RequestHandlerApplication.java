@@ -42,7 +42,7 @@ public class RequestHandlerApplication {
 
         // run embeded http server.
         int port = 8125;
-        RequestHandlerHttpServer httpServer = new RequestHandlerHttpServer(port, spark);
+        RequestHandlerHttpServer httpServer = new RequestHandlerHttpServer(port, jsc, spark);
         try {
             httpServer.start();
             log.info("embed http server is running now....");
