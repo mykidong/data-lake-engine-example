@@ -1,5 +1,6 @@
 package mykidong.http;
 
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -14,12 +15,14 @@ public class RequestHandlerHttpServer {
     private static Logger log = LoggerFactory.getLogger(RequestHandlerHttpServer.class);
 
     private Server server;
+    private JavaSparkContext jsc;
     private SparkSession spark;
     private int port;
 
-    public RequestHandlerHttpServer(int port, SparkSession spark)
+    public RequestHandlerHttpServer(int port, JavaSparkContext jsc, SparkSession spark)
     {
         this.port = port;
+        this.jsc = jsc;
         this.spark = spark;
     }
 
@@ -33,7 +36,7 @@ public class RequestHandlerHttpServer {
 
         // add servlet to handler.
         ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(new ServletHolder(new SparkRequestHandlerServlet(spark)), "/run-codes");
+        handler.addServletWithMapping(new ServletHolder(new SparkRequestHandlerServlet(jsc, spark)), "/run-codes");
 
         server.setHandler(handler);
         server.start();

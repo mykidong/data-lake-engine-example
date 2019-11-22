@@ -1,6 +1,7 @@
 package mykidong.http;
 
 import mykidong.reflect.DynamicSparkRunner;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
 import org.joor.Reflect;
 import org.slf4j.Logger;
@@ -16,10 +17,12 @@ public class SparkRequestHandlerServlet extends HttpServlet {
 
     private static Logger log = LoggerFactory.getLogger(SparkRequestHandlerServlet.class);
 
+    private JavaSparkContext jsc;
     private SparkSession spark;
 
-    public SparkRequestHandlerServlet(SparkSession spark)
+    public SparkRequestHandlerServlet(JavaSparkContext jsc, SparkSession spark)
     {
+        this.jsc = jsc;
         this.spark = spark;
     }
 
@@ -34,6 +37,9 @@ public class SparkRequestHandlerServlet extends HttpServlet {
 
         // run spark codes dynamically.
         try {
+            // set fair scheduler pool.
+            jsc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread().getId());
+
             long start = System.currentTimeMillis();
 
             DynamicSparkRunner sparkRunner = Reflect.compile(
@@ -43,6 +49,9 @@ public class SparkRequestHandlerServlet extends HttpServlet {
 
             log.info("elapsed time: [" + (double)(System.currentTimeMillis() - start) / (double)1000 + "]s");
             log.info("requested spark job is done...");
+
+            // unset fair scheduler pool.
+            jsc.setLocalProperty("spark.scheduler.pool", null);
 
             // response.
             response.setContentType("application/json");
