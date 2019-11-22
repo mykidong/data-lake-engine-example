@@ -45,7 +45,7 @@ public class SparkRequestHandlerServlet extends HttpServlet {
             DynamicSparkRunner sparkRunner = Reflect.compile(
                     "mykidong.http.SparkRunner", codes).create().get();
 
-            sparkRunner.run(spark);
+            String result = sparkRunner.run(spark);
 
             log.info("elapsed time: [" + (double)(System.currentTimeMillis() - start) / (double)1000 + "]s");
             log.info("requested spark job is done...");
@@ -56,7 +56,7 @@ public class SparkRequestHandlerServlet extends HttpServlet {
             // response.
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().println("{ \"status\": \"ok\"}");
+            response.getWriter().println("{ \"result\": \"" + result + "\"}");
         } catch (Exception e)
         {
             e.printStackTrace();

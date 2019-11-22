@@ -7,6 +7,9 @@ import mykidong.util.Log4jConfigurer;
 import mykidong.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
@@ -18,19 +21,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import scala.actors.threadpool.Arrays;
 
-class SparkRunner implements mykidong.reflect.DynamicSparkRunner {
+import java.util.List;
+
+class CountRunner implements mykidong.reflect.DynamicSparkRunner {
     public String run(SparkSession spark) throws Exception {
-        // read parquet.
-        Dataset<Row> parquetDs = spark.read().format("parquet")
-                .load("/test-event-parquet");
 
-        // create persistent parquet table with external path.
-        parquetDs.write().format("parquet")
-                .option("path", "hdfs://mc/test-event-parquet-table")
-                .mode(SaveMode.Overwrite)
-                .saveAsTable("test_parquet_dynamic_request");
+        List<Integer> intList = Arrays.asList(new Integer[]{1, 2, 3, 4, 5, 6, 7, 10, 11});
 
-        return "SUCCESS!!";
+        JavaRDD<Integer> rdd = new JavaSparkContext(spark.sparkContext()).parallelize(intList);
+        int sum = rdd.reduce(new Function2<Integer, Integer, Integer>() {
+            @Override
+            public Integer call(Integer a, Integer b) throws Exception {
+                return a + b;
+            }
+        });
+
+        return "sum: " + sum;
     }
 }

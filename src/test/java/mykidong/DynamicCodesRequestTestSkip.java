@@ -53,4 +53,25 @@ public class DynamicCodesRequestTestSkip {
 
         Assert.assertTrue(response.getStatusLine().getStatusCode() == 200);
     }
+
+
+    @Test
+    public void requestCountWithCodes() throws Exception
+    {
+        // read java codes.
+        String codes = StringUtils.fileToString("/templates/count.java");
+
+        String url = "http://localhost:8125/run-codes";
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpPost httpPost = new HttpPost(url);
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("codes", codes));
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+        HttpResponse response = client.execute(httpPost);
+        log.info("response: " + response.getEntity().toString());
+
+        Assert.assertTrue(response.getStatusLine().getStatusCode() == 200);
+    }
 }
