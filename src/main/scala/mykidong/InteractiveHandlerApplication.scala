@@ -42,7 +42,7 @@ object InteractiveHandlerApplication {
     try {
       httpServer.start()
       log.info("embed http server is running now....")
-      Thread.sleep(Long.MAX_VALUE)
+      Thread.sleep(Long.MaxValue)
     } catch {
       case e: Exception =>
         log.error(e.getMessage)
