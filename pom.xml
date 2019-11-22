@@ -66,6 +66,9 @@
 		<!-- jetty -->
 		<jetty.version>9.3.24.v20180605</jetty.version>
 
+		<!-- http4s -->
+		<http4s.version>0.20.13</http4s.version>
+
 		<!-- plugin scala -->
 		<plugin.scala.version>2.15.2</plugin.scala.version>
 	</properties>
@@ -229,6 +232,16 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
 			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.http4s</groupId>
+			<artifactId>http4s-blaze-server_${scala.binary.version}</artifactId>
+			<version>${http4s.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.http4s</groupId>
+			<artifactId>http4s-dsl_${scala.binary.version}</artifactId>
+			<version>${http4s.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
