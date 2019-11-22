@@ -29,6 +29,8 @@ public class RequestHandlerApplication {
         SparkConf sparkConf = new SparkConf().setAppName(RequestHandlerApplication.class.getName());
         sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse");
         sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar");
+
+        // set fair scheduler mode.
         sparkConf.set("spark.scheduler.mode", "FAIR");
 
         // spark session.
