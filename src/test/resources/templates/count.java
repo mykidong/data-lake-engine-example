@@ -37,7 +37,7 @@ class CountRunner implements mykidong.reflect.DynamicSparkRunner {
     }
 }
 
-private static class Sum implements Function2<Integer, Integer, Integer>
+class Sum implements Function2<Integer, Integer, Integer>
 {
     @Override
     public Integer call(Integer a, Integer b) throws Exception {
