@@ -10,7 +10,7 @@ import java.net.URL;
 
 public class Log4jConfigurer implements InitializingBean {
 
-	public static final String DEFAULT_LOG4J_XML = "log4j.xml";
+	public static final String DEFAULT_LOG4J_XML = "/log4j2.xml";
 	
 	static Log4jConfigurer instance;
 	
@@ -20,15 +20,15 @@ public class Log4jConfigurer implements InitializingBean {
 		this.confPath = confPath;
 	}
 
-	public static void loadLog4j()
+	public static void loadLog4j(String path)
 	{
 		Log4jConfigurer log4jConfigurer = new Log4jConfigurer();
-		log4jConfigurer.setConfPath(DEFAULT_LOG4J_XML);
+		log4jConfigurer.setConfPath((path == null) ? DEFAULT_LOG4J_XML : path);
 		try {
 			log4jConfigurer.afterPropertiesSet();
 		}catch (Exception e)
 		{
-			throw new RuntimeException(e);
+			System.err.println("error when loading log4j: " + e.getCause());
 		}
 	}
 
@@ -43,7 +43,7 @@ public class Log4jConfigurer implements InitializingBean {
 		DOMConfigurator.configure(url);
 
 		final Logger log = LoggerFactory.getLogger(Log4jConfigurer.class);
-		log.debug("log4j loaded...");	
+		log.info("log4j loaded...");
 	}
 }
 
