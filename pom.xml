@@ -67,6 +67,9 @@
 		<!-- http4s -->
 		<http4s.version>0.20.13</http4s.version>
 
+		<!-- scalatest -->
+		<scalatest.version>3.0.7</scalatest.version>
+
 		<!-- plugin scala -->
 		<plugin.scala.version>2.15.2</plugin.scala.version>
 	</properties>
@@ -217,14 +220,9 @@
 			<version>${jetty.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.http4s</groupId>
-			<artifactId>http4s-blaze-server_${scala.binary.version}</artifactId>
-			<version>${http4s.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.http4s</groupId>
-			<artifactId>http4s-dsl_${scala.binary.version}</artifactId>
-			<version>${http4s.version}</version>
+			<groupId>io.shaka</groupId>
+			<artifactId>naive-http_${scala.binary.version}</artifactId>
+			<version>103</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>

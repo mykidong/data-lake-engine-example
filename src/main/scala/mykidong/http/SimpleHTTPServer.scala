@@ -1,25 +1,26 @@
 package mykidong.http
 
-import cats.effect._
-import org.http4s._
-import org.http4s.dsl.io._
-import org.http4s.implicits._
-import org.http4s.server.Router
-import org.http4s.server.blaze._
+import io.shaka.http.HttpServer
+import io.shaka.http.Request.POST
+import io.shaka.http.Response.respond
+import io.shaka.http.Response.seeOther
+import io.shaka.http.Status.NOT_FOUND
 
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object SimpleHTTPServer {
 
-  implicit val cs: ContextShift[IO] = IO.contextShift(global)
-  implicit val timer: Timer[IO] = IO.timer(global)
+  def main(args: Array[String]): Unit = {
+    val port = 8125
+    val httpServer = HttpServer(port).start()
 
-  val helloWorldService = HttpRoutes.of[IO] {
-    case GET -> Root / "hello" / name =>
-      Ok(s"Hello, $name.")
+    httpServer.handler{
+      case request@POST("/run-codes") => {
+        val value = request.entityAsString
+        println("value: " + value)
+        respond("OK")
+      }
+      case _ => respond("doh!").status(NOT_FOUND)
+    }
   }
 
-  val httpApp = Router("/" -> helloWorldService).orNotFound
-
-  val serverBuilder = BlazeServerBuilder[IO].bindHttp(8080, "localhost").withHttpApp(httpApp)
 }
