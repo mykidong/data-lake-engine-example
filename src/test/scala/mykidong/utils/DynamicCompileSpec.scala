@@ -30,6 +30,6 @@ class DynamicCompileSpec extends FunSuite{
     println("ctor: " + ctor.toString)
 
     val dynamicSparkRunner = ctor.newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
-    println("dynamicSparkRunner: " + dynamicSparkRunner.run(null))
+    println("dynamicSparkRunner retValue: " + dynamicSparkRunner.run(null))
   }
 }

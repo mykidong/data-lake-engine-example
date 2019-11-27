@@ -11,3 +11,4 @@ class CountRunner extends mykidong.reflect.DynamicScalaSparkJobRunner {
         "sum: " + sum
     }
 }
+scala.reflect.classTag[CountRunner].runtimeClass
