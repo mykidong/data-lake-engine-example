@@ -54,27 +54,19 @@ object SimpleHTTPServer {
         var retValue = ""
         try {
           val tb = universe.runtimeMirror(getClass.getClassLoader).mkToolBox()
-          log.info("tb: [" + tb.toString + "]");
-
           val ast = tb.parse(codes);
-          log.info("ast: [" + ast.toString() + "]");
-
           val clazz = tb.compile(ast)().asInstanceOf[Class[_]]
-          log.info("clazz: [" + clazz.getName + "]");
-
           val ctor = clazz.getDeclaredConstructors()(0)
-          log.info("ctor: [" + ctor.getName + "]");
 
           // dynamic spark runner.
           val dynamicSparkRunner = ctor.newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
-          log.info("dynamicSparkRunner: [" + dynamicSparkRunner.getClass.getName + "]");
 
           // set fair scheduler pool.
           sc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread.getId)
 
           // execute run().
           retValue = dynamicSparkRunner.run(spark)
-          println("retValue: [" + retValue + "]")
+          log.info("retValue: [" + retValue + "]")
 
           log.info("elapsed time: [" + (System.currentTimeMillis - start).toDouble / 1000.toDouble + "]s")
           log.info("requested spark job is done...")

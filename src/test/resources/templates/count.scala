@@ -5,8 +5,10 @@ class CountRunner extends mykidong.reflect.DynamicScalaSparkJobRunner {
 
         val data = Array(1, 2, 3, 4, 5)
         val distData = spark.sparkContext.parallelize(data)
+        println("distData: " + distData.toString)
 
         val sum = distData.reduce((a, b) => a + b)
+        println("sum: " + sum)
 
         "sum: " + sum
     }
