@@ -73,7 +73,7 @@ object SimpleHTTPServer {
           sc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread.getId)
 
           // execute run().
-          retValue = dynamicSparkRunner.run(null)
+          retValue = dynamicSparkRunner.run(spark)
           println("retValue: [" + retValue + "]")
 
           log.info("elapsed time: [" + (System.currentTimeMillis - start).toDouble / 1000.toDouble + "]s")
