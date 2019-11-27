@@ -1,12 +1,10 @@
 package mykidong.component
 
-import mykidong.component.RequestHandlerApplication
-import mykidong.http.RequestHandlerHttpServer
+import mykidong.http.SimpleHTTPServer
 import mykidong.util.Log4jConfigurer
 import org.apache.spark.SparkConf
-import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.SparkSession
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.LoggerFactory
 
 object InteractiveHandlerApplication {
 
@@ -34,20 +32,10 @@ object InteractiveHandlerApplication {
     // spark session.
     val spark = SparkSession.builder.config(sparkConf).enableHiveSupport.getOrCreate
 
-    val jsc = new JavaSparkContext(spark.sparkContext)
-
     // run embeded http server.
     val port = 8125
-    val httpServer = new RequestHandlerHttpServer(port, jsc, spark)
-    try {
-      httpServer.start()
-      log.info("embed http server is running now....")
-      Thread.sleep(Long.MaxValue)
-    } catch {
-      case e: Exception =>
-        log.error(e.getMessage)
-        throw new RuntimeException(e)
-    }
+    SimpleHTTPServer.run(spark, spark.sparkContext, port)
+    log.info("embedded http server is running now ...")
 
     spark.stop()
   }

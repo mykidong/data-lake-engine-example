@@ -37,8 +37,10 @@ public class DynamicCodesRequestTestSkip {
     @Test
     public void requestWithCodes() throws Exception
     {
+        String path = System.getProperty("path", "/templates/save-as-table-request.scala");
+
         // read java codes.
-        String codes = StringUtils.fileToString("/templates/save-as-table-request.java");
+        String codes = StringUtils.fileToString(path);
 
 
         String url = "http://localhost:8125/run-codes";
@@ -60,6 +62,9 @@ public class DynamicCodesRequestTestSkip {
     @Test
     public void requestCountWithCodes() throws Exception
     {
+        String path = System.getProperty("path", "/templates/count.java");
+
+
         // read java codes.
         String codes = StringUtils.fileToString("/templates/count.java");
 
