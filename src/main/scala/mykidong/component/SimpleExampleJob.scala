@@ -25,15 +25,13 @@ object SimpleExampleJob {
     // spark session.
     val spark = SparkSession.builder.config(sparkConf).enableHiveSupport.getOrCreate
 
-    val parquetDs = spark.read.format("parquet")
-      .load("/test-event-parquet")
+    val parquetDs = spark.read.format("parquet").load("/test-event-parquet")
 
     parquetDs.show(3)
 
     implicit val intEncoder = Encoders.scalaInt
     val sum = parquetDs.map(row => {
       println("row: " + row.toString)
-
       1
     }).count()
 
