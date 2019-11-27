@@ -1,12 +1,11 @@
 package mykidong.component
 
-import mykidong.http.SimpleHTTPServer
 import mykidong.util.Log4jConfigurer
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Encoders, SparkSession}
 import org.slf4j.LoggerFactory
 
-object InteractiveHandlerApplication {
+class SimpleExampleJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
@@ -26,13 +25,21 @@ object InteractiveHandlerApplication {
     // spark session.
     val spark = SparkSession.builder.config(sparkConf).enableHiveSupport.getOrCreate
 
-    // run embeded http server.
-    val port = 8125
-    SimpleHTTPServer.run(spark, spark.sparkContext, port)
-    log.info("embedded http server is running now ...")
+    val parquetDs = spark.read.format("parquet")
+      .load("/test-event-parquet")
 
-    Thread.sleep(Long.MaxValue)
+    parquetDs.show(3)
+
+    implicit val intEncoder = Encoders.scalaInt
+    val sum = parquetDs.map(row => {
+      println("row: " + row.toString)
+
+      1
+    }).count()
+
+    log.info("sum: " + sum)
 
     spark.stop()
   }
+
 }
