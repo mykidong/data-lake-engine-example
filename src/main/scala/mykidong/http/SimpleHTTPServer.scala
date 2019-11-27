@@ -29,8 +29,6 @@ object SimpleHTTPServer {
         val start: Long = System.currentTimeMillis
 
         val body: String = request.entityAsString
-        println("value: " + body)
-
 
         var paramMap: Map[String, String] = Map.empty
 
@@ -47,21 +45,29 @@ object SimpleHTTPServer {
 
         // full class name param.
         val fullClassName = paramMap.get("fullClassName").get
-        println("fullClassName: [" + fullClassName + "]");
+        log.info("fullClassName: [" + fullClassName + "]");
 
         // codes param.
         val codes = paramMap.get("codes").get
-        println("codes: [" + codes + "]");
+        log.info("codes: [" + codes + "]");
 
         var retValue = ""
         try {
           val tb = universe.runtimeMirror(getClass.getClassLoader).mkToolBox()
+          log.info("tb: [" + tb.toString + "]");
+
           val ast = tb.parse(codes);
+          log.info("ast: [" + ast.toString() + "]");
+
           val clazz = tb.compile(ast)().asInstanceOf[Class[_]]
+          log.info("clazz: [" + clazz.getName + "]");
+
           val ctor = clazz.getDeclaredConstructors()(0)
+          log.info("ctor: [" + ctor.getName + "]");
 
           // dynamic spark runner.
           val dynamicSparkRunner = ctor.newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
+          log.info("dynamicSparkRunner: [" + dynamicSparkRunner.getClass.getName + "]");
 
           // set fair scheduler pool.
           sc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread.getId)
