@@ -5,7 +5,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.sql.{Encoders, SparkSession}
 import org.slf4j.LoggerFactory
 
-class SimpleExampleJob {
+object SimpleExampleJob {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
