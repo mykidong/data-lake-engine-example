@@ -9,7 +9,7 @@ class CountRunner extends DynamicScalaSparkJobRunner{
 
         parquetDs.show(3)
 
-        implicit val featureEncoder = Encoders.kryo[Int]
+        implicit val intEncoder = Encoders.INT
         val sum = parquetDs.map(row => {
             println("row: " + row.toString)
 
