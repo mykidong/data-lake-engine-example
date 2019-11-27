@@ -37,6 +37,8 @@ object InteractiveHandlerApplication {
     SimpleHTTPServer.run(spark, spark.sparkContext, port)
     log.info("embedded http server is running now ...")
 
+    Thread.sleep(Long.MaxValue)
+
     spark.stop()
   }
 }
