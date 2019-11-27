@@ -66,7 +66,7 @@ public class DynamicCodesRequestTestSkip {
 
 
         // read java codes.
-        String codes = StringUtils.fileToString("/templates/count.java");
+        String codes = StringUtils.fileToString(path);
 
         String url = "http://localhost:8125/run-codes";
         HttpClient client = HttpClientBuilder.create().build();
