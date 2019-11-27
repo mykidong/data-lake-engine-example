@@ -16,18 +16,17 @@ class DynamicCompileSpec extends FunSuite{
     println("tb: " + tb.toString)
 
     // read java codes.
-    val codes = StringUtils.fileToString("/templates/save-as-table-request.scala")
+    val codes = StringUtils.fileToString("/templates/count.scala")
     println("codes: \n" + codes)
 
-    // TODO: parsing problem...
     val ast = tb.parse(codes);
     println("ast: " + ast.toString)
 
     val clazz = tb.compile(ast)().asInstanceOf[Class[_]]
-    println("clazz: " + clazz.toString)
+    println("clazz: " + clazz.getName)
 
     val ctor = clazz.getDeclaredConstructors()(0)
-    println("ctor: " + ctor.toString)
+    println("ctor: " + ctor.getName)
 
     val dynamicSparkRunner = ctor.newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
     println("dynamicSparkRunner retValue: " + dynamicSparkRunner.run(null))

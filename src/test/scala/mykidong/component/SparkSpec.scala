@@ -7,7 +7,7 @@ import mykidong.http.SimpleHTTPServer.getClass
 import mykidong.util.Log4jConfigurer
 import org.apache.hadoop.conf.Configuration
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Encoders, SparkSession}
 import org.scalatest.FunSuite
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.core.io.support.PropertiesLoaderUtils
@@ -55,7 +55,6 @@ class SparkSpec extends FunSuite{
 
     val data = Array(1, 2, 3, 4, 5)
     val distData = spark.sparkContext.parallelize(data)
-
     val sum = distData.reduce((a, b) => a + b)
     log.info("sum: [" + sum + "]")
   }
