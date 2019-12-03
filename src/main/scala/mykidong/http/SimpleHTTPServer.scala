@@ -14,7 +14,7 @@ import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
 
-import scala.tools.nsc.GenericRunnerSettings
+import scala.tools.nsc.{GenericRunnerSettings, Settings}
 import scala.tools.nsc.interpreter.{JPrintWriter, NamedParam}
 
 object SimpleHTTPServer {
@@ -62,7 +62,7 @@ object SimpleHTTPServer {
           spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
           log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
 
-          val settings = new GenericRunnerSettings(println _)
+          val settings = new Settings()
           settings.processArguments(List("-Yrepl-class-based",
             "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
           settings.usejavacp.value = true
