@@ -1,5 +1,6 @@
 package mykidong.http
 
+import java.io.{BufferedReader, StringReader, StringWriter}
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
@@ -8,16 +9,13 @@ import io.shaka.http.HttpServer
 import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
-import mykidong.reflect.DynamicScalaSparkJobRunner
 import org.apache.spark.SparkContext
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
 
-import scala.reflect.runtime.universe
-import scala.tools.nsc.interpreter.IMain
-import scala.tools.nsc.{GenericRunnerSettings, Settings}
-import scala.tools.reflect.ToolBox
+import scala.tools.nsc.GenericRunnerSettings
+import scala.tools.nsc.interpreter.{JPrintWriter, NamedParam}
 
 object SimpleHTTPServer {
 
@@ -67,7 +65,17 @@ object SimpleHTTPServer {
             "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
           settings.usejavacp.value = true
 
-          SparkILoop.run(codes, settings)
+          val input = new BufferedReader(new StringReader(codes))
+          val output = new JPrintWriter(new StringWriter(), true)
+          val interpreter = new SparkILoop(input, output)
+
+          if (settings.classpath.isDefault) {
+            settings.classpath.value = sys.props("java.class.path")
+          }
+
+          interpreter.process(settings)
+
+
 
 //          val out = System.out
 //          val flusher = new java.io.PrintWriter(out)
