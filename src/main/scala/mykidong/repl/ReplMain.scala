@@ -70,6 +70,7 @@ object ReplMain extends Logging {
     )
 
     val settings = new GenericRunnerSettings(scalaOptionError)
+    settings.usejavacp.value = true
     settings.processArguments(interpArguments, true)
 
     if (!hasErrors) {
