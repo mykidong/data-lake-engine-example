@@ -15,7 +15,8 @@ import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
 
 import scala.reflect.runtime.universe
-import scala.tools.nsc.Settings
+import scala.tools.nsc.interpreter.IMain
+import scala.tools.nsc.{GenericRunnerSettings, Settings}
 import scala.tools.reflect.ToolBox
 
 object SimpleHTTPServer {
@@ -65,25 +66,40 @@ object SimpleHTTPServer {
           settings.processArguments(List("-Yrepl-class-based",
             "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
           settings.usejavacp.value = true
-          SparkILoop.run(codes, settings)
 
-          log.info("elapsed time: [" + (System.currentTimeMillis - start).toDouble / 1000.toDouble + "]s")
-          log.info("requested spark job is done...")
-          
-          val tb = universe.runtimeMirror(getClass.getClassLoader).mkToolBox()
-          val ast = tb.parse(codes);
-          val clazz = tb.compile(ast)().asInstanceOf[Class[_]]
-          val ctor = clazz.getDeclaredConstructors()(0)
+          val out = System.out
+          val flusher = new java.io.PrintWriter(out)
+          val interpreter = {
+            val settings = new GenericRunnerSettings( println _ )
+            settings.usejavacp.value = true
+            new IMain(settings, flusher)
+          }
 
-          // dynamic spark runner.
-          val dynamicSparkRunner = ctor.newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
+          val sc = spark.sparkContext;
+          interpreter.bind("sc", sc);
+          val resultFlag = interpreter.interpret(codes)
 
-          // set fair scheduler pool.
-          sc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread.getId)
-
-          // execute run().
+          var res = Array[AnyRef](null)
+          interpreter.bind("result", "Array[AnyRef]", res)
+          interpreter.interpret("result(0) = classOf[DynamicScalaSparkJobRunner]")
+          val dynamicSparkRunner = res(0).asInstanceOf[Class[_]].getConstructors()(0).newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
           retValue = dynamicSparkRunner.run(spark)
           log.info("retValue: [" + retValue + "]")
+
+//          val tb = universe.runtimeMirror(getClass.getClassLoader).mkToolBox()
+//          val ast = tb.parse(codes);
+//          val clazz = tb.compile(ast)().asInstanceOf[Class[_]]
+//          val ctor = clazz.getDeclaredConstructors()(0)
+//
+//          // dynamic spark runner.
+//          val dynamicSparkRunner = ctor.newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
+//
+//          // set fair scheduler pool.
+//          sc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread.getId)
+//
+//          // execute run().
+//          retValue = dynamicSparkRunner.run(spark)
+//          log.info("retValue: [" + retValue + "]")
 
           log.info("elapsed time: [" + (System.currentTimeMillis - start).toDouble / 1000.toDouble + "]s")
           log.info("requested spark job is done...")
