@@ -19,3 +19,6 @@ class SparkRunner extends DynamicScalaSparkJobRunner {
     }
 }
 scala.reflect.classTag[SparkRunner].runtimeClass
+
+val runner = new SparkRunner()
+runner.run(spark)

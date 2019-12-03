@@ -62,22 +62,24 @@ object SimpleHTTPServer {
           outputDir.deleteOnExit()
           spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
 
-          val settings = new Settings()
+          val settings = new GenericRunnerSettings(println _)
           settings.processArguments(List("-Yrepl-class-based",
             "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
           settings.usejavacp.value = true
 
-          val out = System.out
-          val flusher = new java.io.PrintWriter(out)
-          val interpreter = new IMain(settings, flusher)
+          SparkILoop.run(codes, settings)
 
-          val sc = spark.sparkContext;
-          interpreter.bind("sc", sc);
-          val res = interpreter.interpret(codes)
-
-          val dynamicSparkRunner = res.asInstanceOf[Class[_]].getConstructors()(0).newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
-          retValue = dynamicSparkRunner.run(spark)
-          log.info("retValue: [" + retValue + "]")
+//          val out = System.out
+//          val flusher = new java.io.PrintWriter(out)
+//          val interpreter = new IMain(settings, flusher)
+//
+//          val sc = spark.sparkContext;
+//          interpreter.bind("sc", sc);
+//          val res = interpreter.interpret(codes)
+//
+//          val dynamicSparkRunner = res.asInstanceOf[Class[_]].getConstructors()(0).newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
+//          retValue = dynamicSparkRunner.run(spark)
+//          log.info("retValue: [" + retValue + "]")
 
 //          val tb = universe.runtimeMirror(getClass.getClassLoader).mkToolBox()
 //          val ast = tb.parse(codes);
