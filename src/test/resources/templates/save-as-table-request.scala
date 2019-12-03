@@ -4,7 +4,7 @@ trait DynamicScalaSparkJobRunner {
     def run(spark: SparkSession): String
 }
 
-class SparkRunner extends mykidong.reflect.DynamicScalaSparkJobRunner {
+class SparkRunner extends DynamicScalaSparkJobRunner {
     override def run(spark: SparkSession): String = {
         // read parquet.
         val parquetDs = spark.read.format("parquet")
