@@ -73,12 +73,9 @@ object SimpleHTTPServer {
 
           val sc = spark.sparkContext;
           interpreter.bind("sc", sc);
-          val resultFlag = interpreter.interpret(codes)
+          val res = interpreter.interpret(codes)
 
-          var res = Array[AnyRef](null)
-          interpreter.bind("result", "Array[AnyRef]", res)
-          interpreter.interpret("result(0) = classOf[DynamicScalaSparkJobRunner]")
-          val dynamicSparkRunner = res(0).asInstanceOf[Class[_]].getConstructors()(0).newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
+          val dynamicSparkRunner = res.asInstanceOf[Class[_]].getConstructors()(0).newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
           retValue = dynamicSparkRunner.run(spark)
           log.info("retValue: [" + retValue + "]")
 
