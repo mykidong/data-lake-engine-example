@@ -1,5 +1,9 @@
 import org.apache.spark.sql.{SaveMode, SparkSession}
 
+trait DynamicScalaSparkJobRunner {
+    def run(spark: SparkSession): String
+}
+
 class SparkRunner extends mykidong.reflect.DynamicScalaSparkJobRunner {
     override def run(spark: SparkSession): String = {
         // read parquet.
