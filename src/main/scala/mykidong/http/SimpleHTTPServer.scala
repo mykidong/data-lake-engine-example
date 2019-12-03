@@ -58,7 +58,9 @@ object SimpleHTTPServer {
           val rootDir = spark.conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
           val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
           outputDir.deleteOnExit()
+
           spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+          log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
 
           val settings = new GenericRunnerSettings(println _)
           settings.processArguments(List("-Yrepl-class-based",
