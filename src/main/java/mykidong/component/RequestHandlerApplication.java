@@ -31,6 +31,8 @@ public class RequestHandlerApplication {
         sparkConf.set("spark.dynamicAllocation.enabled", "true");
         sparkConf.set("spark.dynamicAllocation.minExecutors", "3");
         sparkConf.set("spark.dynamicAllocation.maxExecutors", "6");
+        sparkConf.set("spark.shuffle.service.enabled", "true");
+
 
         // set fair scheduler mode.
         sparkConf.set("spark.scheduler.mode", "FAIR");
