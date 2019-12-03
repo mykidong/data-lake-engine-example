@@ -73,10 +73,10 @@ object SimpleHTTPServer {
               val input = new BufferedReader(new StringReader(codes))
               val output = new JPrintWriter(new OutputStreamWriter(ostream), true)
               val repl = new SparkILoop(input, output)
-
               if (settings.classpath.isDefault) {
                 settings.classpath.value = sys.props("java.class.path")
               }
+              repl.initializeSynchronous()
               repl process settings
             }
           }
