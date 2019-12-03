@@ -69,14 +69,15 @@ object SimpleHTTPServer {
 
           val input = new BufferedReader(new StringReader(codes))
           val output = new JPrintWriter(new StringWriter(), true)
-          val interpreter = new SparkILoop(input, output)
+          val sparkILoop: SparkILoop = new SparkILoop(input, output)
 
           if (settings.classpath.isDefault) {
             settings.classpath.value = sys.props("java.class.path")
           }
+          sparkILoop.createInterpreter()
+          sparkILoop.initializeSynchronous()
 
-          interpreter.process(settings)
-
+          sparkILoop.process(settings)
 
 
 //          val out = System.out

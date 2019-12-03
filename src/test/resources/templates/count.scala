@@ -8,17 +8,12 @@ trait DynamicScalaSparkJobRunner {
 
 class CountRunner extends DynamicScalaSparkJobRunner{
     override def run(spark: SparkSession): String = {
-        val parquetDs = spark.read.format("parquet")
-          .load("/test-event-parquet")
 
-        parquetDs.show(3)
+        val data = Array(1, 2, 3, 4, 5)
+        val distData = sc.parallelize(data)
 
-        implicit val intEncoder = Encoders.scalaInt
-        val sum = parquetDs.map(row => {
-            println("row: " + row.toString)
+        val sum = distData.reduce( (a, b) => a + b)
 
-            1
-        }).count()
 
         "sum: " + sum
     }
