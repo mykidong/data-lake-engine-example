@@ -1,6 +1,6 @@
 package mykidong.http
 
-import java.io.{BufferedReader, StringReader, StringWriter}
+import java.io.{BufferedReader, OutputStreamWriter, StringReader, StringWriter}
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
@@ -14,8 +14,9 @@ import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
 
-import scala.tools.nsc.{GenericRunnerSettings, Settings}
+import scala.tools.nsc.GenericRunnerSettings
 import scala.tools.nsc.interpreter.{JPrintWriter, NamedParam}
+import scala.tools.nsc.util.stringFromStream
 
 object SimpleHTTPServer {
 
@@ -62,12 +63,23 @@ object SimpleHTTPServer {
           spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
           log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
 
-          val settings = new Settings()
+          val settings = new GenericRunnerSettings(println _)
           settings.processArguments(List("-Yrepl-class-based",
             "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
           settings.usejavacp.value = true
 
-          SparkILoop.run(codes, settings)
+          stringFromStream { ostream =>
+            Console.withOut(ostream) {
+              val input = new BufferedReader(new StringReader(codes))
+              val output = new JPrintWriter(new OutputStreamWriter(ostream), true)
+              val repl = new SparkILoop(input, output)
+
+              if (settings.classpath.isDefault) {
+                settings.classpath.value = sys.props("java.class.path")
+              }
+              repl process settings
+            }
+          }
 
 
 //          val out = System.out
