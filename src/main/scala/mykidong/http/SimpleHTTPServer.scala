@@ -2,18 +2,18 @@ package mykidong.http
 
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
 
 import io.shaka.http.HttpServer
 import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
-import mykidong.reflect.DynamicScalaSparkJobRunner
 import org.apache.spark.SparkContext
+import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
 
-import scala.reflect.runtime.universe
-import scala.tools.reflect.ToolBox
+import scala.tools.nsc.Settings
 
 object SimpleHTTPServer {
 
@@ -53,20 +53,31 @@ object SimpleHTTPServer {
 
         var retValue = ""
         try {
-          val tb = universe.runtimeMirror(getClass.getClassLoader).mkToolBox()
-          val ast = tb.parse(codes);
-          val clazz = tb.compile(ast)().asInstanceOf[Class[_]]
-          val ctor = clazz.getDeclaredConstructors()(0)
-
-          // dynamic spark runner.
-          val dynamicSparkRunner = ctor.newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
+//          val tb = universe.runtimeMirror(getClass.getClassLoader).mkToolBox()
+//          val ast = tb.parse(codes);
+//          val clazz = tb.compile(ast)().asInstanceOf[Class[_]]
+//          val ctor = clazz.getDeclaredConstructors()(0)
+//
+//          // dynamic spark runner.
+//          val dynamicSparkRunner = ctor.newInstance().asInstanceOf[DynamicScalaSparkJobRunner]
 
           // set fair scheduler pool.
           sc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread.getId)
 
-          // execute run().
-          retValue = dynamicSparkRunner.run(spark)
-          log.info("retValue: [" + retValue + "]")
+//          // execute run().
+//          retValue = dynamicSparkRunner.run(spark)
+//          log.info("retValue: [" + retValue + "]")
+
+          val rootDir = spark.conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
+          val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
+          outputDir.deleteOnExit()
+          spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+
+          val settings = new Settings()
+          settings.processArguments(List("-Yrepl-class-based",
+            "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
+          settings.usejavacp.value = true
+          SparkILoop.run(codes, settings)
 
           log.info("elapsed time: [" + (System.currentTimeMillis - start).toDouble / 1000.toDouble + "]s")
           log.info("requested spark job is done...")
