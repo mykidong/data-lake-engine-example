@@ -69,11 +69,7 @@ object SimpleHTTPServer {
 
           val out = System.out
           val flusher = new java.io.PrintWriter(out)
-          val interpreter = {
-            val settings = new GenericRunnerSettings( println _ )
-            settings.usejavacp.value = true
-            new IMain(settings, flusher)
-          }
+          val interpreter = new IMain(settings, flusher)
 
           val sc = spark.sparkContext;
           interpreter.bind("sc", sc);
