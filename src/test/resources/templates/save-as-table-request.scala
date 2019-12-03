@@ -10,6 +10,8 @@ class SparkRunner extends DynamicScalaSparkJobRunner {
         val parquetDs = spark.read.format("parquet")
                 .load("/test-event-parquet")
 
+        parquetDs.show(5)
+
         // create persistent parquet table with external path.
         parquetDs.write.format("parquet")
                 .option("path", "hdfs://mc/test-event-parquet-table")
