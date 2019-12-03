@@ -67,15 +67,7 @@ object SimpleHTTPServer {
             "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
           settings.usejavacp.value = true
 
-          val input = new BufferedReader(new StringReader(codes))
-          val output = new JPrintWriter(new StringWriter(), true)
-          val sparkILoop: SparkILoop = new SparkILoop(input, output)
-
-          if (settings.classpath.isDefault) {
-            settings.classpath.value = sys.props("java.class.path")
-          }
-
-          sparkILoop.process(settings)
+          SparkILoop.run(codes, settings)
 
 
 //          val out = System.out
