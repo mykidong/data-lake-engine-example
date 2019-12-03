@@ -9,6 +9,7 @@ import io.shaka.http.HttpServer
 import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
+import mykidong.repl.ReplMain
 import org.apache.spark.SparkContext
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
@@ -56,30 +57,35 @@ object SimpleHTTPServer {
 
         var retValue = ""
         try {
-          val rootDir = spark.conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
-          val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
-          outputDir.deleteOnExit()
 
-          spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
-          log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
+          ReplMain.loadRepl(spark)
 
-          val settings = new GenericRunnerSettings(println _)
-          settings.processArguments(List("-Yrepl-class-based",
-            "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
-          settings.usejavacp.value = true
+          ReplMain.interp.command(codes)   
 
-          stringFromStream { ostream =>
-            Console.withOut(ostream) {
-              val input = new BufferedReader(new StringReader(codes))
-              val output = new JPrintWriter(new OutputStreamWriter(ostream), true)
-              val repl = new SparkILoop(input, output)
-              if (settings.classpath.isDefault) {
-                settings.classpath.value = sys.props("java.class.path")
-              }
-              repl.initializeSynchronous()
-              repl process settings
-            }
-          }
+//          val rootDir = spark.conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
+//          val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
+//          outputDir.deleteOnExit()
+//
+//          spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+//          log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
+//
+//          val settings = new GenericRunnerSettings(println _)
+//          settings.processArguments(List("-Yrepl-class-based",
+//            "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
+//          settings.usejavacp.value = true
+//
+//          stringFromStream { ostream =>
+//            Console.withOut(ostream) {
+//              val input = new BufferedReader(new StringReader(codes))
+//              val output = new JPrintWriter(new OutputStreamWriter(ostream), true)
+//              val repl = new SparkILoop(input, output)
+//              if (settings.classpath.isDefault) {
+//                settings.classpath.value = sys.props("java.class.path")
+//              }
+//              repl.initializeSynchronous()
+//              repl process settings
+//            }
+//          }
 
 
 //          val out = System.out
