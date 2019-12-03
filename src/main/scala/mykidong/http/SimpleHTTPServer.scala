@@ -74,8 +74,6 @@ object SimpleHTTPServer {
           if (settings.classpath.isDefault) {
             settings.classpath.value = sys.props("java.class.path")
           }
-          sparkILoop.createInterpreter()
-          sparkILoop.initializeSynchronous()
 
           sparkILoop.process(settings)
 
