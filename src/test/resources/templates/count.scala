@@ -9,12 +9,18 @@ trait DynamicScalaSparkJobRunner {
 class CountRunner extends DynamicScalaSparkJobRunner{
     override def run(spark: SparkSession): String = {
 
-        spark.sql("select * from test_parquet_table limit 10").show()
+        val parquetDs = spark.read.format("parquet")
+          .load("/test-event-parquet")
 
-        spark.sql("select itemId, baseProperties.ts from test_parquet_table").show()
+        parquetDs.show(3)
 
+        implicit val intEncoder = Encoders.scalaInt
+        val sum = parquetDs.map(row => {
+            println("row: " + row.toString);
+            return 1;
+        }).count()
 
-        "sum: "
+        "sum: " + sum
     }
 }
 scala.reflect.classTag[CountRunner].runtimeClass
