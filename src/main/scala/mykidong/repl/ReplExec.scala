@@ -120,7 +120,7 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
    */
   override def process(settings: Settings): Boolean = {
 
-    def newReader = in0.fold(chooseReader(settings))(r => SimpleReader(r, out, interactive = false))
+    def newReader = in0.fold(chooseReader(settings))(r => SimpleReader(r, out, interactive = true))
 
     /** Reader to use before interpreter is online. */
     def preLoop = {
@@ -251,7 +251,6 @@ object ReplExec {
           sets.classpath.value = sys.props("java.class.path")
         }
         repl.process(sets)
-        repl.intp.interpret(code)
       }
     }
   }

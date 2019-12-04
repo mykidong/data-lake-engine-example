@@ -73,8 +73,14 @@ object SimpleHTTPServer {
           settings.processArguments(List("-Yrepl-class-based",
             "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
           settings.usejavacp.value = true
+          if (settings.classpath.isDefault) {
+            settings.classpath.value = sys.props("java.class.path")
+          }
 
-          ReplExec.run(codes, settings);
+          var repl = new ReplExec(None, new JPrintWriter(Console.out, true))
+          repl.settings = settings
+          repl.createInterpreter()
+          repl.intp.interpret(codes)
 
 //          val repl = new ReplExec(None, new JPrintWriter(Console.out, true))
 //          if (settings.classpath.isDefault) {
