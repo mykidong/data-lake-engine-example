@@ -219,17 +219,28 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
 
     this.settings = settings
 
-    startup() match {
-      case null => false
-      case line =>
-        try loop(line) match {
-          case LineResults.EOF => out print Properties.shellInterruptedString
-          case _ =>
-        }
-        catch AbstractOrMissingHandler()
-        finally closeInterpreter()
-        true
-    }
+    createInterpreter()
+    intp.initializeSynchronous()
+
+    val field = classOf[ILoop].getDeclaredFields.filter(_.getName.contains("globalFuture")).head
+    field.setAccessible(true)
+    field.set(this, Future successful true)
+
+    loopPostInit()
+    printWelcome()
+
+
+//    startup() match {
+//      case null => false
+//      case line =>
+//        try loop(line) match {
+//          case LineResults.EOF => out print Properties.shellInterruptedString
+//          case _ =>
+//        }
+//        catch AbstractOrMissingHandler()
+//        finally closeInterpreter()
+//        true
+//    }
   }
 }
 
