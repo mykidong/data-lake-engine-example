@@ -1,48 +1,33 @@
 package mykidong.repl
 
-
 import java.io.File
 import java.net.URI
-import java.nio.file.{Files, Paths}
+import java.util.Locale
+
+import scala.tools.nsc.GenericRunnerSettings
 
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
-import scala.tools.nsc.GenericRunnerSettings
+import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
+import org.apache.spark.util.Utils
 
 
 object ReplMain extends Logging {
 
-  var rootDir: String = _
-  var outputDir: File = _
+  initializeLogIfNecessary(true)
 
-  var conf: SparkConf = _
+  val conf = new SparkConf()
+  val rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
+  val outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+
   var sparkContext: SparkContext = _
   var sparkSession: SparkSession = _
-
   // this is a public var because tests reset it.
   var interp: ReplExec = _
 
   private var hasErrors = false
   private var isShellSession = false
-
-  def loadRepl(spark: SparkSession): Unit = {
-    isShellSession = true
-    initializeLogIfNecessary(true)
-
-    conf = spark.sparkContext.getConf
-    sparkSession = spark
-    sparkContext = spark.sparkContext
-
-    rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
-    outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
-    outputDir.deleteOnExit()
-
-    spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
-    log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
-
-    doMain(new ReplExec)
-  }
 
   private def scalaOptionError(msg: String): Unit = {
     hasErrors = true
@@ -51,31 +36,25 @@ object ReplMain extends Logging {
     // scalastyle:on println
   }
 
-  private def getLocalUserJarsForShell(conf: SparkConf): Seq[String] = {
-    val localJars = conf.getOption("spark.repl.local.jars")
-    localJars.map(_.split(",")).map(_.filter(_.nonEmpty)).toSeq.flatten
+  def main(args: Array[String]): Unit = {
+    isShellSession = true
+    doMain(args, new ReplExec)
   }
 
-  private def doMain(_interp: ReplExec): Unit = {
+  // Visible for testing
+  private[repl] def doMain(args: Array[String], _interp: ReplExec): Unit = {
     interp = _interp
-    val jars = getLocalUserJarsForShell(conf)
+    val jars = Utils.getLocalUserJarsForShell(conf)
       // Remove file:///, file:// or file:/ scheme if exists for each jar
       .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
       .mkString(File.pathSeparator)
-
-    println("jars: [" + jars.toString + "]")
-
     val interpArguments = List(
       "-Yrepl-class-based",
       "-Yrepl-outdir", s"${outputDir.getAbsolutePath}",
       "-classpath", jars
-    )
-
-    var classLoader = Thread.currentThread.getContextClassLoader
+    ) ++ args.toList
 
     val settings = new GenericRunnerSettings(scalaOptionError)
-    settings.usejavacp.value = true
-    settings.embeddedDefaults(classLoader)
     settings.processArguments(interpArguments, true)
 
     if (!hasErrors) {
@@ -101,6 +80,28 @@ object ReplMain extends Logging {
         conf.setSparkHome(System.getenv("SPARK_HOME"))
       }
 
+      val builder = SparkSession.builder.config(conf)
+      if (conf.get(CATALOG_IMPLEMENTATION.key, "hive").toLowerCase(Locale.ROOT) == "hive") {
+        if (SparkSession.hiveClassesArePresent) {
+          // In the case that the property is not set at all, builder's config
+          // does not have this value set to 'hive' yet. The original default
+          // behavior is that when there are hive classes, we use hive catalog.
+          sparkSession = builder.enableHiveSupport().getOrCreate()
+          logInfo("Created Spark session with Hive support")
+        } else {
+          // Need to change it back to 'in-memory' if no hive classes are found
+          // in the case that the property is set to hive in spark-defaults.conf
+          builder.config(CATALOG_IMPLEMENTATION.key, "in-memory")
+          sparkSession = builder.getOrCreate()
+          logInfo("Created Spark session")
+        }
+      } else {
+        // In the case that the property is set but not to 'hive', the internal
+        // default is 'in-memory'. So the sparkSession will use in-memory catalog.
+        sparkSession = builder.getOrCreate()
+        logInfo("Created Spark session")
+      }
+      sparkContext = sparkSession.sparkContext
       sparkSession
     } catch {
       case e: Exception if isShellSession =>

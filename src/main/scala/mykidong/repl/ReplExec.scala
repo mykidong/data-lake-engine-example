@@ -61,7 +61,6 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
   )
 
   def initializeSpark(): Unit = {
-
     if (!intp.reporter.hasErrors) {
       // `savingReplayStack` removes the commands from session history.
       savingReplayStack {
@@ -205,14 +204,15 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
         } else {
           loopPostInit()
           printWelcome()
-          splash.start()
-
-          val line = splash.line           // what they typed in while they were waiting
-          if (line == null) {              // they ^D
-            try out print Properties.shellInterruptedString
-            finally closeInterpreter()
-          }
-          line
+//          splash.start()
+//
+//          val line = splash.line           // what they typed in while they were waiting
+//          if (line == null) {              // they ^D
+//            try out print Properties.shellInterruptedString
+//            finally closeInterpreter()
+//          }
+//          line
+          ""
         }
       } finally splash.stop()
     }
@@ -245,12 +245,12 @@ object ReplExec {
       Console.withOut(ostream) {
         val input = new BufferedReader(new StringReader(code))
         val output = new JPrintWriter(new OutputStreamWriter(ostream), true)
-        val repl = new ReplExec(input, output)
+        val repl = new SparkILoop(input, output)
 
         if (sets.classpath.isDefault) {
           sets.classpath.value = sys.props("java.class.path")
         }
-        repl.process(sets)
+        repl process sets
       }
     }
   }
