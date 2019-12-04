@@ -60,7 +60,7 @@ object SimpleHTTPServer {
 
           ReplMain.loadRepl(spark)
 
-          ReplMain.interp.command(codes)   
+          ReplMain.interp.intp.quietRun(codes)   
 
 //          val rootDir = spark.conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
 //          val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile

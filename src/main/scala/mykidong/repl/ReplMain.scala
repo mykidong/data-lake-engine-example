@@ -8,7 +8,6 @@ import java.nio.file.{Files, Paths}
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
-
 import scala.tools.nsc.GenericRunnerSettings
 
 
