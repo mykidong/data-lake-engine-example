@@ -82,7 +82,8 @@ object SimpleHTTPServer {
           repl.createInterpreter()
           repl.initializeSpark()
 
-          repl.command(codes)
+          Seq(codes).foreach(repl.intp.quietRun _)
+
 
 //          val repl = new ReplExec(None, new JPrintWriter(Console.out, true))
 //          if (settings.classpath.isDefault) {
