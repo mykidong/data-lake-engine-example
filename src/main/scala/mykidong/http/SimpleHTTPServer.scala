@@ -16,7 +16,7 @@ import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
 
 import scala.tools.nsc.GenericRunnerSettings
-import scala.tools.nsc.interpreter.{JPrintWriter, NamedParam}
+import scala.tools.nsc.interpreter.{JPrintWriter, NamedParam, SimpleReader}
 import scala.tools.nsc.util.stringFromStream
 
 object SimpleHTTPServer {
@@ -77,10 +77,17 @@ object SimpleHTTPServer {
             settings.classpath.value = sys.props("java.class.path")
           }
 
-          var repl = new ReplExec(None, new JPrintWriter(Console.out, true))
+          val replOut = new JPrintWriter(Console.out, true)
+
+          var repl = new ReplExec(None, replOut)
           repl.settings = settings
           repl.createInterpreter()
-          repl.initializeSpark()
+
+          val in0 = getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+          val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
+
+          repl.in = reader
+          repl.initializeSynchronous()
 
           val lines = codes.split("\n")
           lines.foreach(line => {
@@ -88,7 +95,24 @@ object SimpleHTTPServer {
             repl.command(line)
           })
 
-          repl.process(settings)
+
+//
+//          var repl = new ReplExec(None, new JPrintWriter(Console.out, true))
+//          repl.settings = settings
+//          repl.createInterpreter()
+//          repl.initializeSpark()
+//
+//          val lines = codes.split("\n")
+//          lines.foreach(line => {
+//            log.info("ready to run command: [" + line + "]")
+//            repl.command(line)
+//          })
+//
+//          repl.process(settings)
+//
+
+
+
 
 
 //          val repl = new ReplExec(None, new JPrintWriter(Console.out, true))
@@ -144,5 +168,11 @@ object SimpleHTTPServer {
       }
       case _ => respond("doh!").status(NOT_FOUND)
     }
+  }
+
+  def getField(obj: Object, name: String): Object = {
+    val field = obj.getClass.getField(name)
+    field.setAccessible(true)
+    field.get(obj)
   }
 }

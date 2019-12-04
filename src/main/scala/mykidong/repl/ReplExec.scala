@@ -243,9 +243,9 @@ object ReplExec {
 
     stringFromStream { ostream =>
       Console.withOut(ostream) {
-        //val input = new BufferedReader(new StringReader(code))
+        val input = new BufferedReader(new StringReader(code))
         val output = new JPrintWriter(new OutputStreamWriter(ostream), true)
-        val repl = new ReplExec(None, output)
+        val repl = new ReplExec(input, output)
 
         if (sets.classpath.isDefault) {
           sets.classpath.value = sys.props("java.class.path")
