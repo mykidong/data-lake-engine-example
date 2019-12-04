@@ -13,12 +13,12 @@ class CountRunner extends DynamicScalaSparkJobRunner{
         parquetDs.show(3)
 
         implicit val intEncoder = Encoders.scalaInt
-        val sum: Int = parquetDs.map(row => {
+        val sum: Long = parquetDs.map(row => {
             println("row: " + row.toString);
-            return 1;
+            1
         }).count()
 
-        s"$sum"
+        return s"$sum";
     }
 }
 scala.reflect.classTag[CountRunner].runtimeClass
