@@ -58,6 +58,7 @@ object SimpleHTTPServer {
         var retValue = ""
         try {
 
+          System.setProperty("scala.usejavacp", "true")
           org.apache.spark.repl.Main.main(Array(""))
 //
 //          ReplMain.interp.intp.quietRun(codes)
