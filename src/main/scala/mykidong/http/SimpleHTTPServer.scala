@@ -95,7 +95,8 @@ object SimpleHTTPServer {
             log.info("ready to run command: [" + line + "]")
 
             val result = repl.command(line)
-            log.info("result: [" + result.lineToRecord.get + "]")
+            Thread.sleep(2000)
+            log.info("result - keepRunning: [" + result.keepRunning + "], lineToRecord: [" + (if(!result.lineToRecord.isEmpty) {result.lineToRecord.get} else {"null"}) + "]")
           })
 
 
