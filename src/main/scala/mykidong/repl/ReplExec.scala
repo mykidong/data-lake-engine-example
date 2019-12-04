@@ -61,6 +61,7 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
   )
 
   def initializeSpark(): Unit = {
+
     if (!intp.reporter.hasErrors) {
       // `savingReplayStack` removes the commands from session history.
       savingReplayStack {

@@ -63,14 +63,20 @@ object ReplMain extends Logging {
       // Remove file:///, file:// or file:/ scheme if exists for each jar
       .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
       .mkString(File.pathSeparator)
+
+    println("jars: [" + jars.toString + "]")
+
     val interpArguments = List(
       "-Yrepl-class-based",
       "-Yrepl-outdir", s"${outputDir.getAbsolutePath}",
       "-classpath", jars
     )
 
+    var classLoader = Thread.currentThread.getContextClassLoader
+
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.usejavacp.value = true
+    settings.embeddedDefaults(classLoader)
     settings.processArguments(interpArguments, true)
 
     if (!hasErrors) {
