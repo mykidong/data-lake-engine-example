@@ -1,9 +1,7 @@
-import mykidong.reflect.DynamicScalaSparkJobRunner
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Encoders, SparkSession}
 
 trait DynamicScalaSparkJobRunner {
-    def run(spark: SparkSession): String
+  def run(spark: SparkSession): String
 }
 
 class CountRunner extends DynamicScalaSparkJobRunner{
