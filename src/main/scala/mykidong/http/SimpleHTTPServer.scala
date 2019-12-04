@@ -77,11 +77,16 @@ object SimpleHTTPServer {
             settings.classpath.value = sys.props("java.class.path")
           }
 
-          var repl = new ReplExec(new BufferedReader(new StringReader(codes)),
-                                  new JPrintWriter(Console.out, true))
+          var repl = new ReplExec(None, new JPrintWriter(Console.out, true))
           repl.settings = settings
           repl.createInterpreter()
           repl.initializeSpark()
+
+          val lines = codes.split("\n")
+          lines.foreach(line => {
+            log.info("ready to run command: [" + line + "]")
+            repl.command(line)
+          })
 
           repl.process(settings)
 
