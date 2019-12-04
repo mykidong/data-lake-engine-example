@@ -9,7 +9,7 @@ import io.shaka.http.HttpServer
 import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
-import mykidong.repl.ReplMain
+import mykidong.repl.{ReplExec, ReplMain}
 import org.apache.spark.SparkContext
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
@@ -74,17 +74,12 @@ object SimpleHTTPServer {
             "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
           settings.usejavacp.value = true
 
-          stringFromStream { ostream =>
-            Console.withOut(ostream) {
-              val output = new JPrintWriter(new OutputStreamWriter(ostream), true)
-              val repl = new SparkILoop(None, output)
-              if (settings.classpath.isDefault) {
-                settings.classpath.value = sys.props("java.class.path")
-              }
-              repl.process(settings)
-              repl.intp.quietRun(codes)
-            }
+          val repl = new ReplExec(None, new JPrintWriter(Console.out, true))
+          if (settings.classpath.isDefault) {
+            settings.classpath.value = sys.props("java.class.path")
           }
+          repl.process(settings)
+          repl.intp.quietRun(codes)
 
 
 //          val out = System.out
