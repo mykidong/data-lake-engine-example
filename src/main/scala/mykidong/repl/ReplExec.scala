@@ -229,6 +229,8 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
     loopPostInit()
     printWelcome()
 
+    true
+
 
 //    startup() match {
 //      case null => false
