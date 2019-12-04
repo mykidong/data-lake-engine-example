@@ -77,12 +77,13 @@ object SimpleHTTPServer {
             settings.classpath.value = sys.props("java.class.path")
           }
 
-          val repl = new ReplExec(None, new JPrintWriter(Console.out, true))
+          var repl = new ReplExec(new BufferedReader(new StringReader(codes)),
+                                  new JPrintWriter(Console.out, true))
           repl.settings = settings
           repl.createInterpreter()
           repl.initializeSpark()
 
-          Seq(codes).foreach(repl.intp.quietRun _)
+          repl.process(settings)
 
 
 //          val repl = new ReplExec(None, new JPrintWriter(Console.out, true))
