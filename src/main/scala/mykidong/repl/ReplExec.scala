@@ -251,7 +251,7 @@ object ReplExec {
           sets.classpath.value = sys.props("java.class.path")
         }
         repl.process(sets)
-        repl.intp.quietRun(code)
+        repl.intp.interpret(code)
       }
     }
   }
