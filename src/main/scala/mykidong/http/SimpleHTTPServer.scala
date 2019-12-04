@@ -82,6 +82,7 @@ object SimpleHTTPServer {
           var repl = new ReplExec(None, replOut)
           repl.settings = settings
           repl.createInterpreter()
+          repl.initializeSpark()
 
           val in0 = getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
           val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
