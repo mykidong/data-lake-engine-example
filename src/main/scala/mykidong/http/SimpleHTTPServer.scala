@@ -10,7 +10,7 @@ import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
 import mykidong.repl.{ReplExec, ReplMain}
-import org.apache.spark.SparkContext
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
@@ -23,8 +23,41 @@ object SimpleHTTPServer {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
 
-  def run(spark: SparkSession, sc: SparkContext, port: Int): Unit = {
+  private var conf: SparkConf = _
 
+  def run(conf: SparkConf, port: Int): Unit = {
+    this.conf = conf
+
+    // ========================= init. repl.
+    val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
+    val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
+    outputDir.deleteOnExit()
+
+    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+    log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
+
+    val settings = new GenericRunnerSettings(println _)
+    settings.processArguments(List("-Yrepl-class-based",
+      "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
+    settings.usejavacp.value = true
+    if (settings.classpath.isDefault) {
+      settings.classpath.value = sys.props("java.class.path")
+    }
+
+    val replOut = new JPrintWriter(Console.out, true)
+
+    var repl = new ReplExec(None, replOut)
+    repl.settings = settings
+    repl.createInterpreter()
+    repl.initializeSpark()
+
+    val in0 = getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
+
+    repl.in = reader
+    repl.initializeSynchronous()
+
+    // start http server.
     val httpServer = HttpServer(port).start()
 
     httpServer.handler{
@@ -57,47 +90,13 @@ object SimpleHTTPServer {
 
         var retValue = ""
         try {
+          val lines = codes.split("\n")
+          lines.foreach(line => {
+            log.info("ready to run command: [" + line + "]")
 
-          System.setProperty("scala.usejavacp", "true")
-          org.apache.spark.repl.Main.main(Array(""))
-//
-//          ReplMain.interp.intp.quietRun(codes)
-//
-//          val rootDir = spark.conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
-//          val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
-//          outputDir.deleteOnExit()
-//
-//          spark.conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
-//          log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
-//
-//          val settings = new GenericRunnerSettings(println _)
-//          settings.processArguments(List("-Yrepl-class-based",
-//            "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
-//          settings.usejavacp.value = true
-//          if (settings.classpath.isDefault) {
-//            settings.classpath.value = sys.props("java.class.path")
-//          }
-//
-//          val replOut = new JPrintWriter(Console.out, true)
-//
-//          var repl = new ReplExec(None, replOut)
-//          repl.settings = settings
-//          repl.createInterpreter()
-//          repl.initializeSpark()
-//
-//          val in0 = getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-//          val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
-//
-//          repl.in = reader
-//          repl.initializeSynchronous()
-//
-//          val lines = codes.split("\n")
-//          lines.foreach(line => {
-//            log.info("ready to run command: [" + line + "]")
-//
-//            val result = repl.command(line)
-//            log.info("result - keepRunning: [" + result.keepRunning + "], lineToRecord: [" + (if(!result.lineToRecord.isEmpty) {result.lineToRecord.get} else {"null"}) + "]")
-//          })
+            val result = repl.command(line)
+            log.info("result - keepRunning: [" + result.keepRunning + "], lineToRecord: [" + (if(!result.lineToRecord.isEmpty) {result.lineToRecord.get} else {"null"}) + "]")
+          })
 //
 
 //
@@ -161,7 +160,7 @@ object SimpleHTTPServer {
           log.info("requested spark job is done...")
 
           // unset fair scheduler pool.
-          sc.setLocalProperty("spark.scheduler.pool", null)
+//          sc.setLocalProperty("spark.scheduler.pool", null)
         } catch {
           case e: Exception => {
             e.printStackTrace()
