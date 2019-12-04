@@ -148,8 +148,9 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
       if (isReplPower) enablePowerMode(true)
       initializeSpark()
       loadInitFiles()
+
       // SI-7418 Now, and only now, can we enable TAB completion.
-      in.postInit()
+      //in.postInit()
     }
     def loadInitFiles(): Unit = settings match {
       case settings: GenericRunnerSettings =>
