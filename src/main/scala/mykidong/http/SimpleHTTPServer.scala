@@ -80,6 +80,8 @@ object SimpleHTTPServer {
           var repl = new ReplExec(None, new JPrintWriter(Console.out, true))
           repl.settings = settings
           repl.createInterpreter()
+          repl.initializeSpark()
+
           repl.intp.interpret(codes)
 
 //          val repl = new ReplExec(None, new JPrintWriter(Console.out, true))
