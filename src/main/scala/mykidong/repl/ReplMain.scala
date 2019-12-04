@@ -2,10 +2,10 @@ package mykidong.repl
 
 import java.io.File
 import java.net.URI
+import java.nio.file.{Files, Paths}
 import java.util.Locale
 
 import scala.tools.nsc.GenericRunnerSettings
-
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
@@ -18,8 +18,9 @@ object ReplMain extends Logging {
   initializeLogIfNecessary(true)
 
   val conf = new SparkConf()
-  val rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
-  val outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+
+  val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
+  val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
 
   var sparkContext: SparkContext = _
   var sparkSession: SparkSession = _
@@ -41,10 +42,15 @@ object ReplMain extends Logging {
     doMain(args, new ReplExec)
   }
 
+  def getLocalUserJarsForShell(conf: SparkConf): Seq[String] = {
+    val localJars = conf.getOption("spark.repl.local.jars")
+    localJars.map(_.split(",")).map(_.filter(_.nonEmpty)).toSeq.flatten
+  }
+
   // Visible for testing
   private[repl] def doMain(args: Array[String], _interp: ReplExec): Unit = {
     interp = _interp
-    val jars = Utils.getLocalUserJarsForShell(conf)
+    val jars = getLocalUserJarsForShell(conf)
       // Remove file:///, file:// or file:/ scheme if exists for each jar
       .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
       .mkString(File.pathSeparator)
