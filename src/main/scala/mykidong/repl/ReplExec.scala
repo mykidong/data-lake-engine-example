@@ -227,7 +227,7 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
 
     if (intp.reporter.hasErrors) {
       echo("Interpreter encountered errors during initialization!")
-      null
+      false
     } else {
       loopPostInit()
 
