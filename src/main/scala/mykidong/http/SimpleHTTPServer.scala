@@ -79,7 +79,10 @@ object SimpleHTTPServer {
             settings.classpath.value = sys.props("java.class.path")
           }
           repl.process(settings)
+          log.info("proocess settings done...")
+
           repl.intp.quietRun(codes)
+          log.info("quietRun done...")
 
 
 //          val out = System.out
