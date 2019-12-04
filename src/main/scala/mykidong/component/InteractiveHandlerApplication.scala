@@ -36,6 +36,9 @@ object InteractiveHandlerApplication {
     SimpleHTTPServer.run(spark, spark.sparkContext, port)
     log.info("embedded http server is running now ...")
 
+    System.setProperty("scala.usejavacp", "true")
+    org.apache.spark.repl.Main.main(Array(""))
+
     Thread.sleep(Long.MaxValue)
 
     spark.stop()
