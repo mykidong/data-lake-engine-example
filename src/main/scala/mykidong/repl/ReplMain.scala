@@ -1,6 +1,6 @@
 package mykidong.repl
 
-import java.io.File
+import java.io.{BufferedReader, File}
 import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.util.Locale
@@ -11,6 +11,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
 
 import scala.tools.nsc.GenericRunnerSettings
+import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
 
 
 object ReplMain extends Logging {
@@ -47,6 +48,12 @@ object ReplMain extends Logging {
     localJars.map(_.split(",")).map(_.filter(_.nonEmpty)).toSeq.flatten
   }
 
+  def getField(obj: Object, name: String): Object = {
+    val field = obj.getClass.getField(name)
+    field.setAccessible(true)
+    field.get(obj)
+  }
+
   // Visible for testing
   private[repl] def doMain(args: Array[String], _interp: ReplExec): Unit = {
     interp = _interp
@@ -63,10 +70,23 @@ object ReplMain extends Logging {
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.processArguments(interpArguments, true)
 
-    if (!hasErrors) {
-      interp.process(settings) // Repl starts and goes in loop of R.E.P.L
-      Option(sparkContext).foreach(_.stop)
-    }
+    interp.settings = settings
+    interp.createInterpreter()
+    interp.initializeSpark()
+
+    val in0 = getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
+
+    interp.in = reader
+    interp.initializeSynchronous()
+
+
+
+//
+//    if (!hasErrors) {
+//      interp.process(settings) // Repl starts and goes in loop of R.E.P.L
+//      Option(sparkContext).foreach(_.stop)
+//    }
   }
 
   def createSparkSession(): SparkSession = {
