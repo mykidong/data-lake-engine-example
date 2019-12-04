@@ -58,7 +58,7 @@ object SimpleHTTPServer {
         var retValue = ""
         try {
 
-          org.apache.spark.repl.Main.main(null)
+          org.apache.spark.repl.Main.main(Array("--name", "Spark shell"))
 //
 //          ReplMain.interp.intp.quietRun(codes)
 //
