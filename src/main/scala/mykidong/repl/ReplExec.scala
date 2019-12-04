@@ -204,31 +204,48 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
         } else {
           loopPostInit()
           printWelcome()
-//          splash.start()
-//
-//          val line = splash.line           // what they typed in while they were waiting
-//          if (line == null) {              // they ^D
-//            try out print Properties.shellInterruptedString
-//            finally closeInterpreter()
-//          }
-//          line
-          ""
+          splash.start()
+
+          val line = splash.line           // what they typed in while they were waiting
+          if (line == null) {              // they ^D
+            try out print Properties.shellInterruptedString
+            finally closeInterpreter()
+          }
+          line
         }
       } finally splash.stop()
     }
 
     this.settings = settings
-    startup() match {
-      case null => false
-      case line =>
-        try loop(line) match {
-          case LineResults.EOF => out print Properties.shellInterruptedString
-          case _ =>
-        }
-        catch AbstractOrMissingHandler()
-        finally closeInterpreter()
-        true
+
+    createInterpreter()
+    intp.initializeSynchronous()
+
+    val field = classOf[ILoop].getDeclaredFields.filter(_.getName.contains("globalFuture")).head
+    field.setAccessible(true)
+    field.set(this, Future successful true)
+
+    if (intp.reporter.hasErrors) {
+      echo("Interpreter encountered errors during initialization!")
+      null
+    } else {
+      loopPostInit()
+
+      true
     }
+
+
+//    startup() match {
+//      case null => false
+//      case line =>
+//        try loop(line) match {
+//          case LineResults.EOF => out print Properties.shellInterruptedString
+//          case _ =>
+//        }
+//        catch AbstractOrMissingHandler()
+//        finally closeInterpreter()
+//        true
+//    }
   }
 }
 
