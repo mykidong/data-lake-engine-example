@@ -219,9 +219,12 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
 
     this.settings = settings
 
+    val in0New = getField(intp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0New.fold(this.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
+    this.in = reader
+
     createInterpreter()
     intp.initializeSynchronous()
-
     val field = classOf[ILoop].getDeclaredFields.filter(_.getName.contains("globalFuture")).head
     field.setAccessible(true)
     field.set(this, Future successful true)
@@ -243,6 +246,12 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
 //        finally closeInterpreter()
 //        true
 //    }
+  }
+
+  def getField(obj: Object, name: String): Object = {
+    val field = obj.getClass.getField(name)
+    field.setAccessible(true)
+    field.get(obj)
   }
 }
 
