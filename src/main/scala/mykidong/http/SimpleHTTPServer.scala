@@ -32,6 +32,8 @@ object SimpleHTTPServer {
     System.setProperty("scala.usejavacp", "true")
     ReplMain.main(Array(""))
 
+    val repl: ReplExec = ReplMain.interp
+
 
 //    val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
 //    val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
@@ -98,7 +100,7 @@ object SimpleHTTPServer {
           lines.foreach(line => {
             log.info("ready to run command: [" + line + "]")
 
-            val result = org.apache.spark.repl.Main.interp.command(line)
+            val result = repl.command(line)
             log.info("result - keepRunning: [" + result.keepRunning + "], lineToRecord: [" + (if(!result.lineToRecord.isEmpty) {result.lineToRecord.get} else {"null"}) + "]")
           })
 //
