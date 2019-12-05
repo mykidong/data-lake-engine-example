@@ -185,7 +185,7 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
     }
     def startup(): String = withSuppressedSettings {
       // let them start typing
-      val splash = preLoop
+      //val splash = preLoop
 
       // while we go fire up the REPL
       try {
@@ -205,47 +205,50 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
         } else {
           loopPostInit()
           printWelcome()
-          splash.start()
-
-          val line = splash.line           // what they typed in while they were waiting
-          if (line == null) {              // they ^D
-            try out print Properties.shellInterruptedString
-            finally closeInterpreter()
-          }
-          line
+//          splash.start()
+//
+//          val line = splash.line           // what they typed in while they were waiting
+//          if (line == null) {              // they ^D
+//            try out print Properties.shellInterruptedString
+//            finally closeInterpreter()
+//          }
+//          line
+          ""
         }
-      } finally splash.stop()
+      } finally {
+          //splash.stop()
+      }
     }
 
     this.settings = settings
+//
+//    val in0New = getField(this, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+//    val reader = in0New.fold(this.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
+//    this.in = reader
+//
+//    createInterpreter()
+//    intp.initializeSynchronous()
+//    val field = classOf[ILoop].getDeclaredFields.filter(_.getName.contains("globalFuture")).head
+//    field.setAccessible(true)
+//    field.set(this, Future successful true)
+//
+//    loopPostInit()
+//    printWelcome()
+//
+//    true
 
-    val in0New = getField(this, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-    val reader = in0New.fold(this.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
-    this.in = reader
 
-    createInterpreter()
-    intp.initializeSynchronous()
-    val field = classOf[ILoop].getDeclaredFields.filter(_.getName.contains("globalFuture")).head
-    field.setAccessible(true)
-    field.set(this, Future successful true)
-
-    loopPostInit()
-    printWelcome()
-
-    true
-
-
-//    startup() match {
-//      case null => false
-//      case line =>
-//        try loop(line) match {
-//          case LineResults.EOF => out print Properties.shellInterruptedString
-//          case _ =>
-//        }
-//        catch AbstractOrMissingHandler()
-//        finally closeInterpreter()
-//        true
-//    }
+    startup() match {
+      case null => false
+      case line =>
+        try loop(line) match {
+          case LineResults.EOF => out print Properties.shellInterruptedString
+          case _ =>
+        }
+        catch AbstractOrMissingHandler()
+        finally closeInterpreter()
+        true
+    }
   }
 
   def getField(obj: Object, name: String): Object = {
