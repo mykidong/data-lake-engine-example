@@ -46,7 +46,11 @@ object ReplMain extends Logging {
     interp = _interp
 
     // add user jars to classpath.
-    conf.set("spark.repl.local.jars", "/home/mc/data-lake-engine-example/target/data-lake-example-1.0.0-SNAPSHOT-spark-job.jar")
+    val localJars: Option[String] = conf.getOption("spark.repl.local.jars")
+    val newJars = if(localJars.isEmpty) {"/home/mc/data-lake-engine-example/target/data-lake-example-1.0.0-SNAPSHOT-spark-job.jar"}
+    else { localJars.get + "," + "/home/mc/data-lake-engine-example/target/data-lake-example-1.0.0-SNAPSHOT-spark-job.jar" }
+
+    conf.set("spark.repl.local.jars", newJars)
 
     val jars = Utils.getLocalUserJarsForShell(conf)
       // Remove file:///, file:// or file:/ scheme if exists for each jar
