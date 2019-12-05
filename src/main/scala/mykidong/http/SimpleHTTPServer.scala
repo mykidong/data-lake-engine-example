@@ -10,7 +10,7 @@ import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
 import org.apache.spark.SparkConf
-import org.apache.spark.repl.ReplExec
+import org.apache.spark.repl.{ForInterpreter, ReplExec}
 import org.slf4j.LoggerFactory
 
 import scala.tools.nsc.GenericRunnerSettings
@@ -60,12 +60,12 @@ object SimpleHTTPServer {
     repl.createInterpreter()
     repl.initializeSpark()
 
-    val in0 = repl.getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val in0 = ForInterpreter.getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
     val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
 
     repl.in = reader
     repl.initializeSynchronous()
-    repl.loopPostInit()
+    ForInterpreter.loopPostInit(repl)
 
     httpServer.handler{
       case request@POST("/run-codes") => {

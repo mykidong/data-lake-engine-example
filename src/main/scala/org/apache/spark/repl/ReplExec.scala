@@ -2,18 +2,19 @@ package org.apache.spark.repl
 
 import java.io.BufferedReader
 
-import scala.tools.nsc.interpreter.{Results, StdReplTags}
-
 // scalastyle:off println
-import scala.Predef.{println => _}
+import scala.Predef.{println => _, _}
 // scalastyle:on println
 import scala.concurrent.Future
 import scala.reflect.classTag
 import scala.reflect.io.File
+import scala.tools.nsc.{GenericRunnerSettings, Properties}
+import scala.tools.nsc.Settings
+import scala.tools.nsc.interpreter.{isReplDebug, isReplPower, replProps}
+import scala.tools.nsc.interpreter.{AbstractOrMissingHandler, ILoop, IMain, JPrintWriter}
+import scala.tools.nsc.interpreter.{NamedParam, SimpleReader, SplashLoop, SplashReader}
 import scala.tools.nsc.interpreter.StdReplTags.tagOfIMain
-import scala.tools.nsc.interpreter.{AbstractOrMissingHandler, ILoop, IMain, JPrintWriter, NamedParam, SimpleReader, SplashLoop, SplashReader, isReplDebug, isReplPower, replProps}
 import scala.tools.nsc.util.stringFromStream
-import scala.tools.nsc.{GenericRunnerSettings, Properties, Settings}
 import scala.util.Properties.{javaVersion, javaVmName, versionString}
 
 /**
@@ -68,6 +69,23 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
       throw new RuntimeException(s"Scala $versionString interpreter encountered " +
         "errors during initialization")
     }
+  }
+
+  /** Print a welcome message */
+  override def printWelcome(): Unit = {
+    import org.apache.spark.SPARK_VERSION
+    echo("""Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version %s
+      /_/
+         """.format(SPARK_VERSION))
+    val welcomeMsg = "Using Scala %s (%s, Java %s)".format(
+      versionString, javaVmName, javaVersion)
+    echo(welcomeMsg)
+    echo("Type in expressions to have them evaluated.")
+    echo("Type :help for more information.")
   }
 
   /** Available commands */
@@ -184,10 +202,7 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
           null
         } else {
           loopPostInit()
-
-          // welcome message removed...
-          //printWelcome()
-
+          printWelcome()
           splash.start()
 
           val line = splash.line           // what they typed in while they were waiting
@@ -213,77 +228,6 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
         true
     }
   }
-
-
-  /**
-   * zepellin 추가 method.
-   */
-  def getField(obj: Object, name: String): Object = {
-    val field = obj.getClass.getField(name)
-    field.setAccessible(true)
-    field.get(obj)
-  }
-
-  /**
-   * zepellin 추가 method.
-   */
-  def loopPostInit(): Unit = {
-    import StdReplTags._
-    import scala.reflect.{classTag, io}
-
-    val sparkILoop = this
-    val intp = this.intp
-    val power = this.power
-    val in = this.in
-
-    def loopPostInit() {
-      // Bind intp somewhere out of the regular namespace where
-      // we can get at it in generated code.
-      intp.quietBind(NamedParam[IMain]("$intp", intp)(tagOfIMain, classTag[IMain]))
-      // Auto-run code via some setting.
-      (replProps.replAutorunCode.option
-        flatMap (f => io.File(f).safeSlurp())
-        foreach (intp quietRun _)
-        )
-      // classloader and power mode setup
-      intp.setContextClassLoader()
-      if (isReplPower) {
-        replProps.power setValue true
-        unleashAndSetPhase()
-        asyncMessage(power.banner)
-      }
-      // SI-7418 Now, and only now, can we enable TAB completion.
-      in.postInit()
-    }
-
-    def unleashAndSetPhase() = if (isReplPower) {
-      power.unleash()
-      intp beSilentDuring phaseCommand("typer") // Set the phase to "typer"
-    }
-
-    def phaseCommand(name: String): Results.Result = {
-      callMethod(
-        sparkILoop,
-        "scala$tools$nsc$interpreter$ILoop$$phaseCommand",
-        Array(classOf[String]),
-        Array(name)).asInstanceOf[Results.Result]
-    }
-
-    def asyncMessage(msg: String): Unit = {
-      callMethod(
-        sparkILoop, "asyncMessage", Array(classOf[String]), Array(msg))
-    }
-
-    def callMethod(obj: Object, name: String,
-                   parameterTypes: Array[Class[_]],
-                   parameters: Array[Object]): Object = {
-      val method = obj.getClass.getMethod(name, parameterTypes: _ *)
-      method.setAccessible(true)
-      method.invoke(obj, parameters: _ *)
-    }
-
-    loopPostInit()
-  }
 }
 
 object ReplExec {
@@ -293,7 +237,7 @@ object ReplExec {
    * the given code to it as input.
    */
   def run(code: String, sets: Settings = new Settings): String = {
-    import java.io.{BufferedReader, OutputStreamWriter, StringReader}
+    import java.io.{ BufferedReader, StringReader, OutputStreamWriter }
 
     stringFromStream { ostream =>
       Console.withOut(ostream) {
