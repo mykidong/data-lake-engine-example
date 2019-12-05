@@ -1,3 +1,11 @@
+import java.util.{Map, Properties}
+
+import com.cedarsoftware.util.io.JsonWriter
+import com.fasterxml.jackson.databind.ObjectMapper
+import mykidong.HiveJdbcMetadata
+
+import scala.collection.JavaConversions._
+
 val tableName = "test.without_copying_file"
 
 // spark hive metastore for hive 1.2.x.
@@ -17,14 +25,6 @@ log.info("extra: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsStrin
 
 var ddl = ""
 var count = 0
-
-import java.util.{Map, Properties}
-
-import com.cedarsoftware.util.io.JsonWriter
-import com.fasterxml.jackson.databind.ObjectMapper
-import mykidong.HiveJdbcMetadata
-
-import scala.collection.JavaConversions._
 
 for (columnName <- ddlMap.keySet) {
   if (count > 0) ddl += "," + columnName + " " + ddlMap.get(columnName)
