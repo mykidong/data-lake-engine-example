@@ -20,7 +20,7 @@ import scala.util.Properties.{javaVersion, javaVmName, versionString}
 /**
  *  A Spark-specific interactive shell.
  */
-class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
+class Interpreter(in0: Option[BufferedReader], out: JPrintWriter)
   extends ILoop(in0, out) {
   def this(in0: BufferedReader, out: JPrintWriter) = this(Some(in0), out)
   def this() = this(None, new JPrintWriter(Console.out, true))
@@ -230,7 +230,7 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
   }
 }
 
-object ReplExec {
+object Interpreter {
 
   /**
    * Creates an interpreter loop with default settings and feeds
@@ -243,7 +243,7 @@ object ReplExec {
       Console.withOut(ostream) {
         val input = new BufferedReader(new StringReader(code))
         val output = new JPrintWriter(new OutputStreamWriter(ostream), true)
-        val repl = new ReplExec(input, output)
+        val repl = new Interpreter(input, output)
 
         if (sets.classpath.isDefault) {
           sets.classpath.value = sys.props("java.class.path")

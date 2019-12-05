@@ -32,7 +32,7 @@ object SimpleHTTPServer {
     //       jsc.setLocalProperty("spark.scheduler.pool", null)
 
     ReplMain.main(Array(""))
-    val repl = ReplMain.interp
+    val interpreter = ReplMain.interp
 
     httpServer.handler{
       case request@POST("/run-codes") => {
@@ -65,7 +65,7 @@ object SimpleHTTPServer {
         var retValue = ""
         try {
 
-          repl.command(codes)
+          interpreter.command(codes)
 
         } catch {
           case e: Exception => {

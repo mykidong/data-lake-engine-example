@@ -25,7 +25,7 @@ object ReplMain extends Logging {
   var sparkContext: SparkContext = _
   var sparkSession: SparkSession = _
   // this is a public var because tests reset it.
-  var interp: ReplExec = _
+  var interp: Interpreter = _
 
   private var hasErrors = false
   private var isShellSession = false
@@ -39,11 +39,11 @@ object ReplMain extends Logging {
 
   def main(args: Array[String]): Unit = {
     isShellSession = true
-    doMain(args, new ReplExec)
+    doMain(args, new Interpreter)
   }
 
   // Visible for testing
-  private[repl] def doMain(args: Array[String], _interp: ReplExec): Unit = {
+  private[repl] def doMain(args: Array[String], _interp: Interpreter): Unit = {
     interp = _interp
     val jars = Utils.getLocalUserJarsForShell(conf)
       // Remove file:///, file:// or file:/ scheme if exists for each jar
@@ -64,12 +64,12 @@ object ReplMain extends Logging {
     interp.createInterpreter()
     interp.initializeSpark()
 
-    val in0 = ForInterpreter.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
     val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
 
     interp.in = reader
     interp.initializeSynchronous()
-    ForInterpreter.loopPostInit(interp)
+    InterpreterHelper.loopPostInit(interp)
     // ----------------------------------------------------------
 
 

@@ -2,7 +2,7 @@ package org.apache.spark.repl
 
 import scala.tools.nsc.interpreter.{IMain, NamedParam, Results, StdReplTags, isReplPower, replProps}
 
-object ForInterpreter {
+object InterpreterHelper {
 
   /**
    * zepellin 추가 method.
@@ -16,7 +16,7 @@ object ForInterpreter {
   /**
    * zepellin 추가 method.
    */
-  def loopPostInit(interpreter: ReplExec): Unit = {
+  def loopPostInit(interpreter: Interpreter): Unit = {
     import StdReplTags._
     import scala.reflect.classTag
     import scala.reflect.io
