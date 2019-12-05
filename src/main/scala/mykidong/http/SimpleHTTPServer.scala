@@ -60,13 +60,13 @@ object SimpleHTTPServer {
     repl.createInterpreter()
     repl.initializeSpark()
 
-//    val in0 = ForInterpreter.getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-//    val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
-//
-//    repl.in = reader
-//    repl.initializeSynchronous()
-//
-//    ForInterpreter.loopPostInit(repl)
+    val in0 = ForInterpreter.getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
+
+    repl.in = reader
+    repl.initializeSynchronous()
+
+    ForInterpreter.loopPostInit(repl)
 
     httpServer.handler{
       case request@POST("/run-codes") => {
