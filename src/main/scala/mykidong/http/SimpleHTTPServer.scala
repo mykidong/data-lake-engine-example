@@ -33,9 +33,12 @@ object SimpleHTTPServer {
 
     // ========================= init. repl.
     System.setProperty("scala.usejavacp", "true")
-    org.apache.spark.repl.Main.main(Array(""))
+//
+//    org.apache.spark.repl.Main.main(Array(""))
+//    val repl = org.apache.spark.repl.Main.interp
 
-    val repl = org.apache.spark.repl.Main.interp
+    ReplMain.main(Array(""))
+    val repl = ReplMain.interp
 
 
 //    val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))

@@ -3,8 +3,6 @@ package mykidong.repl
 
 import java.io.BufferedReader
 
-import scala.tools.nsc.interpreter.{Results, StdReplTags, isReplPower, replProps}
-
 // scalastyle:off println
 import scala.Predef.{println => _, _}
 // scalastyle:on println
@@ -150,9 +148,8 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
       if (isReplPower) enablePowerMode(true)
       initializeSpark()
       loadInitFiles()
-
       // SI-7418 Now, and only now, can we enable TAB completion.
-      //in.postInit()
+      in.postInit()
     }
     def loadInitFiles(): Unit = settings match {
       case settings: GenericRunnerSettings =>
@@ -220,7 +217,6 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
     }
 
     this.settings = settings
-
     startup() match {
       case null => false
       case line =>
@@ -232,65 +228,6 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
         finally closeInterpreter()
         true
     }
-  }
-
-  def loopPostInit(): Unit = {
-    import StdReplTags._
-    import scala.reflect.classTag
-    import scala.reflect.io
-
-    val sparkILoop = this
-    val intp = this.intp
-    val power = this.power
-    val in = this.in
-
-    def loopPostInit() {
-      // Bind intp somewhere out of the regular namespace where
-      // we can get at it in generated code.
-      intp.quietBind(NamedParam[IMain]("$intp", intp)(tagOfIMain, classTag[IMain]))
-      // Auto-run code via some setting.
-      (replProps.replAutorunCode.option
-        flatMap (f => io.File(f).safeSlurp())
-        foreach (intp quietRun _)
-        )
-      // classloader and power mode setup
-      intp.setContextClassLoader()
-      if (isReplPower) {
-        replProps.power setValue true
-        unleashAndSetPhase()
-        asyncMessage(power.banner)
-      }
-      // SI-7418 Now, and only now, can we enable TAB completion.
-      in.postInit()
-    }
-
-    def unleashAndSetPhase() = if (isReplPower) {
-      power.unleash()
-      intp beSilentDuring phaseCommand("typer") // Set the phase to "typer"
-    }
-
-    def phaseCommand(name: String): Results.Result = {
-      callMethod(
-        sparkILoop,
-        "scala$tools$nsc$interpreter$ILoop$$phaseCommand",
-        Array(classOf[String]),
-        Array(name)).asInstanceOf[Results.Result]
-    }
-
-    def asyncMessage(msg: String): Unit = {
-      callMethod(
-        sparkILoop, "asyncMessage", Array(classOf[String]), Array(msg))
-    }
-
-    def callMethod(obj: Object, name: String,
-                   parameterTypes: Array[Class[_]],
-                   parameters: Array[Object]): Object = {
-      val method = obj.getClass.getMethod(name, parameterTypes: _ *)
-      method.setAccessible(true)
-      method.invoke(obj, parameters: _ *)
-    }
-
-    loopPostInit()
   }
 }
 
