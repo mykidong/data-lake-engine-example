@@ -27,10 +27,10 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
 
   val initializationCommands: Seq[String] = Seq(
     """
-    @transient val spark = if (org.apache.spark.repl.Main.sparkSession != null) {
-        org.apache.spark.repl.Main.sparkSession
+    @transient val spark = if (org.apache.spark.repl.ReplMain.sparkSession != null) {
+        org.apache.spark.repl.ReplMain.sparkSession
       } else {
-        org.apache.spark.repl.Main.createSparkSession()
+        org.apache.spark.repl.ReplMain.createSparkSession()
       }
     @transient val sc = {
       val _sc = spark.sparkContext
