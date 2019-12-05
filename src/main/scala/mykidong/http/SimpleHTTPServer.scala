@@ -65,7 +65,8 @@ object SimpleHTTPServer {
 
     repl.in = reader
     repl.initializeSynchronous()
-    ForInterpreter.loopPostInit(repl)
+
+    //ForInterpreter.loopPostInit(repl)
 
     httpServer.handler{
       case request@POST("/run-codes") => {
