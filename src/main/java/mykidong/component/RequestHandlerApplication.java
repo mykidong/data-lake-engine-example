@@ -15,14 +15,7 @@ public class RequestHandlerApplication {
     public static void main(String[] args)
     {
         // init. log4j.
-        Log4jConfigurer log4j = new Log4jConfigurer();
-        log4j.setConfPath("/log4j.xml");
-        try {
-            log4j.afterPropertiesSet();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        Log4jConfigurer.loadLog4j(null);
 
         // spark configuration.
         SparkConf sparkConf = new SparkConf().setAppName(RequestHandlerApplication.class.getName());

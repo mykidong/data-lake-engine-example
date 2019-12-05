@@ -28,44 +28,44 @@ object SimpleHTTPServer {
   def run(conf: SparkConf, port: Int): Unit = {
     this.conf = conf
 
-    // ========================= init. repl.
-//    System.setProperty("scala.usejavacp", "true")
-//    ReplMain.main(Array(""))
-//
-//    val repl: ReplExec = ReplMain.interp
-
-
-    val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
-    val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
-    outputDir.deleteOnExit()
-
-    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
-    log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
-
-    val settings = new GenericRunnerSettings(println _)
-    settings.processArguments(List("-Yrepl-class-based",
-      "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
-    settings.usejavacp.value = true
-    if (settings.classpath.isDefault) {
-      settings.classpath.value = sys.props("java.class.path")
-    }
-
-    val replOut = new JPrintWriter(Console.out, true)
-
-    val repl = new ReplExec(None, replOut)
-    repl.settings = settings
-    repl.createInterpreter()
-    repl.initializeSpark()
-
-    val in0 = getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-    val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
-
-    repl.in = reader
-    repl.initializeSynchronous()
-    repl.loopPostInit()
-
     // start http server.
     val httpServer = HttpServer(port).start()
+
+    // ========================= init. repl.
+    System.setProperty("scala.usejavacp", "true")
+    ReplMain.main(Array(""))
+
+    val repl: ReplExec = ReplMain.interp
+
+
+//    val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
+//    val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
+//    outputDir.deleteOnExit()
+//
+//    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+//    log.info("spark.repl.class.outputDir: [" + outputDir.getAbsolutePath + "]");
+//
+//    val settings = new GenericRunnerSettings(println _)
+//    settings.processArguments(List("-Yrepl-class-based",
+//      "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
+//    settings.usejavacp.value = true
+//    if (settings.classpath.isDefault) {
+//      settings.classpath.value = sys.props("java.class.path")
+//    }
+//
+//    val replOut = new JPrintWriter(Console.out, true)
+//
+//    val repl = new ReplExec(None, replOut)
+//    repl.settings = settings
+//    repl.createInterpreter()
+//    repl.initializeSpark()
+//
+//    val in0 = getField(repl, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+//    val reader = in0.fold(repl.chooseReader(settings))(r => SimpleReader(r, replOut, interactive = true))
+//
+//    repl.in = reader
+//    repl.initializeSynchronous()
+//    repl.loopPostInit()
 
     httpServer.handler{
       case request@POST("/run-codes") => {
@@ -101,7 +101,7 @@ object SimpleHTTPServer {
           lines.foreach(line => {
             log.info("ready to run command: [" + line + "]")
 
-            val result = repl.interpret(line)
+            val result = repl.command(line)
             log.info("result: [" + result.toString + "]")
           })
 //

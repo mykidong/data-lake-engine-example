@@ -29,9 +29,7 @@ public class DynamicCodesRequestTestSkip {
     @Before
     public void init() throws Exception {
         // init. log4j.
-        Log4jConfigurer log4j = new Log4jConfigurer();
-        log4j.setConfPath("/log4j.xml");
-        log4j.afterPropertiesSet();
+        Log4jConfigurer.loadLog4j(null);
     }
 
     @Test
