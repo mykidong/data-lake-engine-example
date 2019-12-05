@@ -44,6 +44,10 @@ object ReplMain extends Logging {
   // Visible for testing
   private[repl] def doMain(args: Array[String], _interp: ReplExec): Unit = {
     interp = _interp
+
+    // add user jars to classpath.
+    conf.set("spark.repl.local.jars", "/home/mc/data-lake-engine-example/target/data-lake-example-1.0.0-SNAPSHOT-spark-job.jar")
+
     val jars = Utils.getLocalUserJarsForShell(conf)
       // Remove file:///, file:// or file:/ scheme if exists for each jar
       .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
