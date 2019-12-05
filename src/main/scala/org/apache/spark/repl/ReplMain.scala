@@ -4,13 +4,13 @@ import java.io.File
 import java.net.URI
 import java.util.Locale
 
-import scala.tools.nsc.GenericRunnerSettings
-
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
 import org.apache.spark.util.Utils
+
+import scala.tools.nsc.GenericRunnerSettings
 
 object ReplMain extends Logging {
 
@@ -44,14 +44,6 @@ object ReplMain extends Logging {
   // Visible for testing
   private[repl] def doMain(args: Array[String], _interp: ReplExec): Unit = {
     interp = _interp
-
-    // add user jars to classpath.
-    val localJars: Option[String] = conf.getOption("spark.repl.local.jars")
-    val newJars = if(localJars.isEmpty) {"/home/mc/data-lake-engine-example/target/data-lake-example-1.0.0-SNAPSHOT-spark-job.jar"}
-    else { localJars.get + "," + "/home/mc/data-lake-engine-example/target/data-lake-example-1.0.0-SNAPSHOT-spark-job.jar" }
-
-    conf.set("spark.repl.local.jars", newJars)
-
     val jars = Utils.getLocalUserJarsForShell(conf)
       // Remove file:///, file:// or file:/ scheme if exists for each jar
       .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }

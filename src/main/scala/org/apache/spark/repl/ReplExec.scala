@@ -70,23 +70,6 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
     }
   }
 
-  /** Print a welcome message */
-  override def printWelcome(): Unit = {
-    import org.apache.spark.SPARK_VERSION
-    echo("""Welcome to
-      ____              __
-     / __/__  ___ _____/ /__
-    _\ \/ _ \/ _ `/ __/  '_/
-   /___/ .__/\_,_/_/ /_/\_\   version %s
-      /_/
-         """.format(SPARK_VERSION))
-    val welcomeMsg = "Using Scala %s (%s, Java %s)".format(
-      versionString, javaVmName, javaVersion)
-    echo(welcomeMsg)
-    echo("Type in expressions to have them evaluated.")
-    echo("Type :help for more information.")
-  }
-
   /** Available commands */
   override def commands: List[LoopCommand] = standardCommands
 
@@ -201,7 +184,10 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
           null
         } else {
           loopPostInit()
-          printWelcome()
+
+          // welcome message removed...
+          //printWelcome()
+
           splash.start()
 
           val line = splash.line           // what they typed in while they were waiting
