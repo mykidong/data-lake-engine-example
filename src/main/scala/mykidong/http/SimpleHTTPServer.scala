@@ -98,13 +98,16 @@ object SimpleHTTPServer {
 
         var retValue = ""
         try {
-          val lines = codes.split("\n")
-          lines.foreach(line => {
-            log.info("ready to run command: [" + line + "]")
 
-            val result = repl.command(line)
-            log.info("result: [" + result.toString + "]")
-          })
+          repl.command(codes)
+          
+//          val lines = codes.split("\n")
+//          lines.foreach(line => {
+//            log.info("ready to run command: [" + line + "]")
+//
+//            val result = repl.command(line)
+//            log.info("result: [" + result.toString + "]")
+//          })
 
 
 //
