@@ -1,6 +1,6 @@
 package org.apache.spark.repl
 
-import java.io.File
+import java.io.{BufferedReader, File}
 import java.net.URI
 import java.util.Locale
 
@@ -11,6 +11,7 @@ import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
 import org.apache.spark.util.Utils
 
 import scala.tools.nsc.GenericRunnerSettings
+import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
 
 object ReplMain extends Logging {
 
@@ -57,10 +58,25 @@ object ReplMain extends Logging {
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.processArguments(interpArguments, true)
 
-    if (!hasErrors) {
-      interp.process(settings) // Repl starts and goes in loop of R.E.P.L
-      Option(sparkContext).foreach(_.stop)
-    }
+    // ------------- repl 이 나오지 않게 함...
+    settings.usejavacp.value = true
+    interp.settings = settings
+    interp.createInterpreter()
+    interp.initializeSpark()
+
+    val in0 = ForInterpreter.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
+
+    interp.in = reader
+    interp.initializeSynchronous()
+
+    ForInterpreter.loopPostInit(interp)
+
+
+//    if (!hasErrors) {
+//      interp.process(settings) // Repl starts and goes in loop of R.E.P.L
+//      Option(sparkContext).foreach(_.stop)
+//    }
   }
 
   def createSparkSession(): SparkSession = {
