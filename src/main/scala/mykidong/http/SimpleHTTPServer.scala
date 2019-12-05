@@ -101,8 +101,8 @@ object SimpleHTTPServer {
           lines.foreach(line => {
             log.info("ready to run command: [" + line + "]")
 
-            val result = repl.command(line)
-            log.info("result - keepRunning: [" + result.keepRunning + "], lineToRecord: [" + (if(!result.lineToRecord.isEmpty) {result.lineToRecord.get} else {"null"}) + "]")
+            val result = repl.interpret(line)
+            log.info("result: [" + result.toString + "]")
           })
 //
 
