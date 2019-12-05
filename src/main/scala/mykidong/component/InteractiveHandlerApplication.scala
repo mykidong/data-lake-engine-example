@@ -3,7 +3,6 @@ package mykidong.component
 import mykidong.http.SimpleHTTPServer
 import mykidong.util.Log4jConfigurer
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
 
 object InteractiveHandlerApplication {
@@ -28,19 +27,10 @@ object InteractiveHandlerApplication {
     // set fair scheduler mode.
     sparkConf.set("spark.scheduler.mode", "FAIR")
 
-    // spark session.
-//    val spark = SparkSession.builder.config(sparkConf).enableHiveSupport.getOrCreate
 
     // run embeded http server.
     val port = 8125
     SimpleHTTPServer.run(sparkConf, port)
     log.info("embedded http server is running now ...")
-//
-//    System.setProperty("scala.usejavacp", "true")
-//    org.apache.spark.repl.Main.main(Array(""))
-
-    Thread.sleep(Long.MaxValue)
-//
-//    spark.stop()
   }
 }
