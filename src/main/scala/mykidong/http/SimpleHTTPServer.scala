@@ -56,11 +56,11 @@ object SimpleHTTPServer {
 
         // full class name param.
         val fullClassName = paramMap.get("fullClassName").get
-        log.info("fullClassName: [" + fullClassName + "]");
+        println("fullClassName: [" + fullClassName + "]");
 
         // codes param.
         val codes = paramMap.get("codes").get
-        log.info("codes: [" + codes + "]");
+        println("codes: [" + codes + "]");
 
         var retValue = ""
         try {
