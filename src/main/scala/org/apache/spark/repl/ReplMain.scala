@@ -58,7 +58,7 @@ object ReplMain extends Logging {
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.processArguments(interpArguments, true)
 
-    // ------------- repl 이 나오지 않게 함...
+    // ------------- zeppellin spark interpreter 에서 가져옴...
     settings.usejavacp.value = true
     interp.settings = settings
     interp.createInterpreter()
@@ -69,10 +69,11 @@ object ReplMain extends Logging {
 
     interp.in = reader
     interp.initializeSynchronous()
-
     ForInterpreter.loopPostInit(interp)
+    // ----------------------------------------------------------
 
 
+    // ------------- repl 이 나오지 않게 함...
 //    if (!hasErrors) {
 //      interp.process(settings) // Repl starts and goes in loop of R.E.P.L
 //      Option(sparkContext).foreach(_.stop)
