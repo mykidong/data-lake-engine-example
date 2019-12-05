@@ -29,7 +29,7 @@ object SimpleHTTPServer {
     val httpServer = HttpServer(port).start()
 
     // ========================= init. repl.
-//    System.setProperty("scala.usejavacp", "true")
+    System.setProperty("scala.usejavacp", "true")
 //
 //    org.apache.spark.repl.Main.main(Array(""))
 //    val repl = org.apache.spark.repl.Main.interp
