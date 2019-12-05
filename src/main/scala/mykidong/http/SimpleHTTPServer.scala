@@ -1,6 +1,6 @@
 package mykidong.http
 
-import java.io.{BufferedReader, OutputStreamWriter, StringReader, StringWriter}
+import java.io.BufferedReader
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
@@ -9,14 +9,12 @@ import io.shaka.http.HttpServer
 import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.repl.{ReplExec, ReplMain, SparkILoop}
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.SparkConf
+import org.apache.spark.repl.ReplExec
 import org.slf4j.LoggerFactory
 
 import scala.tools.nsc.GenericRunnerSettings
-import scala.tools.nsc.interpreter.{JPrintWriter, NamedParam, SimpleReader}
-import scala.tools.nsc.util.stringFromStream
+import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
 
 object SimpleHTTPServer {
 
@@ -97,20 +95,16 @@ object SimpleHTTPServer {
         val codes = paramMap.get("codes").get
         log.info("codes: [" + codes + "]");
 
+        var retValue = ""
+        try {
+          val lines = codes.split("\n")
+          lines.foreach(line => {
+            log.info("ready to run command: [" + line + "]")
 
-        val result = repl.command(codes)
+            val result = repl.command(line)
+            log.info("result: [" + result.toString + "]")
+          })
 
-
-//        var retValue = ""
-//        try {
-//          val lines = codes.split("\n")
-//          lines.foreach(line => {
-//            log.info("ready to run command: [" + line + "]")
-//
-//            val result = repl.command(line)
-//            log.info("result: [" + result.toString + "]")
-//          })
-//
 
 //
 //          var repl = new ReplExec(None, new JPrintWriter(Console.out, true))
@@ -184,11 +178,5 @@ object SimpleHTTPServer {
       }
       case _ => respond("doh!").status(NOT_FOUND)
     }
-  }
-
-  def getField(obj: Object, name: String): Object = {
-    val field = obj.getClass.getField(name)
-    field.setAccessible(true)
-    field.get(obj)
   }
 }
