@@ -2,25 +2,24 @@ package mykidong.repl
 
 import java.io.File
 import java.net.URI
-import java.nio.file.{Files, Paths}
 import java.util.Locale
+
+import scala.tools.nsc.GenericRunnerSettings
 
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
-
-import scala.tools.nsc.GenericRunnerSettings
-
+import mykidong.util.Utils
 
 object ReplMain extends Logging {
 
   initializeLogIfNecessary(true)
+  //Signaling.cancelOnInterrupt()
 
   val conf = new SparkConf()
-
-  val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
-  val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
+  val rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
+  val outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
 
   var sparkContext: SparkContext = _
   var sparkSession: SparkSession = _
@@ -37,23 +36,15 @@ object ReplMain extends Logging {
     // scalastyle:on println
   }
 
-  def main(args: Array[String]): Unit = {
+  def ReplMain(args: Array[String]): Unit = {
     isShellSession = true
-    doMain(args, new ReplExec)
-  }
-
-  def getLocalUserJarsForShell(conf: SparkConf): Seq[String] = {
-    val localJars = conf.getOption("spark.repl.local.jars")
-    localJars.map(_.split(",")).map(_.filter(_.nonEmpty)).toSeq.flatten
+    doReplMain(args, new ReplExec)
   }
 
   // Visible for testing
-  private[repl] def doMain(args: Array[String], _interp: ReplExec): Unit = {
+  private[repl] def doReplMain(args: Array[String], _interp: ReplExec): Unit = {
     interp = _interp
-
-    conf.set("spark.repl.local.jars", "/home/mc/data-lake-engine-example/target/data-lake-example-1.0.0-SNAPSHOT-spark-job.jar")
-
-    val jars = getLocalUserJarsForShell(conf)
+    val jars = Utils.getLocalUserJarsForShell(conf)
       // Remove file:///, file:// or file:/ scheme if exists for each jar
       .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
       .mkString(File.pathSeparator)
@@ -91,6 +82,20 @@ object ReplMain extends Logging {
 
       val builder = SparkSession.builder.config(conf)
       if (conf.get(CATALOG_IMPLEMENTATION.key, "hive").toLowerCase(Locale.ROOT) == "hive") {
+//        if (SparkSession.hiveClassesArePresent) {
+//          // In the case that the property is not set at all, builder's config
+//          // does not have this value set to 'hive' yet. The original default
+//          // behavior is that when there are hive classes, we use hive catalog.
+//          sparkSession = builder.enableHiveSupport().getOrCreate()
+//          logInfo("Created Spark session with Hive support")
+//        } else {
+//          // Need to change it back to 'in-memory' if no hive classes are found
+//          // in the case that the property is set to hive in spark-defaults.conf
+//          builder.config(CATALOG_IMPLEMENTATION.key, "in-memory")
+//          sparkSession = builder.getOrCreate()
+//          logInfo("Created Spark session")
+//        }
+
         sparkSession = builder.enableHiveSupport().getOrCreate()
         logInfo("Created Spark session with Hive support")
       } else {
