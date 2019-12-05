@@ -219,7 +219,7 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
 
     this.settings = settings
 
-    val in0New = getField(intp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val in0New = getField(this, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
     val reader = in0New.fold(this.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
     this.in = reader
 
