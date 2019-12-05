@@ -1,4 +1,3 @@
-val parquetDs = spark.read.format("parquet").load("/test-event-parquet");
-parquetDs.show(3);
-val sum: Long = parquetDs.map(row => {  println("row: " + row.toString);  1 }).count();
-println("sum: [" + sum + "]");
+val data = Array(1, 2, 3, 4, 5)
+val distData = sc.parallelize(data)
+val sum = distData.reduce((a, b) => (a + b))
