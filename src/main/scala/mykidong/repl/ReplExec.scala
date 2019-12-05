@@ -237,18 +237,21 @@ class ReplExec(in0: Option[BufferedReader], out: JPrintWriter)
 //
 //    true
 
+    startup()
+    true
 
-    startup() match {
-      case null => false
-      case line =>
-        try loop(line) match {
-          case LineResults.EOF => out print Properties.shellInterruptedString
-          case _ =>
-        }
-        catch AbstractOrMissingHandler()
-        finally closeInterpreter()
-        true
-    }
+
+//    startup() match {
+//      case null => false
+//      case line =>
+//        try loop(line) match {
+//          case LineResults.EOF => out print Properties.shellInterruptedString
+//          case _ =>
+//        }
+//        catch AbstractOrMissingHandler()
+//        finally closeInterpreter()
+//        true
+//    }
   }
 
   def getField(obj: Object, name: String): Object = {
