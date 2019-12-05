@@ -10,7 +10,7 @@ import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.repl.{ReplMain, SparkILoop}
+import org.apache.spark.repl.{Main, ReplMain, SparkILoop}
 import org.apache.spark.sql.SparkSession
 import org.slf4j.LoggerFactory
 
@@ -36,8 +36,8 @@ object SimpleHTTPServer {
 //    org.apache.spark.repl.Main.main(Array(""))
 //    val repl = org.apache.spark.repl.Main.interp
 
-    ReplMain.main(Array(""))
-    val repl = ReplMain.interp
+    Main.main(Array(""))
+    val repl = Main.interp
 
 
 //    val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
