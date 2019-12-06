@@ -66,6 +66,9 @@ object SimpleHTTPServer {
         try {
           // interpret spark codes.
           interpreter.command(codes)
+
+          val res = interpreter.valueOfTerm("res0").get
+          println("result: [" + res + "]")
         } catch {
           case e: Exception => {
             e.printStackTrace()
