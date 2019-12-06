@@ -57,6 +57,8 @@ object SimpleHTTPServer {
 
         var retValue = ""
 
+        val startTime = System.currentTimeMillis
+
         // set scheduler pool for the current thread.
         ReplMain.sparkContext.setLocalProperty("spark.scheduler.pool", "production")
         println("before running spark codes, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
@@ -73,6 +75,9 @@ object SimpleHTTPServer {
         // unset scheduler pool for the current thread.
         ReplMain.sparkContext.setLocalProperty("spark.scheduler.pool", null)
         println("after spark codes run, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
+
+        log.info("elapsed time: [" + (System.currentTimeMillis - startTime).toDouble / 1000.toDouble + "]s")
+        log.info("requested spark job is done...")
 
         respond(retValue)
       }
