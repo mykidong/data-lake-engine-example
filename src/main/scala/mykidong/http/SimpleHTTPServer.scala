@@ -67,8 +67,11 @@ object SimpleHTTPServer {
           // interpret spark codes.
           interpreter.command(codes)
 
-          val res = interpreter.valueOfTerm("res0").get
-          println("result: [" + res + "]")
+          val mostRecentVar = interpreter.mostRecentVar;
+          println("mostRecentVar: [" + mostRecentVar + "]")
+
+          val mostRecentVarValue = interpreter.valueOfTerm(interpreter.mostRecentVar).getOrElse(null)
+          println("mostRecentVarValue: [" + mostRecentVarValue + "]")
         } catch {
           case e: Exception => {
             e.printStackTrace()
