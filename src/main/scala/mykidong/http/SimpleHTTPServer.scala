@@ -23,14 +23,6 @@ object SimpleHTTPServer {
     // start http server.
     val httpServer = HttpServer(port).start()
 
-
-    // TODO: 넘어온 spark conf 를 Repl 에 넘겨야 되는데 어떻게 할까.
-    // TODO: // set fair scheduler pool.
-    //       jsc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread.getId)
-    //       ............
-    //       // unset fair scheduler pool.
-    //       jsc.setLocalProperty("spark.scheduler.pool", null)
-
     // run interpreter main with spark conf.
     ReplMain.doRun(conf)
     val interpreter = ReplMain.interp
@@ -64,15 +56,23 @@ object SimpleHTTPServer {
         println("codes: [" + codes + "]");
 
         var retValue = ""
+
+        // set scheduler pool for the current thread.
+        ReplMain.sparkContext.setLocalProperty("spark.scheduler.pool", "production")
+        println("before running spark codes, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
+
         try {
-
+          // interpret spark codes.
           interpreter.command(codes)
-
         } catch {
           case e: Exception => {
             e.printStackTrace()
           }
         }
+
+        // unset scheduler pool for the current thread.
+        ReplMain.sparkContext.setLocalProperty("spark.scheduler.pool", null)
+        println("after spark codes run, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
 
         respond(retValue)
       }

@@ -26,6 +26,7 @@ object InteractiveHandlerApplication {
 
     // set fair scheduler mode.
     sparkConf.set("spark.scheduler.mode", "FAIR")
+    sparkConf.set("spark.scheduler.allocation.file", "/usr/lib/mc/conf/fairscheduler.xml")
 
 
     // run embeded http server.

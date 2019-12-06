@@ -42,7 +42,7 @@ public class SparkRequestHandlerServlet extends HttpServlet {
         // run spark codes dynamically.
         try {
             // set fair scheduler pool.
-            jsc.setLocalProperty("spark.scheduler.pool", "pool-" + Thread.currentThread().getId());
+            jsc.setLocalProperty("spark.scheduler.pool", "production");
 
             long start = System.currentTimeMillis();
 

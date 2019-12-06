@@ -29,6 +29,7 @@ public class RequestHandlerApplication {
 
         // set fair scheduler mode.
         sparkConf.set("spark.scheduler.mode", "FAIR");
+        sparkConf.set("spark.scheduler.allocation.file", "/usr/lib/mc/conf/fairscheduler.xml");
 
         // spark session.
         SparkSession spark = SparkSession
