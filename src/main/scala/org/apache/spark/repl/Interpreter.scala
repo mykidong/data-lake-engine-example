@@ -52,6 +52,9 @@ class Interpreter(in0: Option[BufferedReader], out: JPrintWriter)
       println("Spark session available as 'spark'.")
       _sc
     }
+
+    println("spark configuration: " + spark.sparkContext.getConf.getAll.toList.toString())
+
     """,
     "import org.apache.spark.SparkContext._",
     "import spark.implicits._",
