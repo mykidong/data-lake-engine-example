@@ -44,8 +44,7 @@ object ReplMain extends Logging {
   def doRun(sparkConf: SparkConf): Unit = {
 
     this.conf = sparkConf
-
-    println("spark configurations: " + this.conf.getAll.toString)
+    println("spark configuration: " + this.conf.getAll.toList.toString())
 
     rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
     outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
