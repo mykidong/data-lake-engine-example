@@ -76,8 +76,8 @@ object SimpleHTTPServer {
         ReplMain.sparkContext.setLocalProperty("spark.scheduler.pool", null)
         println("after spark codes run, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
 
-        log.info("elapsed time: [" + (System.currentTimeMillis - startTime).toDouble / 1000.toDouble + "]s")
-        log.info("requested spark job is done...")
+        println("elapsed time: [" + (System.currentTimeMillis - startTime).toDouble / 1000.toDouble + "]s")
+        println("requested spark job is done...")
 
         respond(retValue)
       }
