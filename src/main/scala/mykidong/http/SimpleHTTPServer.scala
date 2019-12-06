@@ -73,7 +73,7 @@ object SimpleHTTPServer {
           val typeOfMostRecentVar = interpreter.typeOfTerm(interpreter.mostRecentVar)
           println("typeOfMostRecentVar: [" + typeOfMostRecentVar + "]")
 
-          val mostRecentVarValue = interpreter.valueOfTerm(interpreter.mostRecentVar).getOrElse(null)
+          val mostRecentVarValue = interpreter.intp.valueOfTerm(interpreter.mostRecentVar).getOrElse(null)
           println("mostRecentVarValue: [" + mostRecentVarValue + "]")
         } catch {
           case e: Exception => {
