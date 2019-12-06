@@ -18,9 +18,9 @@ object ReplMain extends Logging {
   initializeLogIfNecessary(true)
   Signaling.cancelOnInterrupt()
 
-  val conf = new SparkConf()
-  val rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
-  val outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+  var conf: SparkConf = _
+  var rootDir: String = _
+  var outputDir: File = _
 
   var sparkContext: SparkContext = _
   var sparkSession: SparkSession = _
@@ -37,14 +37,22 @@ object ReplMain extends Logging {
     // scalastyle:on println
   }
 
-  def main(args: Array[String]): Unit = {
-    isShellSession = true
-    doMain(args, new Interpreter)
-  }
+  /**
+   * REPL 을 실행하지 않고 Interpreter 만 사용할 경우.
+   *
+   */
+  def doRun(sparkConf: SparkConf): Unit = {
 
-  // Visible for testing
-  private[repl] def doMain(args: Array[String], _interp: Interpreter): Unit = {
-    interp = _interp
+    this.conf = sparkConf
+
+    println("spark configurations: " + this.conf.getAll.toString)
+
+    rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
+    outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+
+    isShellSession = true
+
+    interp = new Interpreter()
     val jars = Utils.getLocalUserJarsForShell(conf)
       // Remove file:///, file:// or file:/ scheme if exists for each jar
       .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
@@ -53,7 +61,7 @@ object ReplMain extends Logging {
       "-Yrepl-class-based",
       "-Yrepl-outdir", s"${outputDir.getAbsolutePath}",
       "-classpath", jars
-    ) ++ args.toList
+    )
 
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.processArguments(interpArguments, true)
@@ -70,14 +78,47 @@ object ReplMain extends Logging {
     interp.in = reader
     interp.initializeSynchronous()
     InterpreterHelper.loopPostInit(interp)
-    // ----------------------------------------------------------
+  }
 
+  /**
+   * REPL 을 실행할 경우
+   *
+   * NOTE: 개발 현재 REPL 은 사용하지 않음.
+   *
+   * @param args
+   */
+  def main(args: Array[String]): Unit = {
+    isShellSession = true
+    doMain(args, new Interpreter())
+  }
 
-    // ------------- repl 이 나오지 않게 함...
-//    if (!hasErrors) {
-//      interp.process(settings) // Repl starts and goes in loop of R.E.P.L
-//      Option(sparkContext).foreach(_.stop)
-//    }
+  /**
+   * REPL 을 실행할 경우.
+   *
+   * NOTE: 개발 현재 REPL 은 사용하지 않음.
+   *
+   * @param args
+   * @param _interp
+   */
+  private[repl] def doMain(args: Array[String], _interp: Interpreter): Unit = {
+    interp = _interp
+    val jars = Utils.getLocalUserJarsForShell(conf)
+      // Remove file:///, file:// or file:/ scheme if exists for each jar
+      .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
+      .mkString(File.pathSeparator)
+    val interpArguments = List(
+      "-Yrepl-class-based",
+      "-Yrepl-outdir", s"${outputDir.getAbsolutePath}",
+      "-classpath", jars
+    ) ++ args.toList
+
+    val settings = new GenericRunnerSettings(scalaOptionError)
+    settings.processArguments(interpArguments, true)
+
+    if (!hasErrors) {
+      interp.process(settings) // Repl starts and goes in loop of R.E.P.L
+      Option(sparkContext).foreach(_.stop)
+    }
   }
 
   def createSparkSession(): SparkSession = {

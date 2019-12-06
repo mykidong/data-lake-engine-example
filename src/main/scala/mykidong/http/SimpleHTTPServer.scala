@@ -31,7 +31,8 @@ object SimpleHTTPServer {
     //       // unset fair scheduler pool.
     //       jsc.setLocalProperty("spark.scheduler.pool", null)
 
-    ReplMain.main(Array(""))
+    // run interpreter main with spark conf.
+    ReplMain.doRun(conf)
     val interpreter = ReplMain.interp
 
     httpServer.handler{
