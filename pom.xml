@@ -72,6 +72,9 @@
 
 		<!-- plugin scala -->
 		<plugin.scala.version>2.15.2</plugin.scala.version>
+
+        <!-- lift json -->
+        <lift-json.version>3.4.0</lift-json.version>
 	</properties>
 
 	<dependencies>
@@ -250,6 +253,11 @@
 			<artifactId>scalatest_${scala.binary.version}</artifactId>
 			<version>${scalatest.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.liftweb</groupId>
+			<artifactId>lift-json_${scala.binary.version}</artifactId>
+			<version>${lift-json.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

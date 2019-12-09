@@ -53,12 +53,13 @@ class Interpreter(in0: Option[BufferedReader], out: JPrintWriter)
       _sc
     }
 
-    import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
-    
-    val mapper = new ObjectMapper()
-    val writer = mapper.writerWithDefaultPrettyPrinter
-    val json = writer.writeValueAsString(spark.sparkContext.getConf)
-    println("spark configuration: \n" + json)
+    import net.liftweb.json.JObject
+    import net.liftweb.json.JsonAST._
+    import net.liftweb.json.JsonDSL._
+
+    val json: JObject = "spark confs" -> spark.sparkContext.getConf.getAll.toList
+
+    println("spark configuration: " + prettyRender(json))
 
     """,
     "import org.apache.spark.SparkContext._",

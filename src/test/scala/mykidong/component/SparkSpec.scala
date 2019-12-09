@@ -1,7 +1,6 @@
 package mykidong.component
 
 import mykidong.util.Log4jConfigurer
-import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 import org.scalatest.FunSuite
@@ -48,11 +47,13 @@ class SparkSpec extends FunSuite{
       hadoopConfiguration.set(key, value)
     }
 
-    val mapper = new ObjectMapper()
-    val writer = mapper.writerWithDefaultPrettyPrinter
-    val json = writer.writeValueAsString(spark.sparkContext.getConf)
+    import net.liftweb.json.JObject
+    import net.liftweb.json.JsonAST._
+    import net.liftweb.json.JsonDSL._
 
-    println("spark configuration: " + json)
+    val json: JObject = "spark confs" -> spark.sparkContext.getConf.getAll.toList
+
+    println("spark configuration: " + prettyRender(json))
 
 
     val data = Array(1, 2, 3, 4, 5)
