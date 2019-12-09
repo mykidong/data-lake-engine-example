@@ -64,6 +64,9 @@ object SimpleHTTPServer {
         println("before running spark codes, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
 
         try {
+          // print current scheduler pool in repl.
+          interpreter.command("println(\"REPL: before running spark codes, scheduler pool set to [\" + sc.getLocalProperty(\"spark.scheduler.pool\") + \"] for the current thread [\" + Thread.currentThread().getId + \"]\")")
+
           // interpret spark codes.
           interpreter.command(codes)
 
@@ -85,6 +88,9 @@ object SimpleHTTPServer {
         // unset scheduler pool for the current thread.
         ReplMain.sparkContext.setLocalProperty("spark.scheduler.pool", null)
         println("after spark codes run, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
+
+        // print current scheduler pool in repl.
+        interpreter.command("println(\"REPL: after spark codes run, scheduler pool set to [\" + sc.getLocalProperty(\"spark.scheduler.pool\") + \"] for the current thread [\" + Thread.currentThread().getId + \"]\")")
 
         println("elapsed time: [" + (System.currentTimeMillis - startTime).toDouble / 1000.toDouble + "]s")
         println("requested spark job is done...")
