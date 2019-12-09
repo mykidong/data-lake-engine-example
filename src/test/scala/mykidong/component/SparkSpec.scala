@@ -1,17 +1,13 @@
 package mykidong.component
 
-import java.util.Properties
-
-import mykidong.{DynamicCodesRequestTestSkip, SparkSQLTestSkip}
-import mykidong.http.SimpleHTTPServer.getClass
 import mykidong.util.Log4jConfigurer
-import org.apache.hadoop.conf.Configuration
+import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.{Encoders, SparkSession}
+import org.apache.spark.sql.SparkSession
 import org.scalatest.FunSuite
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.LoggerFactory
+import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.support.PropertiesLoaderUtils
-import org.springframework.core.io.{ClassPathResource, Resource}
 
 class SparkSpec extends FunSuite{
 
@@ -51,6 +47,12 @@ class SparkSpec extends FunSuite{
       val value = hiveProps.getProperty(key)
       hadoopConfiguration.set(key, value)
     }
+
+    val mapper = new ObjectMapper()
+    val writer = mapper.writerWithDefaultPrettyPrinter
+    val json = writer.writeValueAsString(spark.sparkContext.getConf)
+
+    println("spark configuration: " + json)
 
 
     val data = Array(1, 2, 3, 4, 5)

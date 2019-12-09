@@ -53,7 +53,12 @@ class Interpreter(in0: Option[BufferedReader], out: JPrintWriter)
       _sc
     }
 
-    println("spark configuration: " + spark.sparkContext.getConf.getAll.toList.toString())
+    import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
+    
+    val mapper = new ObjectMapper()
+    val writer = mapper.writerWithDefaultPrettyPrinter
+    val json = writer.writeValueAsString(spark.sparkContext.getConf)
+    println("spark configuration: \n" + json)
 
     """,
     "import org.apache.spark.SparkContext._",
