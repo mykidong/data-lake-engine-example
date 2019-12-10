@@ -9,6 +9,14 @@ parquetDs.show(5)
 
 import org.apache.spark.sql.Encoders
 
+case class Event(itemId: String,
+                 quantity: Long,
+                 price: Long,
+                 uid: String,
+                 eventType: String,
+                 version: String,
+                 ts:Long)
+
 val newEventDs = parquetDs.map(row => {
     val itemId = row.getString(0)
     val quantity = row.getLong(1)
@@ -20,7 +28,7 @@ val newEventDs = parquetDs.map(row => {
     val ts = baseProperties.getLong(3)
 
     Row(itemId, quantity, price, uid, eventType, version, ts)
-})(Encoders.kryo[Row])
+}, Encoders.product[Event])
 
 newEventDs.printSchema()
 
