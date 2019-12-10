@@ -17,7 +17,7 @@ case class Event(itemId: String,
                  version: String,
                  ts:Long)
 
-val newEventDs = parquetDs.map(row => {
+val newEventDs = parquetDs.map((row: Row) => {
     val itemId = row.getString(0)
     val quantity = row.getLong(1)
     val price = row.getLong(2)
