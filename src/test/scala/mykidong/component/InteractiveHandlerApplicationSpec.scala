@@ -57,13 +57,13 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
       hadoopConfiguration.set(key, value)
     }
 
+    // =============== make sark configuration json pretty ===========================
     import net.liftweb.json.JObject
     import net.liftweb.json.JsonAST._
     import net.liftweb.json.JsonDSL._
-
     val json: JObject = "spark confs" -> spark.sparkContext.getConf.getAll.toList
-
     println("spark configuration: " + prettyRender(json))
+
 
     // run embeded http server.
     val port = 8125

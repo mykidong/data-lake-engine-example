@@ -322,6 +322,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- TODO: scalatest 를 maven 에서 run 하려는데 아직 문제가 있음!!!! -->
 			<plugin>
 				<groupId>org.scalatest</groupId>
 				<artifactId>scalatest-maven-plugin</artifactId>
