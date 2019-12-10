@@ -3,18 +3,15 @@ package org.apache.spark.repl
 import java.io.BufferedReader
 
 // scalastyle:off println
-import scala.Predef.{println => _, _}
+import scala.Predef.{println => _}
 // scalastyle:on println
 import scala.concurrent.Future
 import scala.reflect.classTag
 import scala.reflect.io.File
-import scala.tools.nsc.{GenericRunnerSettings, Properties}
-import scala.tools.nsc.Settings
-import scala.tools.nsc.interpreter.{isReplDebug, isReplPower, replProps}
-import scala.tools.nsc.interpreter.{AbstractOrMissingHandler, ILoop, IMain, JPrintWriter}
-import scala.tools.nsc.interpreter.{NamedParam, SimpleReader, SplashLoop, SplashReader}
 import scala.tools.nsc.interpreter.StdReplTags.tagOfIMain
+import scala.tools.nsc.interpreter.{AbstractOrMissingHandler, ILoop, IMain, JPrintWriter, NamedParam, SimpleReader, SplashLoop, SplashReader, isReplDebug, isReplPower, replProps}
 import scala.tools.nsc.util.stringFromStream
+import scala.tools.nsc.{GenericRunnerSettings, Properties, Settings}
 import scala.util.Properties.{javaVersion, javaVmName, versionString}
 
 /**
@@ -105,6 +102,43 @@ class Interpreter(in0: Option[BufferedReader], out: JPrintWriter)
     initializeSpark()
     echo("Note that after :reset, state of SparkSession and SparkContext is unchanged.")
   }
+
+
+  /**
+   * IMain 에서 가져온 Codes.
+   *
+   * @param id
+   * @return
+   */
+  def valueFromVar(id: String): Option[Any] = this.intp.global.exitingTyper {
+    import scala.reflect.runtime.{universe => ru}
+    lazy val importToRuntime = ru.internal createImporter this.intp.global
+
+    def value() = {
+
+      println("variable: [" + id + "]")
+
+      val sym0    = this.intp.symbolOfTerm(id)
+      println("sym0: [" + sym0 + "]")
+
+      val sym     = (importToRuntime importSymbol sym0).asTerm
+      println("sym: [" + sym + "]")
+
+      val module  = this.intp.runtimeMirror.reflectModule(sym.owner.companionSymbol.asModule).instance
+      println("module: [" + module.getClass.toString + "]")
+
+      val module1 = this.intp.runtimeMirror.reflect(module)
+      println("module1: [" + module1.toString + "]")
+
+      val invoker = module1.reflectField(sym)
+      println("invoker: [" + invoker.toString + "]")
+
+      invoker.get
+    }
+
+    try Some(value()) catch { case _: Exception => None }
+  }
+
 
   override def replay(): Unit = {
     initializeSpark()
@@ -246,7 +280,7 @@ object Interpreter {
    * the given code to it as input.
    */
   def run(code: String, sets: Settings = new Settings): String = {
-    import java.io.{ BufferedReader, StringReader, OutputStreamWriter }
+    import java.io.{BufferedReader, OutputStreamWriter, StringReader}
 
     stringFromStream { ostream =>
       Console.withOut(ostream) {
