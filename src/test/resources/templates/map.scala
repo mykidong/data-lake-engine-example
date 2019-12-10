@@ -1,6 +1,6 @@
 import org.apache.spark.sql.{Dataset, Row, RowFactory, SaveMode, SparkSession}
 
-//val spark: SparkSession
+val spark: SparkSession
 
 val parquetDs = spark.read.format("parquet")
   .load("/test-event-parquet")
@@ -14,10 +14,10 @@ val newEventRdd = parquetDs.map(row => {
     val quantity = row.get(1)
     val price = row.get(2)
     val baseProperties = row.getStruct(3)
-    val uid = baseProperties.getString(0)
-    val eventType = baseProperties.getString(1)
-    val version = baseProperties.getString(2)
-    val ts = baseProperties.getLong(3)
+    val uid = baseProperties.get(0)
+    val eventType = baseProperties.get(1)
+    val version = baseProperties.get(2)
+    val ts = baseProperties.get(3)
 
     RowFactory.create(itemId, quantity, price, uid, eventType, version, ts)
 })(Encoders.kryo[Row])
