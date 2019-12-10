@@ -1,6 +1,6 @@
 import org.apache.spark.sql.{Dataset, Row, RowFactory, SaveMode, SparkSession}
 
-val spark: SparkSession
+//val spark: SparkSession
 
 val parquetDs = spark.read.format("parquet")
   .load("/test-event-parquet")
