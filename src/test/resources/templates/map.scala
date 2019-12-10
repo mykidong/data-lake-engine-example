@@ -13,7 +13,7 @@ val newEventRdd = parquetDs.map(row => {
     val itemId = row.getString(0)
     val quantity = row.getLong(1)
     val price = row.getLong(2)
-    val baseProperties = row.getStruct(4)
+    val baseProperties = row.getStruct(3)
     val uid = baseProperties.getString(0)
     val eventType = baseProperties.getString(1)
     val version = baseProperties.getString(2)
