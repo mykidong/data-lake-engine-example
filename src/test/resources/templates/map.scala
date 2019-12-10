@@ -27,8 +27,8 @@ val newEventDs = parquetDs.map((row: Row) => {
     val version = baseProperties.getString(2)
     val ts = baseProperties.getLong(3)
 
-    Row(itemId, quantity, price, uid, eventType, version, ts)
-}, Encoders.product[Event])
+    Event(itemId, quantity, price, uid, eventType, version, ts)
+})(Encoders.product[Event])
 
 newEventDs.printSchema()
 
