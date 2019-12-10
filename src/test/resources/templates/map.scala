@@ -19,7 +19,7 @@ val newEventRdd = parquetDs.map(row => {
     val version = baseProperties.get(2)
     val ts = baseProperties.get(3)
 
-    RowFactory.create(itemId, quantity, price, uid, eventType, version, ts)
+    Row(itemId, quantity, price, uid, eventType, version, ts)
 })(Encoders.kryo[Row])
 
 newEventRdd.printSchema()
