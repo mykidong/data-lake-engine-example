@@ -12,7 +12,7 @@ class ReplClassLoaderSpec extends FunSuite {
 
     val currentClassLoader: ClassLoader = Thread.currentThread.getContextClassLoader
 
-    val classLoader: ClassLoader = addReplClassLoaderIfNeeded(currentClassLoader)
+    val classLoader: ClassLoader = addReplClassLoaderIfNeeded(currentClassLoader.asInstanceOf[ClassLoader]).asInstanceOf[ClassLoader]
 
     def urlses(cl: ClassLoader): Array[java.net.URL] = cl match {
       case null => Array()
