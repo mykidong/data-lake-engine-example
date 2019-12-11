@@ -1,5 +1,6 @@
 package mykidong.utils
 
+import mykidong.util.ClassLoaderUtils
 import org.apache.spark.repl.ExecutorClassLoader
 import org.apache.spark.{SparkConf, SparkEnv}
 import org.scalatest.FunSuite
@@ -12,39 +13,9 @@ class ReplClassLoaderSpec extends FunSuite {
 
     val executorClassLoader: ExecutorClassLoader = addReplClassLoaderIfNeeded(currentClassLoader.asInstanceOf[ClassLoader]).asInstanceOf[ExecutorClassLoader]
 
-    var myCL: ClassLoader = executorClassLoader
-    while ( {
-      myCL != null
-    })
-    {
-      System.out.println("ClassLoader: " + myCL)
-      val vec = list(myCL)
-      for(cl <- vec){
-          println("\t" + cl.getClass.getName)
-      }
-
-      myCL = myCL.getParent
-    }
-
+    ClassLoaderUtils.printAllClasses(executorClassLoader)
   }
 
-  @throws[NoSuchFieldException]
-  @throws[SecurityException]
-  @throws[IllegalArgumentException]
-  @throws[IllegalAccessException]
-  private def list(CL: ClassLoader) = {
-    var CL_class: java.lang.Class[_] = CL.getClass
-    while ( {
-      CL_class ne classOf[java.lang.ClassLoader]
-    }) {
-      CL_class = CL_class.getSuperclass
-    }
-
-    val ClassLoader_classes_field: java.lang.reflect.Field = CL_class.getDeclaredField("classes")
-    ClassLoader_classes_field.setAccessible(true)
-
-    ClassLoader_classes_field.get(CL).asInstanceOf[Vector]
-  }
 
   private def addReplClassLoaderIfNeeded(parent: ClassLoader) = {
     val conf = new SparkConf()
@@ -54,7 +25,7 @@ class ReplClassLoaderSpec extends FunSuite {
     if (classUri != null) {
       println("Using REPL class URI: " + classUri)
       try {
-        val _userClassPathFirst = false
+        val _userClassPathFirst: java.lang.Boolean = false
         val klass = classForName("org.apache.spark.repl.ExecutorClassLoader")
           .asInstanceOf[Class[_ <: ClassLoader]]
         val constructor = klass.getConstructor(classOf[SparkConf],
