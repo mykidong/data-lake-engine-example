@@ -10,7 +10,7 @@ class ReplClassLoaderSpec extends FunSuite {
 
   test("load remote classes via repl classes uri") {
 
-    val currentClassLoader = Thread.currentThread.getContextClassLoader
+    val currentClassLoader: ClassLoader = Thread.currentThread.getContextClassLoader
 
     val classLoader: ClassLoader = addReplClassLoaderIfNeeded(currentClassLoader)
 
