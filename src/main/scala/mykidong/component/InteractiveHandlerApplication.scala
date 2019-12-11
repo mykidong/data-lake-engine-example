@@ -28,6 +28,9 @@ object InteractiveHandlerApplication {
     sparkConf.set("spark.scheduler.mode", "FAIR")
     sparkConf.set("spark.scheduler.allocation.file", "/usr/lib/mc/conf/fairscheduler.xml")
 
+    // set configuration logging to true.
+    sparkConf.set("spark.logConf", "true")
+
 
     // run embeded http server.
     val port = 8125
