@@ -37,13 +37,16 @@ class ReplClassLoaderSpec extends FunSuite {
         val _userClassPathFirst: Boolean = false
         val klass = classForName("org.apache.spark.repl.ExecutorClassLoader")
           .asInstanceOf[Class[_ <: ClassLoader]]
-        val constructor = klass.getConstructor(classOf[SparkConf], classOf[SparkEnv],
-          classOf[String], classOf[ClassLoader], classOf[Boolean])
+        val constructor = klass.getConstructor(classOf[SparkConf],
+                                                classOf[SparkEnv],
+                                                classOf[String],
+                                                classOf[ClassLoader],
+                                                classOf[Boolean])
         constructor.newInstance(conf,
                                 SparkEnv.get,
                                 classUri,
                                 parent,
-                                _userClassPathFirst).asInstanceOf[ExecutorClassLoader]
+                                _userClassPathFirst.asInstanceOf[Boolean])
       } catch {
         case _: ClassNotFoundException =>
           println("Could not find org.apache.spark.repl.ExecutorClassLoader on classpath!")
