@@ -33,7 +33,7 @@ class ReplClassLoaderSpec extends FunSuite {
     if (classUri != null) {
       println("Using REPL class URI: " + classUri)
       try {
-        val _userClassPathFirst = conf.get("spark.executor.userClassPathFirst")
+        val _userClassPathFirst = conf.getOption("spark.executor.userClassPathFirst")
         val klass = classForName("org.apache.spark.repl.ExecutorClassLoader")
           .asInstanceOf[Class[_ <: ClassLoader]]
         val constructor = klass.getConstructor(classOf[SparkConf], classOf[SparkEnv],
