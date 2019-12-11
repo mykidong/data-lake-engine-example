@@ -41,7 +41,7 @@ class ReplClassLoaderSpec extends FunSuite {
                                                 classOf[SparkEnv],
                                                 classOf[String],
                                                 classOf[ClassLoader],
-                                                classOf[java.lang.Boolean])
+                                                classOf[Boolean])
         constructor.newInstance(conf,
                                 SparkEnv.get,
                                 classUri,
