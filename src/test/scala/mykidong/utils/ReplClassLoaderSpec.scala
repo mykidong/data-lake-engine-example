@@ -10,24 +10,18 @@ class ReplClassLoaderSpec extends FunSuite {
 
   test("load remote classes via repl classes uri") {
 
-    val currentClassLoader = this.getClass.getClassLoader
+    val currentClassLoader = Thread.currentThread.getContextClassLoader
 
-    val classLoader = addReplClassLoaderIfNeeded(currentClassLoader)
+    val classLoader: ClassLoader = addReplClassLoaderIfNeeded(currentClassLoader)
 
-    var f: Field = _
-    try {
-      f = classOf[ClassLoader].getDeclaredField("classes")
-      f.setAccessible(true)
-      val classes: java.util.Vector[Class] = f.get(classLoader).asInstanceOf[Nothing]
-      import scala.collection.JavaConversions._
-      for (cls <- classes) {
-        val location = cls.getResource('/' + cls.getName.replace('.', '/') + ".class")
-        println(s"location: ${location}")
-      }
-    } catch {
-      case e: Exception =>
-        e.printStackTrace()
+    def urlses(cl: ClassLoader): Array[java.net.URL] = cl match {
+      case null => Array()
+      case u: java.net.URLClassLoader => u.getURLs() ++ urlses(cl.getParent)
+      case _ => urlses(cl.getParent)
     }
+
+    val  urls = urlses(classLoader)
+    println(s"classpath: ${urls.mkString("\n")}")
 
   }
 
