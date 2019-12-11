@@ -3,6 +3,7 @@ package mykidong.utils
 import java.lang.reflect.Field
 
 import org.apache.spark.internal.config._
+import org.apache.spark.repl.ExecutorClassLoader
 import org.apache.spark.{SparkConf, SparkEnv}
 import org.scalatest.FunSuite
 
@@ -42,7 +43,7 @@ class ReplClassLoaderSpec extends FunSuite {
                                 SparkEnv.get,
                                 classUri,
                                 parent,
-                                _userClassPathFirst)
+                                _userClassPathFirst).asInstanceOf[ExecutorClassLoader]
       } catch {
         case _: ClassNotFoundException =>
           println("Could not find org.apache.spark.repl.ExecutorClassLoader on classpath!")
