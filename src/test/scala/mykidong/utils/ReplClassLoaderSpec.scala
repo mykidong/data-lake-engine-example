@@ -42,10 +42,10 @@ class ReplClassLoaderSpec extends FunSuite {
                                                 classOf[String],
                                                 classOf[ClassLoader],
                                                 classOf[Boolean])
-        constructor.newInstance(conf,
-                                SparkEnv.get,
-                                classUri,
-                                parent,
+        constructor.newInstance(conf.asInstanceOf[SparkConf],
+                                SparkEnv.get.asInstanceOf[SparkEnv],
+                                classUri.asInstanceOf[String],
+                                parent.asInstanceOf[ClassLoader],
                                 _userClassPathFirst.asInstanceOf[Boolean])
       } catch {
         case _: ClassNotFoundException =>
