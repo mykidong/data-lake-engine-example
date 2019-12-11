@@ -13,6 +13,7 @@ class ReplClassLoaderSpec extends FunSuite {
 
     val executorClassLoader: ExecutorClassLoader = addReplClassLoaderIfNeeded(currentClassLoader.asInstanceOf[ClassLoader]).asInstanceOf[ExecutorClassLoader]
 
+    // TODO: 왜 아무것도 print 하지 않을까...
     ClassLoaderUtils.printAllClasses(executorClassLoader)
   }
 
@@ -25,7 +26,7 @@ class ReplClassLoaderSpec extends FunSuite {
     if (classUri != null) {
       println("Using REPL class URI: " + classUri)
       try {
-        val _userClassPathFirst: java.lang.Boolean = false
+        val _userClassPathFirst: java.lang.Boolean = true
         val klass = classForName("org.apache.spark.repl.ExecutorClassLoader")
           .asInstanceOf[Class[_ <: ClassLoader]]
         val constructor = klass.getConstructor(classOf[SparkConf],

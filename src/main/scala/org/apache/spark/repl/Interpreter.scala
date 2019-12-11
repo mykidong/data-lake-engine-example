@@ -23,7 +23,27 @@ import scala.util.Properties.{javaVersion, javaVmName, versionString}
 class Interpreter(in0: Option[BufferedReader], out: JPrintWriter)
   extends ILoop(in0, out) {
   def this(in0: BufferedReader, out: JPrintWriter) = this(Some(in0), out)
-  def this() = this(None, new JPrintWriter(Console.out, true))
+  def this() = {
+    this(None, new JPrintWriter(Console.out, true))
+
+    /* Required for scoped mode.
+     * In scoped mode multiple scala compiler (repl) generates class in the same directory.
+     * Class names is not randomly generated and look like '$line12.$read$$iw$$iw'
+     * Therefore it's possible to generated class conflict(overwrite) with other repl generated
+     * class.
+     *
+     * To prevent generated class name conflict,
+     * change prefix of generated class name from each scala compiler (repl) instance.
+     *
+     * In Spark 2.x, REPL generated wrapper class name should compatible with the pattern
+     * ^(\$line(?:\d+)\.\$read)(?:\$\$iw)+$
+     *
+     * As hashCode() can return a negative integer value and the minus character '-' is invalid
+     * in a package name we change it to a numeric value '0' which still conforms to the regexp.
+     *
+     */
+    System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
+  }
 
   val initializationCommands: Seq[String] = Seq(
     """

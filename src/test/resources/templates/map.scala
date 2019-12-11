@@ -2,6 +2,7 @@ import org.apache.spark.sql.{Dataset, Row, RowFactory, SaveMode, SparkSession}
 
 val spark: SparkSession
 
+// TODO: 사용자 Request 별 Session 을 생성해야 하나....
 // create new spark session.
 val newSpark = spark.newSession
 
