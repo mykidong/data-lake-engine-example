@@ -46,7 +46,7 @@ class ReplClassLoaderSpec extends FunSuite {
                                 SparkEnv.get,
                                 classUri,
                                 parent,
-                                _userClassPathFirst)
+                                _userClassPathFirst.asInstanceOf[Boolean])
       } catch {
         case _: ClassNotFoundException =>
           println("Could not find org.apache.spark.repl.ExecutorClassLoader on classpath!")
