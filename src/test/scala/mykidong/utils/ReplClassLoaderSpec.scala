@@ -30,7 +30,7 @@ class ReplClassLoaderSpec extends FunSuite {
     val conf = new SparkConf()
     conf.set("spark.repl.class.uri", "spark://mc-d02.opasnet.io:44571/classes")
 
-    val classUri = conf.get("spark.repl.class.uri", null)
+    val classUri: String = conf.get("spark.repl.class.uri", null)
     if (classUri != null) {
       println("Using REPL class URI: " + classUri)
       try {
@@ -46,7 +46,7 @@ class ReplClassLoaderSpec extends FunSuite {
                                 SparkEnv.get,
                                 classUri,
                                 parent,
-                                _userClassPathFirst.asInstanceOf[Boolean])
+                                _userClassPathFirst)
       } catch {
         case _: ClassNotFoundException =>
           println("Could not find org.apache.spark.repl.ExecutorClassLoader on classpath!")
