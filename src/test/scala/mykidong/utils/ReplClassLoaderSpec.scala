@@ -1,0 +1,82 @@
+package mykidong.utils
+
+import java.lang.reflect.Field
+
+import org.apache.spark.{SparkConf, SparkEnv}
+import org.scalatest.FunSuite
+
+class ReplClassLoaderSpec extends FunSuite {
+
+  test("load remote classes via repl classes uri") {
+
+    val currentClassLoader = this.getClass.getClassLoader
+
+    val classLoader = addReplClassLoaderIfNeeded(currentClassLoader)
+
+    var f: Field = _
+    try {
+      f = classOf[ClassLoader].getDeclaredField("classes")
+      f.setAccessible(true)
+      val classes: java.util.Vector[Class] = f.get(classLoader).asInstanceOf[Nothing]
+      import scala.collection.JavaConversions._
+      for (cls <- classes) {
+        val location = cls.getResource('/' + cls.getName.replace('.', '/') + ".class")
+        System.out.println("<p>" + location + "<p/>")
+      }
+    } catch {
+      case e: Exception =>
+        e.printStackTrace()
+    }
+
+  }
+
+  private def addReplClassLoaderIfNeeded(parent: ClassLoader) = {
+    val conf = new SparkConf()
+    conf.set("spark.repl.class.uri", "spark://mc-d02.opasnet.io:44571/classes")
+
+    val classUri = conf.get("spark.repl.class.uri", null)
+    if (classUri != null) {
+      println("Using REPL class URI: " + classUri)
+      try {
+        val _userClassPathFirst = true
+        val klass = classForName("org.apache.spark.repl.ExecutorClassLoader")
+          .asInstanceOf[Class[_ <: ClassLoader]]
+        val constructor = klass.getConstructor(classOf[SparkConf], classOf[SparkEnv],
+          classOf[String], classOf[ClassLoader], classOf[Boolean])
+        constructor.newInstance(conf, null, classUri, parent, _userClassPathFirst)
+      } catch {
+        case _: ClassNotFoundException =>
+          println("Could not find org.apache.spark.repl.ExecutorClassLoader on classpath!")
+          System.exit(1)
+          null
+      }
+    } else {
+      parent
+    }
+  }
+
+  def getSparkClassLoader: ClassLoader = getClass.getClassLoader
+
+  /**
+   * Get the Context ClassLoader on this thread or, if not present, the ClassLoader that
+   * loaded Spark.
+   *
+   * This should be used whenever passing a ClassLoader to Class.ForName or finding the currently
+   * active loader when setting up ClassLoader delegation chains.
+   */
+  def getContextOrSparkClassLoader: ClassLoader =
+    Option(Thread.currentThread().getContextClassLoader).getOrElse(getSparkClassLoader)
+
+  private def classForName[C](
+                       className: String,
+                       initialize: Boolean = true,
+                       noSparkClassLoader: Boolean = false): Class[C] = {
+    if (!noSparkClassLoader) {
+      Class.forName(className, initialize, getContextOrSparkClassLoader).asInstanceOf[Class[C]]
+    } else {
+      Class.forName(className, initialize, Thread.currentThread().getContextClassLoader).
+        asInstanceOf[Class[C]]
+    }
+    // scalastyle:on classforname
+  }
+}

@@ -263,6 +263,7 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+				<!--
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -272,6 +273,7 @@
 						<junitArtifactName>junit:junit</junitArtifactName>
 					</configuration>
 				</plugin>
+				-->
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -329,8 +331,16 @@
 				<version>1.0</version>
 				<configuration>
 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-					<suites>mykidong.component.InteractiveHandlerApplicationSpec</suites>
+					<suites>mykidong.component.ReplClassLoaderSpec</suites>
 				</configuration>
+				<executions>
+					<execution>
+						<id>test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

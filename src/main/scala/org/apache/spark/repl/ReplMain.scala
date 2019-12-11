@@ -44,7 +44,7 @@ object ReplMain extends Logging {
   def doRun(sparkConf: SparkConf): Unit = {
 
     this.conf = sparkConf
-    println("spark configuration: " + this.conf.getAll.toList.toString())
+    println(s"spark configuration: ${this.conf.getAll.toList.toString()}")
 
     rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
     outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
@@ -62,7 +62,7 @@ object ReplMain extends Logging {
       "-classpath", jars
     )
 
-    println("interpArguments: " + interpArguments.toString())
+    println(s"interpArguments: ${interpArguments.toString()}")
 
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.processArguments(interpArguments, true)
