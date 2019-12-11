@@ -13,16 +13,10 @@ class ReplClassLoaderSpec extends FunSuite {
 
     val currentClassLoader: ClassLoader = Thread.currentThread.getContextClassLoader
 
-    val classLoader: ClassLoader = addReplClassLoaderIfNeeded(currentClassLoader.asInstanceOf[ClassLoader]).asInstanceOf[ClassLoader]
+    val executorClassLoader: ExecutorClassLoader = addReplClassLoaderIfNeeded(currentClassLoader.asInstanceOf[ClassLoader]).asInstanceOf[ExecutorClassLoader]
 
-    def urlses(cl: ClassLoader): Array[java.net.URL] = cl match {
-      case null => Array()
-      case u: java.net.URLClassLoader => u.getURLs() ++ urlses(cl.getParent)
-      case _ => urlses(cl.getParent)
-    }
+    println(s"${executorClassLoader.findClass("DynamicScalaSparkJobRunner").getName}")
 
-    val  urls = urlses(classLoader)
-    println(s"classpath: ${urls.mkString("\n")}")
 
   }
 
