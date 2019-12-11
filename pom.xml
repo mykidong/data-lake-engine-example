@@ -331,7 +331,7 @@
 				<version>1.0</version>
 				<configuration>
 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-					<suites>mykidong.component.ReplClassLoaderSpec</suites>
+					<suites>mykidong.utils.ReplClassLoaderSpec</suites>
 				</configuration>
 				<executions>
 					<execution>
