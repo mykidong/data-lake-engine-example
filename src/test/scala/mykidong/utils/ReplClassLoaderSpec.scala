@@ -28,7 +28,7 @@ class ReplClassLoaderSpec extends FunSuite {
 
   private def addReplClassLoaderIfNeeded(parent: ClassLoader) = {
     val conf = new SparkConf()
-    conf.set("spark.repl.class.uri", "spark://mc-d02.opasnet.io:44571/classes")
+    conf.set("spark.repl.class.uri", "spark://mc-d02.opasnet.io:45818/classes")
 
     val classUri: String = conf.get("spark.repl.class.uri", null)
     if (classUri != null) {
