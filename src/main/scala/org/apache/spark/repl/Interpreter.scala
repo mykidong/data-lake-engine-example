@@ -26,6 +26,8 @@ class Interpreter(in0: Option[BufferedReader], out: JPrintWriter)
   def this() = {
     this(None, new JPrintWriter(Console.out, true))
 
+    // ================ Zeppelin 에서 가져온 Codes.
+
     /* Required for scoped mode.
      * In scoped mode multiple scala compiler (repl) generates class in the same directory.
      * Class names is not randomly generated and look like '$line12.$read$$iw$$iw'
