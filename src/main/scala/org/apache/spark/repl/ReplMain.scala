@@ -62,6 +62,8 @@ object ReplMain extends Logging {
       "-classpath", jars
     )
 
+    println("interpArguments: " + interpArguments.toString())
+
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.processArguments(interpArguments, true)
 
