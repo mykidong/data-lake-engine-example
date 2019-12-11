@@ -2,6 +2,7 @@ package mykidong.utils
 
 import java.lang.reflect.Field
 
+import org.apache.spark.internal.config._
 import org.apache.spark.{SparkConf, SparkEnv}
 import org.scalatest.FunSuite
 
@@ -21,7 +22,7 @@ class ReplClassLoaderSpec extends FunSuite {
       import scala.collection.JavaConversions._
       for (cls <- classes) {
         val location = cls.getResource('/' + cls.getName.replace('.', '/') + ".class")
-        System.out.println("<p>" + location + "<p/>")
+        println(s"location: ${location}")
       }
     } catch {
       case e: Exception =>
@@ -38,7 +39,7 @@ class ReplClassLoaderSpec extends FunSuite {
     if (classUri != null) {
       println("Using REPL class URI: " + classUri)
       try {
-        val _userClassPathFirst = true
+        val _userClassPathFirst = conf.get("spark.executor.userClassPathFirst")
         val klass = classForName("org.apache.spark.repl.ExecutorClassLoader")
           .asInstanceOf[Class[_ <: ClassLoader]]
         val constructor = klass.getConstructor(classOf[SparkConf], classOf[SparkEnv],
