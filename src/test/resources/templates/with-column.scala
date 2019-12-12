@@ -19,7 +19,7 @@ println(s"parquetDf partition count: ${parquetDf.rdd.partitions.length}")
 
 import org.apache.spark.sql.functions.{concat, lit}
 
-val newDf = parquetDf
+var newDf = parquetDf
   .withColumn("id", concat(parquetDf.col("itemId"), lit("-"), parquetDf.col("baseProperties.uid")))
   .withColumnRenamed("itemId", "itemIdRenamed")
   .withColumn("uid", parquetDf.col("baseProperties.uid"))
@@ -30,8 +30,11 @@ val newDf = parquetDf
 
 newDf.printSchema()
 
+// reparition dataframe.
+newDf = newDf.repartition(4)
+
 // print partition count for the dataframe.
-println(s"newDf partition count: ${newDf.rdd.partitions.length}")
+println(s"after repartitioning, newDf partition count: ${newDf.rdd.partitions.length}")
 
 newDf.show(5)
 
