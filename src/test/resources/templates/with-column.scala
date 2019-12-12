@@ -28,7 +28,8 @@ var newDf = parquetDf
   .withColumn("ts", parquetDf.col("baseProperties.ts"))
   .drop("baseProperties")
 
-newDf.printSchema()
+// print schema as pretty json.
+println(s"schema as pretty json: ${newDf.schema.prettyJson}")
 
 // reparition dataframe.
 newDf = newDf.repartition(4)
