@@ -25,14 +25,14 @@ case class Event(itemId: String,
                  ts:Long)
 
 val newEventDs = parquetDs.map((row: Row) => {
-    val itemId = row.getString(0)
-    val quantity = row.getLong(1)
-    val price = row.getLong(2)
-    val baseProperties = row.getStruct(3)
-    val uid = baseProperties.getString(0)
-    val eventType = baseProperties.getString(1)
-    val version = baseProperties.getString(2)
-    val ts = baseProperties.getLong(3)
+    val itemId = row.getAs("itemId")
+    val quantity = row.getAs("quantity")
+    val price = row.getAs("price")
+    val baseProperties: Row = row.getAs("baseProperties").asInstanceOf[Row]
+    val uid = baseProperties.getAs("uid")
+    val eventType = baseProperties.getAs("eventType")
+    val version = baseProperties.getAs("version")
+    val ts = baseProperties.getAs("ts")
 
     Event(itemId, quantity, price, uid, eventType, version, ts)
 })(Encoders.product[Event])
