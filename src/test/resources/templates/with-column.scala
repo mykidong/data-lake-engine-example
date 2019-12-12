@@ -22,6 +22,7 @@ val newDf = parquetDf
   .withColumn("eventType", parquetDf.col("baseProperties.eventType"))
   .withColumn("version", parquetDf.col("baseProperties.version"))
   .withColumn("ts", parquetDf.col("baseProperties.ts"))
+  .drop("baseProperties")
 
 newDf.printSchema()
 
