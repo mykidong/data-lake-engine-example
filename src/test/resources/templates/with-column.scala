@@ -38,7 +38,7 @@ newDf = newDf.repartition(4)
 println(s"after repartitioning, newDf partition count: ${newDf.rdd.partitions.length}")
 
 // show catalyst optimization.
-newDf.explain()
+newDf.explain(true)
 
 newDf.show(5)
 
