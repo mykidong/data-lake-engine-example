@@ -9,16 +9,14 @@ import org.apache.spark.sql.SparkSession
 // create new spark session.
 val newSpark = spark.newSession
 
-val slices = 10
+val slices = 1
 val numberOfThrows = 100000 * slices
 System.out.println("About to throw " + numberOfThrows + " darts, ready? Stay away from the target!")
 
-val t0 = System.currentTimeMillis
 
 import org.apache.spark.sql.Encoders
 
 val t1 = System.currentTimeMillis
-System.out.println("Session initialized in " + (t1 - t0) + " ms")
 
 var l: List[Integer] = List()
 
