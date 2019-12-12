@@ -1,12 +1,12 @@
 import org.apache.spark.sql.{Dataset, Row, RowFactory, SaveMode, SparkSession}
 
-val spark: SparkSession
+//val spark: SparkSession
 
 // TODO: 사용자 Request 별 Session 을 생성해야 하나....
 // create new spark session.
 val newSpark = spark.newSession
 
-val parquetDs = spark.read.format("parquet")
+val parquetDs = newSpark.read.format("parquet")
   .load("/test-event-parquet")
 
 parquetDs.show(5)
