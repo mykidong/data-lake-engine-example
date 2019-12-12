@@ -1,5 +1,5 @@
-import org.apache.spark.sql.{Dataset, Row, RowFactory, SaveMode, SparkSession}
-import org.apache.spark.storage.StorageLevel
+import org.apache.spark.sql.SparkSession
+
 
 // NOTE: variable 'spark' 가 이미 REPL 에 SparkSession instance 로 생성되었기 때문에
 //       개발할때만 uncomment 하고 commit 할 경우는 comment 시킴.
@@ -14,7 +14,10 @@ val parquetDf = newSpark.read.format("parquet")
 
 parquetDf.show(5)
 
+import org.apache.spark.sql.functions.{concat, lit}
+
 val newDf = parquetDf
+  .withColumn("id", concat(parquetDf.col("itemId"), lit("-"), parquetDf.col("baseProperties.uid")))
   .withColumnRenamed("itemId", "itemIdRenamed")
   .withColumn("uid", parquetDf.col("baseProperties.uid"))
   .withColumn("eventType", parquetDf.col("baseProperties.eventType"))
