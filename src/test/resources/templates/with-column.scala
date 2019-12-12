@@ -15,7 +15,7 @@ val parquetDf = newSpark.read.format("parquet")
 parquetDf.show(5)
 
 val newDf = parquetDf
-  .withColumnRenamed("itemIdRenamed", "itemId")
+  .withColumnRenamed("itemId", "itemIdRenamed")
   .withColumn("uid", parquetDf.col("baseProperties.uid"))
   .withColumn("eventType", parquetDf.col("baseProperties.eventType"))
   .withColumn("version", parquetDf.col("baseProperties.version"))
