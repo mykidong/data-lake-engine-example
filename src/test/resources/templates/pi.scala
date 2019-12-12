@@ -38,7 +38,8 @@ val dotsDs = incrementalDf.map(i => {
   val x = Math.random * 2 - 1
   val y = Math.random * 2 - 1
   counter += 1
-  if (counter % 100000 eq 0) System.out.println("" + counter + " darts thrown so far")
+  if (counter % 100000 == 0)
+    System.out.println("" + counter + " darts thrown so far")
   if (x * x + y * y <= 1)
     1.asInstanceOf[Integer]
   else
