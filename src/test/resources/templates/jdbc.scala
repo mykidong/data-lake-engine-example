@@ -18,6 +18,7 @@ val jdbcDs = newSpark.read.format("jdbc")
   .option("lowerBound", "1")
   .option("upperBound", "100")
   .option("numPartitions", "10")
+  .option("fetchsize", "100")
   .load
 
 jdbcDs.show(100)
