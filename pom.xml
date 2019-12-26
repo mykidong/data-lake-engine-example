@@ -78,6 +78,9 @@
 
 		<!-- spark sftp -->
 		<spark-sftp.version>1.1.3</spark-sftp.version>
+
+        <!-- delta lake -->
+        <delta-lake.version>0.5.0</delta-lake.version>
 	</properties>
 
 	<dependencies>
@@ -267,6 +270,11 @@
 			<artifactId>spark-sftp_${scala.binary.version}</artifactId>
 			<version>${spark-sftp.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>io.delta</groupId>
+            <artifactId>delta-core_${scala.binary.version}</artifactId>
+            <version>${delta-lake.version}</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
