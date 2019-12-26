@@ -79,9 +79,6 @@
 		<!-- spark sftp -->
 		<spark-sftp.version>1.1.3</spark-sftp.version>
 
-        <!-- delta lake -->
-        <delta-lake.version>0.5.0</delta-lake.version>
-
 		<!-- guava -->
 		<guava.version>14.0.1</guava.version>
 	</properties>
@@ -272,16 +269,6 @@
 			<groupId>com.springml</groupId>
 			<artifactId>spark-sftp_${scala.binary.version}</artifactId>
 			<version>${spark-sftp.version}</version>
-		</dependency>
-        <dependency>
-            <groupId>io.delta</groupId>
-            <artifactId>delta-core_${scala.binary.version}</artifactId>
-            <version>${delta-lake.version}</version>
-        </dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

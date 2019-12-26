@@ -5,6 +5,9 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 //       개발할때만 uncomment 하고 commit 할 경우는 comment 시킴.
 //val spark: SparkSession
 
+
+// TODO: 개발 현재 delta laks 는 Spark 2.4.2 가 필요함으로 지금의 Spark Cluster(2.3.2) 에는 적용을 할수 없음.
+
 // TODO: 사용자 Request 별 Session 을 생성해야 하나....
 // create new spark session.
 val newSpark = spark.newSession
