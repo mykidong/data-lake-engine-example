@@ -1,9 +1,10 @@
-package mykidong.component
+package org.apache.spark.specs
 
 import mykidong.http.SimpleHTTPServer
 import mykidong.util.Log4jConfigurer
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.util.Utils
 import org.scalatest.FunSuite
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
@@ -16,12 +17,14 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
   test("runSparkOnLocal") {
 
     // init. log4j.
-    Log4jConfigurer.loadLog4j(null)
+    Log4jConfigurer.loadLog4j(null)/
 
     // spark configuration for local mode.
+    val tempDir = Utils.createTempDir()
+
     val sparkConf = new SparkConf().setAppName(getClass.getName)
     sparkConf.setMaster("local[2]")
-    sparkConf.set("spark.driver.host","localhost")
+    sparkConf.set("spark.repl.class.outputDir", tempDir.getAbsolutePath)
     sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse")
     sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar")
     sparkConf.set("spark.dynamicAllocation.enabled", "true")
@@ -57,13 +60,6 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
       val value = hiveProps.getProperty(key)
       hadoopConfiguration.set(key, value)
     }
-
-    // =============== make spark configuration json pretty ===========================
-    import net.liftweb.json.JObject
-    import net.liftweb.json.JsonAST._
-    import net.liftweb.json.JsonDSL._
-    val json: JObject = "spark confs" -> spark.sparkContext.getConf.getAll.toList
-    println("spark configuration: " + prettyRender(json))
 
 
     // run embeded http server.
