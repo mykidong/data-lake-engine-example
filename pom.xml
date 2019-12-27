@@ -340,7 +340,7 @@
 				<version>1.0</version>
 				<configuration>
 					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-					<suites>mykidong.utils.InteractiveHandlerApplicationSpec</suites>
+					<suites>mykidong.component.InteractiveHandlerApplicationSpec</suites>
 				</configuration>
 				<executions>
 					<execution>
