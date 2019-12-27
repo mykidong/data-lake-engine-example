@@ -81,6 +81,9 @@
 
 		<!-- guava -->
 		<guava.version>14.0.1</guava.version>
+
+		<!-- jline -->
+		<jline.version>2.14.3</jline.version>
 	</properties>
 
 	<dependencies>
@@ -269,6 +272,11 @@
 			<groupId>com.springml</groupId>
 			<artifactId>spark-sftp_${scala.binary.version}</artifactId>
 			<version>${spark-sftp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jline</groupId>
+			<artifactId>jline</artifactId>
+			<version>${jline.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
