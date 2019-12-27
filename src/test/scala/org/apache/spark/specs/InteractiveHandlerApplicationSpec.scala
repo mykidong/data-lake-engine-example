@@ -1,5 +1,7 @@
 package org.apache.spark.specs
 
+import java.util.UUID
+
 import mykidong.http.SimpleHTTPServer
 import mykidong.util.Log4jConfigurer
 import org.apache.spark.SparkConf
@@ -20,11 +22,19 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
     Log4jConfigurer.loadLog4j(null)
 
     // spark configuration for local mode.
-    val tempDir = Utils.createTempDir()
+    /**
+     * ReplMain 과 똑같이 마춤.
+     *
+     * rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
+     * outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+     */
+    val rootDir = "/tmp/spark-" + UUID.randomUUID().toString
+    val outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
 
     val sparkConf = new SparkConf().setAppName(getClass.getName)
     sparkConf.setMaster("local[2]")
-    sparkConf.set("spark.repl.classdir", tempDir.getAbsolutePath)
+    sparkConf.set("spark.repl.classdir", rootDir)
+    sparkConf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
     sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse")
     sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar")
     sparkConf.set("spark.dynamicAllocation.enabled", "true")
