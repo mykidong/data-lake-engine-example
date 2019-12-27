@@ -342,24 +342,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- TODO: scalatest 를 maven 에서 run 하려는데 아직 문제가 있음!!!! -->
-			<plugin>
-				<groupId>org.scalatest</groupId>
-				<artifactId>scalatest-maven-plugin</artifactId>
-				<version>1.0</version>
-				<configuration>
-					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-					<suites>mykidong.component.InteractiveHandlerApplicationSpec</suites>
-				</configuration>
-				<executions>
-					<execution>
-						<id>test</id>
-						<goals>
-							<goal>test</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -470,6 +452,36 @@
 			</resource>
 		</resources>
 	</build>
+	<profiles>
+		<profile>
+			<id>run-interactive-handler-local</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<!-- TODO: scalatest 를 maven 에서 run 하려는데 아직 문제가 있음!!!! -->
+					<plugin>
+						<groupId>org.scalatest</groupId>
+						<artifactId>scalatest-maven-plugin</artifactId>
+						<version>1.0</version>
+						<configuration>
+							<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+							<suites>mykidong.component.InteractiveHandlerApplicationSpec</suites>
+						</configuration>
+						<executions>
+							<execution>
+								<id>test</id>
+								<goals>
+									<goal>test</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<repositories>
 		<repository>
 			<id>confluent</id>
