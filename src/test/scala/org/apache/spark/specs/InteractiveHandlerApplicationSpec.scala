@@ -25,7 +25,7 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
     val sparkConf = new SparkConf().setAppName(getClass.getName)
     sparkConf.setMaster("local[2]")
     sparkConf.set("spark.repl.class.outputDir", tempDir.getAbsolutePath)
-    sparkConf.set("spark.driver.userClassPathFirst", "true")
+    sparkConf.set("spark.executor.userClassPathFirst", "true")
     sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse")
     sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar")
     sparkConf.set("spark.dynamicAllocation.enabled", "true")
