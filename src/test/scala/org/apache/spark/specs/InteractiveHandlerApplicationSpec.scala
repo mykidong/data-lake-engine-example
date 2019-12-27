@@ -17,7 +17,7 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
   test("runSparkOnLocal") {
 
     // init. log4j.
-    Log4jConfigurer.loadLog4j(null)/
+    Log4jConfigurer.loadLog4j(null)
 
     // spark configuration for local mode.
     val tempDir = Utils.createTempDir()
