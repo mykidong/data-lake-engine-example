@@ -99,7 +99,7 @@ class ExecutorClassLoader(
 
   override def findClass(name: String): Class[_] = {
 
-    println(s"class name: $name")
+    println(s"class name: $name, userClassPathFirst: $userClassPathFirst")
 
     if (userClassPathFirst) {
       findClassLocally(name).getOrElse(parentLoader.loadClass(name))
