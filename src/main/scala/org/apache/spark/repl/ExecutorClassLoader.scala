@@ -118,6 +118,8 @@ class ExecutorClassLoader(
   }
 
   private def getClassFileInputStreamFromSparkRPC(path: String): InputStream = {
+    println(s"getClassFileInputStreamFromSparkRPC - url: $classUri/$path")
+
     val channel = env.rpcEnv.openChannel(s"$classUri/$path")
     new FilterInputStream(Channels.newInputStream(channel)) {
 
