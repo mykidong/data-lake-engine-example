@@ -49,6 +49,12 @@ object ReplMain extends Logging {
     rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
     outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
 
+    // local 에서 repl 이 구동될때 필요.
+    if(conf.getOption("spark.repl.class.outputDir").isEmpty)
+    {
+        conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+    }
+
     isShellSession = true
 
     interp = new Interpreter()
