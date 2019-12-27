@@ -47,7 +47,14 @@ object ReplMain extends Logging {
     println(s"spark configuration: ${this.conf.getAll.toList.toString()}")
 
     rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
-    outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+
+    if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
+      outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+    }
+    // repl 이 local 에서 실행될경우.
+    else {
+      outputDir = new File(conf.get("spark.repl.class.outputDir"))
+    }
 
     // local 에서 repl 이 구동될때 필요.
     if(conf.getOption("spark.repl.class.outputDir").isEmpty)

@@ -22,8 +22,22 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
     Log4jConfigurer.loadLog4j(null)
 
     // spark configuration for local mode.
+    /**
+     * ReplMain 과 똑같이 마춤.
+     *
+     * rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
+     * outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+     */
+    val rootDir = "/tmp/spark-" + UUID.randomUUID().toString
+    val outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+
     val sparkConf = new SparkConf().setAppName(getClass.getName)
     sparkConf.setMaster("local[2]")
+
+    // spark repl class uri 을 생성하기 위함.
+    sparkConf.set("spark.repl.classdir", rootDir)
+    sparkConf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+
     sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse")
     sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar")
     sparkConf.set("spark.dynamicAllocation.enabled", "true")
