@@ -277,6 +277,7 @@
 			<groupId>jline</groupId>
 			<artifactId>jline</artifactId>
 			<version>${jline.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>

@@ -69,6 +69,8 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
     val port = 8125
     SimpleHTTPServer.run(sparkConf, port)
     log.info("embedded http server is running now ...")
+
+    Thread.sleep(Long.MaxValue)
   }
 
 }
