@@ -84,6 +84,9 @@
 
 		<!-- jline -->
 		<jline.version>2.14.3</jline.version>
+
+        <!-- delta lake -->
+        <delta-lake.version>0.5.0</delta-lake.version>
 	</properties>
 
 	<dependencies>
@@ -279,6 +282,11 @@
 			<version>${jline.version}</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>io.delta</groupId>
+            <artifactId>delta-core_${scala.binary.version}</artifactId>
+            <version>${delta-lake.version}</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
