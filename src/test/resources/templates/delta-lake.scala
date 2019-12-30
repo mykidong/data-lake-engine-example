@@ -21,7 +21,7 @@ parquetDf.write
   .format("delta")
   .option("path", "hdfs://mc/test-delta-table")
   .mode(SaveMode.Overwrite)
-  .saveAsTable("parquet_as_delta")
+  .saveAsTable("test.parquet_as_delta")
 
 
 val deltaDf = spark.read
@@ -31,7 +31,7 @@ val deltaDf = spark.read
 deltaDf.show(4);
 
 
-val deltaSqlDf = spark.sql("select * from parquet_as_delta");
+val deltaSqlDf = spark.sql("select * from test.parquet_as_delta");
 deltaSqlDf.show(5);
 
 
