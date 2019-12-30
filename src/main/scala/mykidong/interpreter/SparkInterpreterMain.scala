@@ -50,6 +50,8 @@ object SparkInterpreterMain extends Logging {
     } else {
       new File(conf.get("spark.repl.class.outputDir"))
     }
+    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+
     outputDir.deleteOnExit()
 
     val settings = new Settings()
