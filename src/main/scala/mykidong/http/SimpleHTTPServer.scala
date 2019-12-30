@@ -7,8 +7,8 @@ import io.shaka.http.HttpServer
 import io.shaka.http.Request.POST
 import io.shaka.http.Response.respond
 import io.shaka.http.Status.NOT_FOUND
+import mykidong.interpreter.SparkInterpreterMain
 import org.apache.spark.SparkConf
-import org.apache.spark.repl.ReplMain
 import org.slf4j.LoggerFactory
 
 object SimpleHTTPServer {
@@ -24,8 +24,8 @@ object SimpleHTTPServer {
     val httpServer = HttpServer(port).start()
 
     // run interpreter main with spark conf.
-    ReplMain.doRun(conf)
-    val interpreter = ReplMain.interp
+    SparkInterpreterMain.doRun(conf)
+    val interpreter = SparkInterpreterMain.interp
 
     httpServer.handler{
       case request@POST("/run-codes") => {
@@ -60,8 +60,8 @@ object SimpleHTTPServer {
         val startTime = System.currentTimeMillis
 
         // set scheduler pool for the current thread.
-        ReplMain.sparkContext.setLocalProperty("spark.scheduler.pool", "production")
-        println("before running spark codes, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
+        SparkInterpreterMain.sparkContext.setLocalProperty("spark.scheduler.pool", "production")
+        println("before running spark codes, scheduler pool set to [" + SparkInterpreterMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
 
         try {
           // print current scheduler pool in repl.
@@ -86,8 +86,8 @@ object SimpleHTTPServer {
         }
 
         // unset scheduler pool for the current thread.
-        ReplMain.sparkContext.setLocalProperty("spark.scheduler.pool", null)
-        println("after spark codes run, scheduler pool set to [" + ReplMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
+        SparkInterpreterMain.sparkContext.setLocalProperty("spark.scheduler.pool", null)
+        println("after spark codes run, scheduler pool set to [" + SparkInterpreterMain.sparkContext.getLocalProperty("spark.scheduler.pool") + "] for the current thread [" + Thread.currentThread().getId + "]");
 
         // print current scheduler pool in repl.
         interpreter.command("println(\"REPL: after spark codes run, scheduler pool set to [\" + sc.getLocalProperty(\"spark.scheduler.pool\") + \"] for the current thread [\" + Thread.currentThread().getId + \"]\")")

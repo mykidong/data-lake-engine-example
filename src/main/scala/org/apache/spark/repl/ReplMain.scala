@@ -56,11 +56,6 @@ object ReplMain extends Logging {
       outputDir = new File(conf.get("spark.repl.class.outputDir"))
     }
 
-    // local 에서 repl 이 구동될때 필요.
-    if(conf.getOption("spark.repl.class.outputDir").isEmpty)
-    {
-        conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
-    }
 
     isShellSession = true
 
@@ -85,6 +80,8 @@ object ReplMain extends Logging {
     interp.settings = settings
     interp.createInterpreter()
     interp.initializeSpark()
+
+
 
     val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
     val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
