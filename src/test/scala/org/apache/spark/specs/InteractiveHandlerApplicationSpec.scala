@@ -50,29 +50,29 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
     sparkConf.set("spark.scheduler.mode", "FAIR")
     sparkConf.set("spark.scheduler.allocation.file", "/usr/lib/mc/conf/fairscheduler.xml")
 
-    val spark = SparkSession.builder.config(sparkConf).enableHiveSupport.getOrCreate
-
-    val hadoopConfiguration = spark.sparkContext.hadoopConfiguration
-
-    // set hadoop configuration.
-
-    // hadoop configuration.
-    val resource = new ClassPathResource("hadoop-conf.properties")
-    val hadoopProps = PropertiesLoaderUtils.loadProperties(resource)
-
-    import scala.collection.JavaConversions._
-    for (key <- hadoopProps.stringPropertyNames) {
-      val value = hadoopProps.getProperty(key)
-      hadoopConfiguration.set(key, value)
-    }
-
-    // hive configuration.
-    val hiveProps = PropertiesLoaderUtils.loadProperties(new ClassPathResource("hive-conf.properties"))
-    import scala.collection.JavaConversions._
-    for (key <- hiveProps.stringPropertyNames) {
-      val value = hiveProps.getProperty(key)
-      hadoopConfiguration.set(key, value)
-    }
+//    val spark = SparkSession.builder.config(sparkConf).enableHiveSupport.getOrCreate
+//
+//    val hadoopConfiguration = spark.sparkContext.hadoopConfiguration
+//
+//    // set hadoop configuration.
+//
+//    // hadoop configuration.
+//    val resource = new ClassPathResource("hadoop-conf.properties")
+//    val hadoopProps = PropertiesLoaderUtils.loadProperties(resource)
+//
+//    import scala.collection.JavaConversions._
+//    for (key <- hadoopProps.stringPropertyNames) {
+//      val value = hadoopProps.getProperty(key)
+//      hadoopConfiguration.set(key, value)
+//    }
+//
+//    // hive configuration.
+//    val hiveProps = PropertiesLoaderUtils.loadProperties(new ClassPathResource("hive-conf.properties"))
+//    import scala.collection.JavaConversions._
+//    for (key <- hiveProps.stringPropertyNames) {
+//      val value = hiveProps.getProperty(key)
+//      hadoopConfiguration.set(key, value)
+//    }
 
 
     // run embeded http server.

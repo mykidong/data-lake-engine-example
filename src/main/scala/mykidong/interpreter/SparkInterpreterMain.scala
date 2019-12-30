@@ -39,6 +39,11 @@ object SparkInterpreterMain extends Logging {
 
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
 
+    /**
+     * val rootDir = "/tmp/spark-" + UUID.randomUUID().toString
+     * val outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+     */
+
     val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir"))
     val outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
       Files.createTempDirectory(Paths.get(rootDir), "spark-" + UUID.randomUUID().toString).toFile
@@ -58,7 +63,7 @@ object SparkInterpreterMain extends Logging {
     spark2CreateContext()
 
     // print pretty spark configurations.
-    val json: JObject = "spark confs" -> conf.getAll.toList
+    val json: JObject = "spark confs" -> sparkSession.sparkContext.getConf.getAll.toList
     println("spark configuration: " + prettyRender(json))
 
     val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
