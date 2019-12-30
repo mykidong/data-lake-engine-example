@@ -2,6 +2,7 @@ package mykidong.http
 
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.util.Properties
 
 import io.shaka.http.HttpServer
 import io.shaka.http.Request.POST
@@ -18,13 +19,17 @@ object SimpleHTTPServer {
   private var conf: SparkConf = _
 
   def run(conf: SparkConf, port: Int): Unit = {
+      run(conf, null, port)
+  }
+
+  def run(conf: SparkConf, propsArray: Array[Properties], port: Int): Unit = {
     this.conf = conf
 
     // start http server.
     val httpServer = HttpServer(port).start()
 
     // run interpreter main with spark conf.
-    SparkInterpreterMain.doRun(conf)
+    SparkInterpreterMain.doRun(conf, propsArray)
     val interpreter = SparkInterpreterMain.interp
 
     httpServer.handler{

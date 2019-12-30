@@ -2,11 +2,12 @@ package mykidong.interpreter
 
 import java.io.{BufferedReader, File}
 import java.nio.file.{Files, Paths}
-import java.util.UUID
+import java.util.{Properties, UUID}
 
 import net.liftweb.json.JObject
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
+import org.apache.hadoop.conf.Configuration
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.repl.ReplMain.{conf, outputDir, rootDir}
@@ -30,8 +31,12 @@ object SparkInterpreterMain extends Logging {
 
   var sparkHttpServer: Object = _
 
-
   def doRun(sparkConf: SparkConf): Unit = {
+      doRun(sparkConf, null)
+  }
+
+
+  def doRun(sparkConf: SparkConf, propsArray: Array[Properties]): Unit = {
 
     this.conf = sparkConf
 
@@ -50,6 +55,8 @@ object SparkInterpreterMain extends Logging {
     } else {
       new File(conf.get("spark.repl.class.outputDir"))
     }
+    //  "spark.repl.class.uri":"spark://<repl-driver-host>:<repl-driver-port>/classes" 와 같은 설정을 가진
+    //  repl class fetch server 가 실행되기 위해 반드시 설정해야 함.
     conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
 
     outputDir.deleteOnExit()
@@ -63,6 +70,19 @@ object SparkInterpreterMain extends Logging {
     interp.settings = settings
     interp.createInterpreter()
     spark2CreateContext()
+
+    // local 실행시 hadoop configuratoin 을 설정할때.
+    if(propsArray != null) {
+      val hadoopConfiguration = sparkSession.sparkContext.hadoopConfiguration
+
+      import scala.collection.JavaConversions._
+      for(props <- propsArray) {
+        for (key <- props.stringPropertyNames) {
+          val value = props.getProperty(key)
+          hadoopConfiguration.set(key, value)
+        }
+      }
+    }
 
     // print pretty spark configurations.
     val json: JObject = "spark confs" -> sparkSession.sparkContext.getConf.getAll.toList
