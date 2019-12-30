@@ -102,9 +102,8 @@ object SparkInterpreterMain extends Logging {
     val builder = builderMethod.invoke(sparkObj)
     builder.getClass.getMethod("config", classOf[SparkConf]).invoke(builder, conf)
 
-    if (conf.get("spark.sql.catalogImplementation", "in-memory").toLowerCase == "hive"
-      || conf.get("spark.useHiveContext", "false").toLowerCase == "true") {
-      
+//    if (conf.get("spark.sql.catalogImplementation", "in-memory").toLowerCase == "hive"
+//      || conf.get("spark.useHiveContext", "false").toLowerCase == "true") {
 //      val hiveSiteExisted: Boolean =
 //        Thread.currentThread().getContextClassLoader.getResource("hive-site.xml") != null
 //      val hiveClassesPresent =
@@ -115,12 +114,13 @@ object SparkInterpreterMain extends Logging {
 //      } else {
 //        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
 //      }
+//    } else {
+//      sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
+//    }
 
-      builder.getClass.getMethod("enableHiveSupport").invoke(builder)
-      sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
-    } else {
-      sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
-    }
+    // 무조건 Hive Support!!!
+    builder.getClass.getMethod("enableHiveSupport").invoke(builder)
+    sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
 
     sparkContext = sparkSession.getClass.getMethod("sparkContext").invoke(sparkSession)
       .asInstanceOf[SparkContext]
