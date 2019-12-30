@@ -8,12 +8,24 @@ import scala.tools.nsc.interpreter.{IMain, NamedParam, Results, StdReplTags, isR
 object InterpreterUtils {
 
 
+  /**
+   * zeppeline 에서 copy 함.
+   *
+   * @param obj
+   * @param name
+   * @return
+   */
   def getField(obj: Object, name: String): Object = {
     val field = obj.getClass.getField(name)
     field.setAccessible(true)
     field.get(obj)
   }
 
+  /**
+   * zeppeline 에서 copy 함.
+   *
+   * @param interpreter
+   */
   def loopPostInit(interpreter: SparkILoop): Unit = {
     import StdReplTags._
     import scala.reflect.{classTag, io}

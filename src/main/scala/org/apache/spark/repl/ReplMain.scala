@@ -13,6 +13,7 @@ import org.apache.spark.util.Utils
 import scala.tools.nsc.GenericRunnerSettings
 import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
 
+@Deprecated
 object ReplMain extends Logging {
 
   initializeLogIfNecessary(true)

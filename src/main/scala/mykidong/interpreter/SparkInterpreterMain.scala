@@ -33,18 +33,35 @@ object SparkInterpreterMain extends Logging {
   }
 
 
-  def doRun(sparkConf: SparkConf, propsArray: Array[Properties]): Unit = {
+  /**
+   * Spark Interpreter 생성.
+   *
+   * @param sparkConf Spark Configuration.
+   * @param hadoopPropsArray Hadoop Configuration Properties Array.
+   */
+  def doRun(sparkConf: SparkConf, hadoopPropsArray: Array[Properties]): Unit = {
 
     this.conf = sparkConf
 
-    // ------------- zeppellin spark interpreter 에서 가져옴...
+    // ================================= zeppeline 에서 copy 함. ============================
 
-    System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
-
-    /**
-     * val rootDir = "/tmp/spark-" + UUID.randomUUID().toString
-     * val outputDir = Utils.createTempDir(root = rootDir, namePrefix = "repl")
+    /* Required for scoped mode.
+     * In scoped mode multiple scala compiler (repl) generates class in the same directory.
+     * Class names is not randomly generated and look like '$line12.$read$$iw$$iw'
+     * Therefore it's possible to generated class conflict(overwrite) with other repl generated
+     * class.
+     *
+     * To prevent generated class name conflict,
+     * change prefix of generated class name from each scala compiler (repl) instance.
+     *
+     * In Spark 2.x, REPL generated wrapper class name should compatible with the pattern
+     * ^(\$line(?:\d+)\.\$read)(?:\$\$iw)+$
+     *
+     * As hashCode() can return a negative integer value and the minus character '-' is invalid
+     * in a package name we change it to a numeric value '0' which still conforms to the regexp.
+     *
      */
+    System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
 
     val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir"))
     val outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
@@ -55,7 +72,6 @@ object SparkInterpreterMain extends Logging {
     //  "spark.repl.class.uri":"spark://<repl-driver-host>:<repl-driver-port>/classes" 와 같은 설정을 가진
     //  repl class fetch server 가 실행되기 위해 반드시 설정해야 함.
     conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
-
     outputDir.deleteOnExit()
 
     val settings = new Settings()
@@ -66,14 +82,15 @@ object SparkInterpreterMain extends Logging {
     interp = new SparkILoop()
     interp.settings = settings
     interp.createInterpreter()
+
+    // create spark session and spark context.
     spark2CreateContext()
 
     // local 실행시 hadoop configuratoin 을 설정할때.
-    if(propsArray != null) {
+    if(hadoopPropsArray != null) {
       val hadoopConfiguration = sparkSession.sparkContext.hadoopConfiguration
-
       import scala.collection.JavaConversions._
-      for(props <- propsArray) {
+      for(props <- hadoopPropsArray) {
         for (key <- props.stringPropertyNames) {
           val value = props.getProperty(key)
           hadoopConfiguration.set(key, value)
@@ -94,7 +111,10 @@ object SparkInterpreterMain extends Logging {
   }
 
 
-  def spark2CreateContext(): Unit = {
+  /**
+   * zeppeline 에서 copy 함.
+   */
+  private def spark2CreateContext(): Unit = {
     val sparkClz = Class.forName("org.apache.spark.sql.SparkSession$")
     val sparkObj = sparkClz.getField("MODULE$").get(null)
 

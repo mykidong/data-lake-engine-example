@@ -20,6 +20,7 @@ import scala.util.Properties.{javaVersion, javaVmName, versionString}
 /**
  *  A Spark-specific interactive shell.
  */
+@Deprecated
 class Interpreter(in0: Option[BufferedReader], out: JPrintWriter)
   extends ILoop(in0, out) {
   def this(in0: BufferedReader, out: JPrintWriter) = this(Some(in0), out)

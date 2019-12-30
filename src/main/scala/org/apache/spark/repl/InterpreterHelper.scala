@@ -8,6 +8,7 @@ import org.apache.spark.sql.SQLContext
 import scala.tools.nsc.interpreter.{IMain, NamedParam, Results, StdReplTags, isReplPower, replProps}
 import scala.util.control.NonFatal
 
+@Deprecated
 object InterpreterHelper {
 
   /**
