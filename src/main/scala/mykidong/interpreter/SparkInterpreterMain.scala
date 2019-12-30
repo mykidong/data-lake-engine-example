@@ -7,13 +7,10 @@ import java.util.{Properties, UUID}
 import net.liftweb.json.JObject
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
-import org.apache.hadoop.conf.Configuration
 import org.apache.spark._
 import org.apache.spark.internal.Logging
-import org.apache.spark.repl.ReplMain.{conf, outputDir, rootDir}
-import org.apache.spark.repl.{InterpreterHelper, SparkILoop}
+import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.util.Utils
 
 import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
@@ -88,12 +85,12 @@ object SparkInterpreterMain extends Logging {
     val json: JObject = "spark confs" -> sparkSession.sparkContext.getConf.getAll.toList
     println("spark configuration: " + prettyRender(json))
 
-    val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val in0 = InterpreterUtils.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
     val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
 
     interp.in = reader
     interp.initializeSynchronous()
-    InterpreterHelper.loopPostInit(interp)
+    InterpreterUtils.loopPostInit(interp)
   }
 
 
@@ -107,16 +104,20 @@ object SparkInterpreterMain extends Logging {
 
     if (conf.get("spark.sql.catalogImplementation", "in-memory").toLowerCase == "hive"
       || conf.get("spark.useHiveContext", "false").toLowerCase == "true") {
-      val hiveSiteExisted: Boolean =
-        Thread.currentThread().getContextClassLoader.getResource("hive-site.xml") != null
-      val hiveClassesPresent =
-        sparkClz.getMethod("hiveClassesArePresent").invoke(sparkObj).asInstanceOf[Boolean]
-      if (hiveSiteExisted && hiveClassesPresent) {
-        builder.getClass.getMethod("enableHiveSupport").invoke(builder)
-        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
-      } else {
-        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
-      }
+      
+//      val hiveSiteExisted: Boolean =
+//        Thread.currentThread().getContextClassLoader.getResource("hive-site.xml") != null
+//      val hiveClassesPresent =
+//        sparkClz.getMethod("hiveClassesArePresent").invoke(sparkObj).asInstanceOf[Boolean]
+//      if (hiveSiteExisted && hiveClassesPresent) {
+//        builder.getClass.getMethod("enableHiveSupport").invoke(builder)
+//        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
+//      } else {
+//        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
+//      }
+
+      builder.getClass.getMethod("enableHiveSupport").invoke(builder)
+      sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
     } else {
       sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
     }

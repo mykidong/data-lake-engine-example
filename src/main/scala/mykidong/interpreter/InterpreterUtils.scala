@@ -1,31 +1,22 @@
-package org.apache.spark.repl
+package mykidong.interpreter
 
-import java.io.File
-
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.repl.InterpreterHelper.callMethod
+import org.apache.spark.repl.SparkILoop
 
 import scala.tools.nsc.interpreter.{IMain, NamedParam, Results, StdReplTags, isReplPower, replProps}
-import scala.util.control.NonFatal
 
-object InterpreterHelper {
+object InterpreterUtils {
 
-  /**
-   * zepellin 추가 method.
-   */
+
   def getField(obj: Object, name: String): Object = {
     val field = obj.getClass.getField(name)
     field.setAccessible(true)
     field.get(obj)
   }
 
-  /**
-   * zepellin 추가 method.
-   */
-  def loopPostInit(interpreter: Interpreter): Unit = {
+  def loopPostInit(interpreter: SparkILoop): Unit = {
     import StdReplTags._
-    import scala.reflect.classTag
-    import scala.reflect.io
+    import scala.reflect.{classTag, io}
 
     val sparkILoop = interpreter
     val intp = sparkILoop.intp
@@ -71,14 +62,6 @@ object InterpreterHelper {
     }
 
     loopPostInit()
-  }
-
-  def callMethod(obj: Object, name: String,
-                 parameterTypes: Array[Class[_]],
-                 parameters: Array[Object]): Object = {
-    val method = obj.getClass.getMethod(name, parameterTypes: _ *)
-    method.setAccessible(true)
-    method.invoke(obj, parameters: _ *)
   }
 
 }
