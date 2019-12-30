@@ -1,15 +1,18 @@
 package mykidong.interpreter
 
-import java.io.BufferedReader
+import java.io.{BufferedReader, File}
 import java.nio.file.{Files, Paths}
+import java.util.UUID
 
 import net.liftweb.json.JObject
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 import org.apache.spark._
 import org.apache.spark.internal.Logging
+import org.apache.spark.repl.ReplMain.{conf, outputDir, rootDir}
 import org.apache.spark.repl.{InterpreterHelper, SparkILoop}
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.util.Utils
 
 import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
@@ -36,11 +39,13 @@ object SparkInterpreterMain extends Logging {
 
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
 
-    val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
-    val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
+    val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir"))
+    val outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
+      Files.createTempDirectory(Paths.get(rootDir), "spark-" + UUID.randomUUID().toString).toFile
+    } else {
+      new File(conf.get("spark.repl.class.outputDir"))
+    }
     outputDir.deleteOnExit()
-    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
-
 
     val settings = new Settings()
     settings.processArguments(List("-Yrepl-class-based",
