@@ -3,6 +3,9 @@ package mykidong.interpreter
 import java.io.BufferedReader
 import java.nio.file.{Files, Paths}
 
+import net.liftweb.json.JObject
+import net.liftweb.json.JsonAST._
+import net.liftweb.json.JsonDSL._
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.repl.{InterpreterHelper, SparkILoop}
@@ -22,11 +25,12 @@ object SparkInterpreterMain extends Logging {
   // this is a public var because tests reset it.
   var interp: SparkILoop = _
 
+  var sparkHttpServer: Object = _
+
 
   def doRun(sparkConf: SparkConf): Unit = {
 
     this.conf = sparkConf
-    println(s"spark configuration: ${this.conf.getAll.toList.toString()}")
 
     // ------------- zeppellin spark interpreter 에서 가져옴...
 
@@ -36,6 +40,10 @@ object SparkInterpreterMain extends Logging {
     val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
     outputDir.deleteOnExit()
     conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
+    InterpreterHelper.startHttpServer(conf, outputDir).foreach { case (server, uri) =>
+      sparkHttpServer = server
+      conf.set("spark.repl.class.uri", uri)
+    }
 
     val settings = new Settings()
     settings.processArguments(List("-Yrepl-class-based",
@@ -46,6 +54,10 @@ object SparkInterpreterMain extends Logging {
     interp.settings = settings
     interp.createInterpreter()
     spark2CreateContext()
+
+    // print pretty spark configurations.
+    val json: JObject = "spark confs" -> conf.getAll.toList
+    println("spark configuration: " + prettyRender(json))
 
     val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
     val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
