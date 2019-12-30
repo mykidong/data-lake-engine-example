@@ -40,10 +40,7 @@ object SparkInterpreterMain extends Logging {
     val outputDir = Files.createTempDirectory(Paths.get(rootDir), "spark").toFile
     outputDir.deleteOnExit()
     conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
-    InterpreterHelper.startHttpServer(conf, outputDir).foreach { case (server, uri) =>
-      sparkHttpServer = server
-      conf.set("spark.repl.class.uri", uri)
-    }
+
 
     val settings = new Settings()
     settings.processArguments(List("-Yrepl-class-based",
