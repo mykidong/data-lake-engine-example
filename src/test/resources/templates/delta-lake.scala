@@ -19,7 +19,6 @@ parquetDf.show(5)
 
 parquetDf.write
   .format("delta")
-  .partitionBy("itemId")
   .option("path", "hdfs://mc/test-delta-table")
   .mode(SaveMode.Overwrite)
   .saveAsTable("test.parquet_as_delta")
