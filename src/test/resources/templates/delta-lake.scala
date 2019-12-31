@@ -15,6 +15,7 @@ val newSpark = spark.newSession
 val parquetDf = newSpark.read.format("parquet")
   .load("/test-event-parquet").cache()
 
+println("reading parquet file..")
 parquetDf.show(5)
 
 parquetDf.write
@@ -28,10 +29,13 @@ val deltaDf = spark.read
   .format("delta")
   .load("/test-delta-table");
 
+println("reading delta table file..")
 deltaDf.show(4);
 
 
 val deltaSqlDf = spark.sql("select * from test.parquet_as_delta");
-deltaSqlDf.show(5);
+
+println("reading hive delta table..")
+deltaSqlDf.show(5)
 
 
