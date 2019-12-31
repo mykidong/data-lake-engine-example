@@ -5,25 +5,17 @@ import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.util.{Locale, Properties, UUID}
 
-import mykidong.reflect.DynamicScalaSparkJobRunner
-import mykidong.util.StringUtils
 import net.liftweb.json.JObject
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 import org.apache.spark._
 import org.apache.spark.internal.Logging
-import org.apache.spark.repl.ReplMain.{conf, outputDir, scalaOptionError}
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
-import org.apache.spark.util.Utils
 
-import scala.reflect.runtime.universe
-import scala.tools.nsc.{GenericRunnerSettings, Settings}
+import scala.tools.nsc.GenericRunnerSettings
 import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
-
-import scala.reflect.runtime.universe
-import scala.tools.reflect.ToolBox
 
 object SparkInterpreterMain extends Logging {
 
