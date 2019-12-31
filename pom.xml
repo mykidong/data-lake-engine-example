@@ -501,7 +501,7 @@
 						<version>1.0</version>
 						<configuration>
 							<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-							<suites>org.apache.spark.specs.InteractiveHandlerApplicationSpec</suites>
+							<suites>org.apache.spark.specs.OldInteractiveHandlerApplicationSpec</suites>
 						</configuration>
 						<executions>
 							<execution>
