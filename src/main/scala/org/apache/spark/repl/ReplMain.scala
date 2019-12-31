@@ -48,7 +48,7 @@ object ReplMain extends Logging {
 
     val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir"))
     outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
-      Files.createTempDirectory(Paths.get(rootDir), "spark-" + UUID.randomUUID().toString).toFile
+      Files.createTempDirectory(Paths.get(rootDir), "spark/repl-" + UUID.randomUUID().toString).toFile
     } else {
       new File(conf.get("spark.repl.class.outputDir"))
     }
