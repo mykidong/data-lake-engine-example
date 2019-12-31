@@ -177,7 +177,7 @@ object SparkInterpreterMain extends Logging {
     interp.interpret("import org.apache.spark.sql.functions._")
     // print empty string otherwise the last statement's output of this method
     // (aka. import org.apache.spark.sql.functions._) will mix with the output of user code
-    interp.interpret("print(\"\")")
+    //interp.interpret("print(\"\")")
   }
 
 }
