@@ -5,7 +5,6 @@ import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.util.{Locale, Properties, UUID}
 
-import mykidong.interpreter.SparkInterpreterMain.conf
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
@@ -47,13 +46,9 @@ object ReplMain extends Logging {
 
     this.conf = sparkConf
 
-    val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir") + File.separator + "spark")
-    val rootDirFile = new File(rootDir)
-    if(!rootDirFile.exists()) {
-      rootDirFile.createNewFile()
-    }
+    val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir"))
     outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
-      Files.createTempDirectory(Paths.get(rootDir), "repl-" + UUID.randomUUID().toString).toFile
+      Files.createTempDirectory(Paths.get(rootDir), "spark-repl-" + UUID.randomUUID().toString).toFile
     } else {
       new File(conf.get("spark.repl.class.outputDir"))
     }

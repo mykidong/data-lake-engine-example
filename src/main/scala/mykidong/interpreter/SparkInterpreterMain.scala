@@ -9,7 +9,6 @@ import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 import org.apache.spark._
 import org.apache.spark.internal.Logging
-import org.apache.spark.repl.ReplMain.outputDir
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
@@ -22,6 +21,7 @@ object SparkInterpreterMain extends Logging {
   initializeLogIfNecessary(true)
 
   var conf: SparkConf = _
+  var outputDir: File = _
 
   var sparkContext: SparkContext = _
   var sparkSession: SparkSession = _
@@ -69,13 +69,9 @@ object SparkInterpreterMain extends Logging {
      */
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
 
-    val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir") + File.separator + "spark")
-    val rootDirFile = new File(rootDir)
-    if(!rootDirFile.exists()) {
-      rootDirFile.createNewFile()
-    }
+    val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir"))
     outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
-      Files.createTempDirectory(Paths.get(rootDir), "repl-" + UUID.randomUUID().toString).toFile
+      Files.createTempDirectory(Paths.get(rootDir), "spark-repl-" + UUID.randomUUID().toString).toFile
     } else {
       new File(conf.get("spark.repl.class.outputDir"))
     }
