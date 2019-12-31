@@ -82,8 +82,9 @@ object SimpleHTTPServer {
           println("typeOfMostRecentVar: [" + typeOfMostRecentVar + "]")
 
           // TODO: 왜 valueOfTerm 값이 아무것도 없을까...
-          val getBack = interpreter.valueOfTerm("getBack").getOrElse(null)
 //          val mostRecentVarValue = interpreter.valueOfTerm(interpreter.mostRecentVar).getOrElse(null)
+
+          val getBack = SparkInterpreterMain.getBack
           println("getBack: [" + getBack + "]")
         } catch {
           case e: Exception => {

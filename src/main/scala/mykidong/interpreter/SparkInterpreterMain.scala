@@ -26,7 +26,7 @@ object SparkInterpreterMain extends Logging {
   // this is a public var because tests reset it.
   var interp: SparkILoop = _
 
-  var sparkHttpServer: Object = _
+  var getBack = GetBack
 
   def doRun(sparkConf: SparkConf): Unit = {
       doRun(sparkConf, null)
@@ -150,7 +150,6 @@ object SparkInterpreterMain extends Logging {
 
     // bind the variable to get back the result from the interpreter.
 
-    val getBack = GetBack
     interp.bind("getBack", getBack.getClass.getCanonicalName, getBack, List("""@transient"""))
 
 
