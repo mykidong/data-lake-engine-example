@@ -149,7 +149,7 @@ object SparkInterpreterMain extends Logging {
     interp.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))
 
     // bind the variable to get back the result from the interpreter.
-    var getBack: Dataset[Row] = _
+    var getBack = new Object
     interp.bind("getBack", getBack.getClass.getCanonicalName, getBack, List("""@transient"""))
 
 
