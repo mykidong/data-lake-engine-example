@@ -75,17 +75,14 @@ object SimpleHTTPServer {
           // interpret spark codes.
           interpreter.command(codes)
 
-          val mostRecentVar = interpreter.mostRecentVar;
-          println("mostRecentVar: [" + mostRecentVar + "]")
-
-          val typeOfMostRecentVar = interpreter.typeOfTerm(interpreter.mostRecentVar)
-          println("typeOfMostRecentVar: [" + typeOfMostRecentVar + "]")
-
-          // TODO: 왜 valueOfTerm 값이 아무것도 없을까...
-//          val mostRecentVarValue = interpreter.valueOfTerm(interpreter.mostRecentVar).getOrElse(null)
-
-          val getBack = SparkInterpreterMain.getBack
-          println("getBack: [" + getBack.getResult().show(5) + "]")
+          val result = SparkInterpreterMain.getBack.getResult()
+          if(result == null){
+              println("getback result is empty...")
+          }
+          else {
+            println("show result from the getback!!!")
+            result.show(10)
+          }
         } catch {
           case e: Exception => {
             e.printStackTrace()
