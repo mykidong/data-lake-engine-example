@@ -10,7 +10,7 @@ import net.liftweb.json.JsonDSL._
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.repl.SparkILoop
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
@@ -147,6 +147,11 @@ object SparkInterpreterMain extends Logging {
 
     interp.bind("spark", sparkSession.getClass.getCanonicalName, sparkSession, List("""@transient"""))
     interp.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))
+
+    // bind the variable to get back the result from the interpreter.
+    var getBack: Dataset[Row] = _
+    interp.bind("getBack", getBack.getClass.getCanonicalName, getBack, List("""@transient"""))
+
 
     interp.interpret("import org.apache.spark.SparkContext._")
     interp.interpret("import spark.implicits._")

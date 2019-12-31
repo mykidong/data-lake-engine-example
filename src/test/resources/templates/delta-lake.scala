@@ -39,3 +39,6 @@ println("reading hive delta table..")
 deltaSqlDf.show(5)
 
 
+getBack = deltaSqlDf
+
+
