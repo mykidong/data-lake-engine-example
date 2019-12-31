@@ -2,15 +2,17 @@ package mykidong.interpreter
 
 import java.io.{BufferedReader, File}
 import java.nio.file.{Files, Paths}
-import java.util.{Properties, UUID}
+import java.util.{Locale, Properties, UUID}
 
 import net.liftweb.json.JObject
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 import org.apache.spark._
 import org.apache.spark.internal.Logging
+import org.apache.spark.repl.ReplMain.outputDir
 import org.apache.spark.repl.SparkILoop
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
 
 import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
@@ -68,14 +70,11 @@ object SparkInterpreterMain extends Logging {
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
 
     val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir"))
-    val outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
+    outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
       Files.createTempDirectory(Paths.get(rootDir), "spark-" + UUID.randomUUID().toString).toFile
     } else {
       new File(conf.get("spark.repl.class.outputDir"))
     }
-    //  "spark.repl.class.uri":"spark://<repl-driver-host>:<repl-driver-port>/classes" 와 같은 설정을 가진
-    //  repl class fetch server 가 실행되기 위해 반드시 설정해야 함.
-    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
     outputDir.deleteOnExit()
 
     val settings = new Settings()
@@ -119,35 +118,52 @@ object SparkInterpreterMain extends Logging {
    * zeppeline 에서 copy 함.
    */
   private def spark2CreateContext(): Unit = {
-    val sparkClz = Class.forName("org.apache.spark.sql.SparkSession$")
-    val sparkObj = sparkClz.getField("MODULE$").get(null)
+    val execUri = System.getenv("SPARK_EXECUTOR_URI")
+    conf.setIfMissing("spark.app.name", this.getClass.getName)
 
-    val builderMethod = sparkClz.getMethod("builder")
-    val builder = builderMethod.invoke(sparkObj)
-    builder.getClass.getMethod("config", classOf[SparkConf]).invoke(builder, conf)
+    //  "spark.repl.class.uri":"spark://<repl-driver-host>:<repl-driver-port>/classes" 와 같은 설정을 가진
+    //  repl class fetch server 가 실행되기 위해 반드시 설정해야 함.
+    //
+    // SparkContext will detect this configuration and register it with the RpcEnv's
+    // file server, setting spark.repl.class.uri to the actual URI for executors to
+    // use. This is sort of ugly but since executors are started as part of SparkContext
+    // initialization in certain cases, there's an initialization order issue that prevents
+    // this from being set after SparkContext is instantiated.
+    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath())
 
-//    if (conf.get("spark.sql.catalogImplementation", "in-memory").toLowerCase == "hive"
-//      || conf.get("spark.useHiveContext", "false").toLowerCase == "true") {
-//      val hiveSiteExisted: Boolean =
-//        Thread.currentThread().getContextClassLoader.getResource("hive-site.xml") != null
-//      val hiveClassesPresent =
-//        sparkClz.getMethod("hiveClassesArePresent").invoke(sparkObj).asInstanceOf[Boolean]
-//      if (hiveSiteExisted && hiveClassesPresent) {
-//        builder.getClass.getMethod("enableHiveSupport").invoke(builder)
-//        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
-//      } else {
-//        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
-//      }
-//    } else {
-//      sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
-//    }
+    if (execUri != null) {
+      conf.set("spark.executor.uri", execUri)
+    }
+    if (System.getenv("SPARK_HOME") != null) {
+      conf.setSparkHome(System.getenv("SPARK_HOME"))
+    }
 
-    // 무조건 Hive Support!!!
-    builder.getClass.getMethod("enableHiveSupport").invoke(builder)
-    sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
+    val builder = SparkSession.builder.config(conf)
+    if (conf.get(CATALOG_IMPLEMENTATION.key, "hive").toLowerCase(Locale.ROOT) == "hive") {
+      val sparkClz = Class.forName("org.apache.spark.sql.SparkSession$")
+      val sparkObj = sparkClz.getField("MODULE$").get(null)
+      val hiveClassesPresent = sparkClz.getMethod("hiveClassesArePresent").invoke(sparkObj).asInstanceOf[Boolean]
 
-    sparkContext = sparkSession.getClass.getMethod("sparkContext").invoke(sparkSession)
-      .asInstanceOf[SparkContext]
+      if (hiveClassesPresent) {
+        // In the case that the property is not set at all, builder's config
+        // does not have this value set to 'hive' yet. The original default
+        // behavior is that when there are hive classes, we use hive catalog.
+        sparkSession = builder.enableHiveSupport().getOrCreate()
+        logInfo("Created Spark session with Hive support")
+      } else {
+        // Need to change it back to 'in-memory' if no hive classes are found
+        // in the case that the property is set to hive in spark-defaults.conf
+        builder.config(CATALOG_IMPLEMENTATION.key, "in-memory")
+        sparkSession = builder.getOrCreate()
+        logInfo("Created Spark session")
+      }
+    } else {
+      // In the case that the property is set but not to 'hive', the internal
+      // default is 'in-memory'. So the sparkSession will use in-memory catalog.
+      sparkSession = builder.getOrCreate()
+      logInfo("Created Spark session")
+    }
+    sparkContext = sparkSession.sparkContext
 
     interp.bind("spark", sparkSession.getClass.getCanonicalName, sparkSession, List("""@transient"""))
     interp.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))

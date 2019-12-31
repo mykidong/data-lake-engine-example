@@ -5,7 +5,6 @@ import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.util.{Locale, Properties, UUID}
 
-import mykidong.interpreter.SparkInterpreterMain.conf
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
@@ -22,7 +21,6 @@ object ReplMain extends Logging {
   Signaling.cancelOnInterrupt()
 
   var conf: SparkConf = _
-  var rootDir: String = _
   var outputDir: File = _
 
   var sparkContext: SparkContext = _
@@ -49,14 +47,11 @@ object ReplMain extends Logging {
     this.conf = sparkConf
 
     val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir"))
-    val outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
+    outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
       Files.createTempDirectory(Paths.get(rootDir), "spark-" + UUID.randomUUID().toString).toFile
     } else {
       new File(conf.get("spark.repl.class.outputDir"))
     }
-    //  "spark.repl.class.uri":"spark://<repl-driver-host>:<repl-driver-port>/classes" 와 같은 설정을 가진
-    //  repl class fetch server 가 실행되기 위해 반드시 설정해야 함.
-    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
     outputDir.deleteOnExit()
 
 
