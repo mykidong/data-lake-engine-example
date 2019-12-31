@@ -92,7 +92,7 @@ object SparkInterpreterMain extends Logging {
     interp = new SparkILoop()
 
     val sparkUtilsClz = Class.forName("org.apache.spark.util.Utils")
-    val sparkUtilsObj = sparkUtilsClz.getField("MODULE$").get(null)
+    val sparkUtilsObj = sparkUtilsClz.getDeclaredConstructors()(0).newInstance()
     val sparkUtilsClzMethod = sparkUtilsClz.getMethod("getLocalUserJarsForShell")
 
     val jars = sparkUtilsClzMethod.invoke(sparkUtilsObj, conf).asInstanceOf[Seq[String]]
