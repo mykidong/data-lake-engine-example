@@ -1,20 +1,29 @@
 package mykidong.interpreter
 
 import java.io.{BufferedReader, File}
+import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.util.{Locale, Properties, UUID}
 
+import mykidong.reflect.DynamicScalaSparkJobRunner
+import mykidong.util.StringUtils
 import net.liftweb.json.JObject
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 import org.apache.spark._
 import org.apache.spark.internal.Logging
+import org.apache.spark.repl.ReplMain.{conf, outputDir, scalaOptionError}
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
+import org.apache.spark.util.Utils
 
-import scala.tools.nsc.Settings
+import scala.reflect.runtime.universe
+import scala.tools.nsc.{GenericRunnerSettings, Settings}
 import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
+
+import scala.reflect.runtime.universe
+import scala.tools.reflect.ToolBox
 
 object SparkInterpreterMain extends Logging {
 
@@ -33,6 +42,17 @@ object SparkInterpreterMain extends Logging {
    * interpreter 실행후 result dataframe 을 얻기 위한 Instance.
    */
   var getBack = GetBack
+
+
+  private var hasErrors = false
+  private var isShellSession = false
+
+  private def scalaOptionError(msg: String): Unit = {
+    hasErrors = true
+    // scalastyle:off println
+    Console.err.println(msg)
+    // scalastyle:on println
+  }
 
   def doRun(sparkConf: SparkConf): Unit = {
       doRun(sparkConf, null)
@@ -77,12 +97,27 @@ object SparkInterpreterMain extends Logging {
     }
     outputDir.deleteOnExit()
 
-    val settings = new Settings()
-    settings.processArguments(List("-Yrepl-class-based",
-      "-Yrepl-outdir", s"${outputDir.getAbsolutePath}"), true)
-    settings.usejavacp.value = true
-
     interp = new SparkILoop()
+
+    val sparkUtilsClz = Class.forName("org.apache.spark.util.Utils$")
+    val sparkUtilsObj = sparkUtilsClz.getField("MODULE$").get(null)
+    val sparkUtilsClzMethod = sparkUtilsClz.getMethod("getLocalUserJarsForShell")
+
+    val jars = sparkUtilsClzMethod.invoke(sparkUtilsObj, conf).asInstanceOf[Seq[String]]
+      // Remove file:///, file:// or file:/ scheme if exists for each jar
+      .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
+      .mkString(File.pathSeparator)
+    val interpArguments = List(
+      "-Yrepl-class-based",
+      "-Yrepl-outdir", s"${outputDir.getAbsolutePath}",
+      "-classpath", jars
+    )
+
+    println(s"interpArguments: ${interpArguments.toString()}")
+
+    val settings = new GenericRunnerSettings(scalaOptionError)
+    settings.processArguments(interpArguments, true)
+
     interp.settings = settings
     interp.createInterpreter()
 
@@ -175,9 +210,6 @@ object SparkInterpreterMain extends Logging {
     interp.interpret("import spark.implicits._")
     interp.interpret("import spark.sql")
     interp.interpret("import org.apache.spark.sql.functions._")
-    // print empty string otherwise the last statement's output of this method
-    // (aka. import org.apache.spark.sql.functions._) will mix with the output of user code
-    //interp.interpret("print(\"\")")
   }
 
 }
