@@ -4,6 +4,7 @@ import java.io.{BufferedReader, File}
 import java.net.URI
 import java.util.{Locale, Properties}
 
+import mykidong.interpreter.SparkInterpreterMain.conf
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
@@ -55,6 +56,7 @@ object ReplMain extends Logging {
     else {
       outputDir = new File(conf.get("spark.repl.class.outputDir"))
     }
+    conf.set("spark.repl.class.outputDir", outputDir.getAbsolutePath)
 
 
     isShellSession = true

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.support.PropertiesLoaderUtils
 
+@Deprecated
 class OldInteractiveHandlerApplicationSpec extends FunSuite{
 
   private val log = LoggerFactory.getLogger(classOf[OldInteractiveHandlerApplicationSpec])

@@ -12,6 +12,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.repl.ReplMain
 import org.slf4j.LoggerFactory
 
+@Deprecated
 object OldSimpleHTTPServer {
 
   private val log = LoggerFactory.getLogger(getClass.getName)
