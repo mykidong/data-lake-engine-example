@@ -75,13 +75,17 @@ object SimpleHTTPServer {
           // interpret spark codes.
           interpreter.command(codes)
 
-          val result = SparkInterpreterMain.getBack.getResult()
-          if(result == null){
-              println("getback result is empty...")
+          // interpreter 실행후 result dataframe 을 얻음.
+          val resultDf = SparkInterpreterMain.getBack.getResult()
+          if(resultDf == null){
+              println("getback is empty...")
           }
           else {
             println("show result from the getback!!!")
-            result.show(10)
+            resultDf.show(10)
+
+            // after getting result dataframe, set result dataframe in GetBack to null.
+            SparkInterpreterMain.getBack.setResult(null)
           }
         } catch {
           case e: Exception => {

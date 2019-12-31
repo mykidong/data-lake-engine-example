@@ -26,6 +26,10 @@ object SparkInterpreterMain extends Logging {
   // this is a public var because tests reset it.
   var interp: SparkILoop = _
 
+  // TODO: Multiple User Session 에서 Concurrency Issue 는 없을까???
+  /**
+   * interpreter 실행후 result dataframe 을 얻기 위한 Instance.
+   */
   var getBack = GetBack
 
   def doRun(sparkConf: SparkConf): Unit = {
@@ -148,10 +152,8 @@ object SparkInterpreterMain extends Logging {
     interp.bind("spark", sparkSession.getClass.getCanonicalName, sparkSession, List("""@transient"""))
     interp.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))
 
-    // bind the variable to get back the result from the interpreter.
-
+    // interpreter 실행후 result dataframe 을 얻기 위한 Instance.
     interp.bind("getBack", getBack.getClass.getCanonicalName, getBack, List("""@transient"""))
-
 
     interp.interpret("import org.apache.spark.SparkContext._")
     interp.interpret("import spark.implicits._")
