@@ -38,7 +38,7 @@ val deltaSqlDf = spark.sql("select * from test.parquet_as_delta");
 println("reading hive delta table..")
 deltaSqlDf.show(5)
 
-
-getBack = deltaSqlDf
+// set result data frame to getBack var.
+getBack.setResult(deltaSqlDf)
 
 
