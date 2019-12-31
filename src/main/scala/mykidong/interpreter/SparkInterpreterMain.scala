@@ -70,6 +70,10 @@ object SparkInterpreterMain extends Logging {
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
 
     val rootDir = conf.getOption("spark.repl.classdir").getOrElse(System.getProperty("java.io.tmpdir") + File.separator + "spark")
+    val rootDirFile = new File(rootDir)
+    if(!rootDirFile.exists()) {
+      rootDirFile.createNewFile()
+    }
     outputDir = if(conf.getOption("spark.repl.class.outputDir").isEmpty) {
       Files.createTempDirectory(Paths.get(rootDir), "repl-" + UUID.randomUUID().toString).toFile
     } else {
