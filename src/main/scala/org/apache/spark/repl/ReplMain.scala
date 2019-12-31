@@ -2,7 +2,7 @@ package org.apache.spark.repl
 
 import java.io.{BufferedReader, File}
 import java.net.URI
-import java.util.Locale
+import java.util.{Locale, Properties}
 
 import org.apache.spark._
 import org.apache.spark.internal.Logging
@@ -42,10 +42,9 @@ object ReplMain extends Logging {
    * REPL 을 실행하지 않고 Interpreter 만 사용할 경우.
    *
    */
-  def doRun(sparkConf: SparkConf): Unit = {
+  def doRun(sparkConf: SparkConf, hadoopPropsArray: Array[Properties]): Unit = {
 
     this.conf = sparkConf
-    println(s"spark configuration: ${this.conf.getAll.toList.toString()}")
 
     rootDir = conf.getOption("spark.repl.classdir").getOrElse(Utils.getLocalDir(conf))
 
@@ -82,6 +81,17 @@ object ReplMain extends Logging {
     interp.createInterpreter()
     interp.initializeSpark()
 
+    // local 실행시 hadoop configuratoin 을 설정할때.
+    if(hadoopPropsArray != null) {
+      val hadoopConfiguration = sparkSession.sparkContext.hadoopConfiguration
+      import scala.collection.JavaConversions._
+      for(props <- hadoopPropsArray) {
+        for (key <- props.stringPropertyNames) {
+          val value = props.getProperty(key)
+          hadoopConfiguration.set(key, value)
+        }
+      }
+    }
 
 
     val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
