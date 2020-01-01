@@ -109,6 +109,7 @@ object SparkInterpreterMain extends Logging {
     import scala.util.control.Breaks._
     breakable {
       for (method: Method <- obj.getClass.getDeclaredMethods) {
+        // Method: Utils.getLocalUserJarsForShell()
         if (method.getName.equals("getLocalUserJarsForShell")) {
           sparkUtilsClzMethod = method
           sparkUtilsClzMethod.setAccessible(true)
@@ -118,6 +119,7 @@ object SparkInterpreterMain extends Logging {
       }
     }
 
+    // repl local jar files.
     replLocalJars = sparkUtilsClzMethod.invoke(obj, conf).asInstanceOf[Seq[String]]
 
     val jars = replLocalJars
@@ -166,10 +168,6 @@ object SparkInterpreterMain extends Logging {
     InterpreterUtils.loopPostInit(interp)
   }
 
-
-  /**
-   * zeppeline 에서 copy 함.
-   */
   private def spark2CreateContext(): Unit = {
     val execUri = System.getenv("SPARK_EXECUTOR_URI")
     conf.setIfMissing("spark.app.name", this.getClass.getName)
