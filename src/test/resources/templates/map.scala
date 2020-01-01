@@ -1,4 +1,5 @@
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{Dataset, Row, RowFactory, SaveMode, SparkSession}
+import org.apache.spark.storage.StorageLevel
 
 // NOTE: variable 'spark' 가 이미 REPL 에 SparkSession instance 로 생성되었기 때문에
 //       개발할때만 uncomment 하고 commit 할 경우는 comment 시킴.
@@ -13,6 +14,8 @@ val parquetDs = newSpark.read.format("parquet")
 
 parquetDs.show(5)
 
+import org.apache.spark.sql.Encoders
+
 case class Event(itemId: String,
                  quantity: Long,
                  price: Long,
@@ -20,8 +23,6 @@ case class Event(itemId: String,
                  eventType: String,
                  version: String,
                  ts:Long)
-
-implicit val eventEncoder = org.apache.spark.sql.Encoders.kryo[Event]
 
 val newEventDs = parquetDs.map((row: Row) => {
     val itemId = row.getAs("itemId").asInstanceOf[String]
@@ -34,7 +35,7 @@ val newEventDs = parquetDs.map((row: Row) => {
     val ts = baseProperties.getAs("ts").asInstanceOf[Long]
 
     Event(itemId, quantity, price, uid, eventType, version, ts)
-})
+})(Encoders.product[Event])
 
 newEventDs.printSchema()
 
