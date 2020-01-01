@@ -92,7 +92,9 @@ object SparkInterpreterMain extends Logging {
     }
     outputDir.deleteOnExit()
 
-    interp = new SparkILoop()
+
+    val replOutput = new JPrintWriter(Console.out, true)
+    interp = new SparkILoop(None, replOutput)
 
 
     // org.apache.spark.util.Utils object 를 여기에서 접근할수 없기 때문에 reflection 을 이용하여 Method Access 함.
@@ -157,7 +159,7 @@ object SparkInterpreterMain extends Logging {
     println("spark configuration: " + prettyRender(json))
 
     val in0 = InterpreterUtils.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
+    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, replOutput, interactive = true))
 
     interp.in = reader
     interp.initializeSynchronous()
