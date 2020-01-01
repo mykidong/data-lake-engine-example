@@ -4,6 +4,7 @@ import java.io.{BufferedReader, File}
 import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.util.{Locale, Properties, UUID}
+import java.lang.reflect.Method
 
 import net.liftweb.json.JObject
 import net.liftweb.json.JsonAST._
@@ -96,6 +97,11 @@ object SparkInterpreterMain extends Logging {
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
     val module = runtimeMirror.staticModule("org.apache.spark.util.Utils")
     val obj = runtimeMirror.reflectModule(module).instance
+
+    for(method: Method <- obj.getClass.getDeclaredMethods) {
+      println(s"getDeclaredMethod for the class ${obj.getClass.getName}: ${method.getName}")
+    }
+
     val sparkUtilsClzMethod = obj.getClass.getMethod("getLocalUserJarsForShell")
     sparkUtilsClzMethod.setAccessible(true)
 
