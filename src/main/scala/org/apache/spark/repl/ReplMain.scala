@@ -73,7 +73,6 @@ object ReplMain extends Logging {
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.processArguments(interpArguments, true)
 
-    // ------------- zeppellin spark interpreter 에서 가져옴...
     settings.usejavacp.value = true
     interp.settings = settings
     interp.createInterpreter()

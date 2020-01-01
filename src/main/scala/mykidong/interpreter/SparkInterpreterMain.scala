@@ -1,10 +1,10 @@
 package mykidong.interpreter
 
 import java.io.{BufferedReader, File}
+import java.lang.reflect.Method
 import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.util.{Locale, Properties, UUID}
-import java.lang.reflect.Method
 
 import net.liftweb.json.JObject
 import net.liftweb.json.JsonAST._
@@ -29,6 +29,8 @@ object SparkInterpreterMain extends Logging {
   var sparkSession: SparkSession = _
   // this is a public var because tests reset it.
   var interp: SparkILoop = _
+
+  var replLocalJars: Seq[String] = _
 
   // TODO: Multiple User Session 에서 Concurrency Issue 는 없을까???
   /**
@@ -115,7 +117,9 @@ object SparkInterpreterMain extends Logging {
       }
     }
 
-    val jars = sparkUtilsClzMethod.invoke(obj, conf).asInstanceOf[Seq[String]]
+    replLocalJars = sparkUtilsClzMethod.invoke(obj, conf).asInstanceOf[Seq[String]]
+
+    val jars = replLocalJars
       // Remove file:///, file:// or file:/ scheme if exists for each jar
       .map { x => if (x.startsWith("file:")) new File(new URI(x)).getPath else x }
       .mkString(File.pathSeparator)
@@ -186,32 +190,34 @@ object SparkInterpreterMain extends Logging {
       conf.setSparkHome(System.getenv("SPARK_HOME"))
     }
 
-    val builder = SparkSession.builder.config(conf)
-    if (conf.get(CATALOG_IMPLEMENTATION.key, "hive").toLowerCase(Locale.ROOT) == "hive") {
-      val sparkClz = Class.forName("org.apache.spark.sql.SparkSession$")
-      val sparkObj = sparkClz.getField("MODULE$").get(null)
-      val hiveClassesPresent = sparkClz.getMethod("hiveClassesArePresent").invoke(sparkObj).asInstanceOf[Boolean]
+    val sparkClz = Class.forName("org.apache.spark.sql.SparkSession$")
+    val sparkObj = sparkClz.getField("MODULE$").get(null)
 
+    val builderMethod = sparkClz.getMethod("builder")
+    val builderBase = builderMethod.invoke(sparkObj)
+    val builder = builderBase.getClass.getMethod("config", classOf[SparkConf]).invoke(builder, conf).asInstanceOf[SparkSession.Builder]
+
+    if (conf.get(CATALOG_IMPLEMENTATION.key, "hive").toLowerCase(Locale.ROOT) == "hive") {
+      val hiveClassesPresent = sparkClz.getMethod("hiveClassesArePresent").invoke(sparkObj).asInstanceOf[Boolean]
       if (hiveClassesPresent) {
-        // In the case that the property is not set at all, builder's config
-        // does not have this value set to 'hive' yet. The original default
-        // behavior is that when there are hive classes, we use hive catalog.
-        sparkSession = builder.enableHiveSupport().getOrCreate()
-        logInfo("Created Spark session with Hive support")
+        builder.getClass.getMethod("enableHiveSupport").invoke(builder)
+        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
+        println("Created Spark session (with Hive support).\n".getBytes())
       } else {
-        // Need to change it back to 'in-memory' if no hive classes are found
-        // in the case that the property is set to hive in spark-defaults.conf
+        builder.getClass.getMethod("config", classOf[String]).invoke(builder, conf)
         builder.config(CATALOG_IMPLEMENTATION.key, "in-memory")
-        sparkSession = builder.getOrCreate()
-        logInfo("Created Spark session")
+        sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
+        println("Created Spark session.\n".getBytes())
       }
     } else {
-      // In the case that the property is set but not to 'hive', the internal
-      // default is 'in-memory'. So the sparkSession will use in-memory catalog.
-      sparkSession = builder.getOrCreate()
-      logInfo("Created Spark session")
+      sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
+      println("Created Spark session.\n".getBytes())
     }
-    sparkContext = sparkSession.sparkContext
+
+    sparkContext = sparkSession.getClass.getMethod("sparkContext").invoke(sparkSession)
+      .asInstanceOf[SparkContext]
+    replLocalJars.foreach(file => sparkContext.addFile(file))
+
 
     interp.bind("spark", sparkSession.getClass.getCanonicalName, sparkSession, List("""@transient"""))
     interp.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))

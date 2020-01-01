@@ -1,6 +1,5 @@
 package mykidong.interpreter
 
-import org.apache.spark.repl.InterpreterHelper.callMethod
 import org.apache.spark.repl.SparkILoop
 
 import scala.tools.nsc.interpreter.{IMain, NamedParam, Results, StdReplTags, isReplPower, replProps}
@@ -74,6 +73,14 @@ object InterpreterUtils {
     }
 
     loopPostInit()
+  }
+
+  def callMethod(obj: Object, name: String,
+                 parameterTypes: Array[Class[_]],
+                 parameters: Array[Object]): Object = {
+    val method = obj.getClass.getMethod(name, parameterTypes: _ *)
+    method.setAccessible(true)
+    method.invoke(obj, parameters: _ *)
   }
 
 }
