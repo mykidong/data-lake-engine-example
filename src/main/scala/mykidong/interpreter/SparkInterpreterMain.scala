@@ -95,8 +95,9 @@ object SparkInterpreterMain extends Logging {
 
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
     val module = runtimeMirror.staticModule("org.apache.spark.util.Utils")
-    val obj = runtimeMirror.reflectModule(module)
+    val obj = runtimeMirror.reflectModule(module).instance
     val sparkUtilsClzMethod = obj.getClass.getMethod("getLocalUserJarsForShell")
+    sparkUtilsClzMethod.setAccessible(true)
 
     val jars = sparkUtilsClzMethod.invoke(obj, conf).asInstanceOf[Seq[String]]
       // Remove file:///, file:// or file:/ scheme if exists for each jar
