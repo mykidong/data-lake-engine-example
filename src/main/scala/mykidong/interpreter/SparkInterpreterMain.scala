@@ -195,7 +195,7 @@ object SparkInterpreterMain extends Logging {
 
     val builderMethod = sparkClz.getMethod("builder")
     val builderBase = builderMethod.invoke(sparkObj)
-    val builder = builderBase.getClass.getMethod("config", classOf[SparkConf]).invoke(builder, conf).asInstanceOf[SparkSession.Builder]
+    val builder = builderBase.getClass.getMethod("config", classOf[SparkConf]).invoke(builderBase, conf).asInstanceOf[SparkSession.Builder]
 
     if (conf.get(CATALOG_IMPLEMENTATION.key, "hive").toLowerCase(Locale.ROOT) == "hive") {
       val hiveClassesPresent = sparkClz.getMethod("hiveClassesArePresent").invoke(sparkObj).asInstanceOf[Boolean]
