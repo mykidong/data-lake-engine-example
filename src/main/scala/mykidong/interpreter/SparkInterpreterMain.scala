@@ -98,9 +98,10 @@ object SparkInterpreterMain extends Logging {
     val module = runtimeMirror.staticModule("org.apache.spark.util.Utils")
     val obj = runtimeMirror.reflectModule(module).instance
 
+    var sparkUtilsClzMethod: Method = null
+
     import scala.util.control.Breaks._
     breakable {
-      var sparkUtilsClzMethod: Method = null
       for (method: Method <- obj.getClass.getDeclaredMethods) {
         if (method.getName.equals("getLocalUserJarsForShell")) {
           println("getLocalUserJarsForShell is here!!!!")
