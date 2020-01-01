@@ -92,6 +92,8 @@ object SparkInterpreterMain extends Logging {
 
     interp = new SparkILoop()
 
+
+    // org.apache.spark.util.Utils object 를 여기에서 접근할수 없기 때문에 reflection 을 이용하여 Method Access 함.
     import scala.reflect.runtime.universe
 
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
