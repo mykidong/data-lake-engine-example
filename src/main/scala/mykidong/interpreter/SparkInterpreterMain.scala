@@ -108,7 +108,6 @@ object SparkInterpreterMain extends Logging {
     breakable {
       for (method: Method <- obj.getClass.getDeclaredMethods) {
         if (method.getName.equals("getLocalUserJarsForShell")) {
-          println("getLocalUserJarsForShell is here!!!!")
           sparkUtilsClzMethod = method
           sparkUtilsClzMethod.setAccessible(true)
 
