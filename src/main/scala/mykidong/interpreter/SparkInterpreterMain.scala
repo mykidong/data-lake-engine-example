@@ -205,7 +205,6 @@ object SparkInterpreterMain extends Logging {
         sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
         println("Created Spark session (with Hive support).\n")
       } else {
-        builder.getClass.getMethod("config", classOf[String]).invoke(builder, conf)
         builder.config(CATALOG_IMPLEMENTATION.key, "in-memory")
         sparkSession = builder.getClass.getMethod("getOrCreate").invoke(builder).asInstanceOf[SparkSession]
         println("Created Spark session.\n")
