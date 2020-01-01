@@ -100,6 +100,9 @@ object SparkInterpreterMain extends Logging {
 
     for(method: Method <- obj.getClass.getDeclaredMethods) {
       println(s"getDeclaredMethod for the class ${obj.getClass.getName}: ${method.getName}")
+      if(method.getName.equals("getLocalUserJarsForShell")) {
+          println("getLocalUserJarsForShell is here!!!!")
+      }
     }
 
     val sparkUtilsClzMethod = obj.getClass.getMethod("getLocalUserJarsForShell")
