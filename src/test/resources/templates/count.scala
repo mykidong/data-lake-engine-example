@@ -20,4 +20,4 @@ class CountRunner extends mykidong.reflect.DynamicScalaSparkJobRunner {
 scala.reflect.classTag[CountRunner].runtimeClass
 
 val runner = new CountRunner()
-runner.run(spark)
+println(s"result sum: ${runner.run(spark)}")
