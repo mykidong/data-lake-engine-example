@@ -76,6 +76,14 @@ object ReplMain extends Logging {
     settings.usejavacp.value = true
     interp.settings = settings
     interp.createInterpreter()
+
+    val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
+
+    interp.in = reader
+    interp.initializeSynchronous()
+    InterpreterHelper.loopPostInit(interp)
+
     interp.initializeSpark()
 
     // local 실행시 hadoop configuratoin 을 설정할때.
@@ -89,14 +97,6 @@ object ReplMain extends Logging {
         }
       }
     }
-
-
-    val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
-
-    interp.in = reader
-    interp.initializeSynchronous()
-    InterpreterHelper.loopPostInit(interp)
   }
 
   /**
