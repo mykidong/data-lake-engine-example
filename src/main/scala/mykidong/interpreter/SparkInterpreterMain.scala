@@ -131,6 +131,13 @@ object SparkInterpreterMain extends Logging {
     interp.settings = settings
     interp.createInterpreter()
 
+    val in0 = InterpreterUtils.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, replOutput, interactive = true))
+
+    interp.in = reader
+    interp.initializeSynchronous()
+    InterpreterUtils.loopPostInit(interp)
+
     // create spark session and spark context.
     spark2CreateContext()
 
@@ -149,13 +156,6 @@ object SparkInterpreterMain extends Logging {
     // print pretty spark configurations.
     val json: JObject = "spark confs" -> sparkSession.sparkContext.getConf.getAll.toList
     println("spark configuration: " + prettyRender(json))
-
-    val in0 = InterpreterUtils.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, replOutput, interactive = true))
-
-    interp.in = reader
-    interp.initializeSynchronous()
-    InterpreterUtils.loopPostInit(interp)
   }
 
   private def spark2CreateContext(): Unit = {
