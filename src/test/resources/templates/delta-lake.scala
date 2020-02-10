@@ -25,6 +25,14 @@ parquetDf.write
   .saveAsTable("test.parquet_as_delta")
 
 
+// create delta table with sql.
+spark.sql("CREATE TABLE test_delta USING DELTA LOCATION '/test-delta-table'")
+
+val testDeltaDf = spark.sql("select * from test_delta")
+println("reading from delta table...")
+testDeltaDf.show(10);
+
+
 val deltaDf = spark.read
   .format("delta")
   .load("/test-delta-table");
