@@ -296,6 +296,11 @@
 			<artifactId>ignite-spark</artifactId>
 			<version>${ignite.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.ignite</groupId>
+            <artifactId>ignite-zookeeper</artifactId>
+            <version>${ignite.version}</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
