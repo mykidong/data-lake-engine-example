@@ -87,10 +87,6 @@
 
         <!-- delta lake -->
         <delta-lake.version>0.5.0</delta-lake.version>
-
-
-		<!-- ignite -->
-		<ignite.version>2.7.6</ignite.version>
 	</properties>
 
 	<dependencies>
@@ -290,16 +286,6 @@
             <groupId>io.delta</groupId>
             <artifactId>delta-core_${scala.binary.version}</artifactId>
             <version>${delta-lake.version}</version>
-        </dependency>
-		<dependency>
-			<groupId>org.apache.ignite</groupId>
-			<artifactId>ignite-spark</artifactId>
-			<version>${ignite.version}</version>
-		</dependency>
-        <dependency>
-            <groupId>org.apache.ignite</groupId>
-            <artifactId>ignite-zookeeper</artifactId>
-            <version>${ignite.version}</version>
         </dependency>
 	</dependencies>
 	<build>
