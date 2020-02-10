@@ -33,7 +33,7 @@ println("reading from delta table...")
 testDeltaDf.show(10);
 
 // update delta.
-spark.sql("update test_delta set quantity = 5 where itemId = 'any-item-id0'")
+spark.sql("UPDATE test_delta SET quantity = 5 WHERE itemId = 'any-item-id0'")
 println("after updating delta table...")
 spark.sql("select * from test_delta").show(10);
 
