@@ -195,7 +195,6 @@
 					<artifactId>guava</artifactId>
 				</exclusion>
 			</exclusions>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hive</groupId>
