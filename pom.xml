@@ -293,6 +293,7 @@
             <artifactId>delta-core_${scala.binary.version}</artifactId>
             <version>${delta-lake.version}</version>
         </dependency>
+		<!--
 		<dependency>
 			<groupId>org.spark-project.hive</groupId>
 			<artifactId>hive-beeline</artifactId>
@@ -318,10 +319,11 @@
 			<artifactId>hive-metastore</artifactId>
 			<version>${spark-hive.version}</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.spark-project.hive</groupId>
 			<artifactId>standalone-metastore</artifactId>
-			<version>1.21.2.3.1.2.0-4</version>
+			<version>1.21.2.3.1.4.0-315</version>
 		</dependency>
 		<dependency>
             <groupId>com.google.guava</groupId>
@@ -375,7 +377,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>install-hive-metastore</id>
+						<id>install-hive-metastore-hive3</id>
 						<phase>clean</phase>
 						<goals>
 							<goal>install-file</goal>
@@ -387,6 +389,21 @@
 							<packaging>jar</packaging>
 							<file>${basedir}/src/main/resources/lib/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar</file>
 							<pomFile>${basedir}/src/main/resources/lib/standalone-metastore-1.21.2.3.1.4.0-315-hive3.pom</pomFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-hive-metastore</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>hive</groupId>
+							<artifactId>standalone-metastore</artifactId>
+							<version>${hive.metastore.version}</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/src/main/resources/lib/standalone-metastore-1.21.2.3.1.4.0-315.jar</file>
+							<pomFile>${basedir}/src/main/resources/lib/standalone-metastore-1.21.2.3.1.4.0-315.pom</pomFile>
 						</configuration>
 					</execution>
 				</executions>
