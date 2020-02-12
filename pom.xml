@@ -320,11 +320,13 @@
 			<version>${spark-hive.version}</version>
 		</dependency>
 		-->
+		<!--
 		<dependency>
 			<groupId>org.spark-project.hive</groupId>
 			<artifactId>standalone-metastore</artifactId>
 			<version>${hive.metastore.version}-hive3</version>
 		</dependency>
+		-->
 		<dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
