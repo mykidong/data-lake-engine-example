@@ -1,13 +1,9 @@
 package mykidong.component
 
-import java.util.Properties
-
 import mykidong.http.SimpleHTTPServer
 import mykidong.util.Log4jConfigurer
 import org.apache.spark.SparkConf
 import org.slf4j.LoggerFactory
-import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.support.PropertiesLoaderUtils
 
 object InteractiveHandlerApplication {
 
@@ -32,16 +28,9 @@ object InteractiveHandlerApplication {
     sparkConf.set("spark.scheduler.mode", "FAIR")
     sparkConf.set("spark.scheduler.allocation.file", "/usr/lib/mc/conf/fairscheduler.xml")
 
-
-    // hive configuration.
-    val hiveProps = PropertiesLoaderUtils.loadProperties(new ClassPathResource("hive-conf.properties"))
-
-    val propsArray = new Array[Properties](1)
-    propsArray(0) = hiveProps
-
     // run embeded http server.
     val port = 8125
-    SimpleHTTPServer.run(sparkConf, propsArray, port)
+    SimpleHTTPServer.run(sparkConf, port)
     log.info("embedded http server is running now ...")
   }
 }
