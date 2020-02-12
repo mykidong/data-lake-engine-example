@@ -478,7 +478,19 @@
 	</build>
 	<profiles>
 		<profile>
+			<id>default</id>
+			<properties>
+				<data-lake.hive.metastore.uris>thrift://mc-d01.opasnet.io:9083</data-lake.hive.metastore.uris>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
 			<id>run-interactive-handler-local</id>
+			<properties>
+				<data-lake.hive.metastore.uris>thrift://mc-d03.opasnet.io:10000</data-lake.hive.metastore.uris>
+			</properties>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
@@ -506,6 +518,9 @@
 		</profile>
 		<profile>
 			<id>run-old-interactive-handler-local</id>
+			<properties>
+				<data-lake.hive.metastore.uris>thrift://mc-d01.opasnet.io:9083</data-lake.hive.metastore.uris>
+			</properties>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
