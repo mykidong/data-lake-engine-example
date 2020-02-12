@@ -22,8 +22,7 @@ parquetDf.write
   .format("delta")
   .option("path", "hdfs://mc/test-delta-table")
   .mode(SaveMode.Overwrite)
-  .save
-//  .saveAsTable("test.parquet_as_delta")
+  .saveAsTable("test.parquet_as_delta")
 
 
 // create delta table with sql.
