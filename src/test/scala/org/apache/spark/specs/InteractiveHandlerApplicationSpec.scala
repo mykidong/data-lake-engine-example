@@ -26,10 +26,8 @@ class InteractiveHandlerApplicationSpec extends FunSuite{
 
     sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse")
 
-    // for hive 3.x
-    //sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar")
-
-    sparkConf.set("spark.sql.hive.metastore.jars", "/home/mc/.m2/repository/org/spark-project/hive/standalone-metastore/1.21.2.3.1.4.0-315/standalone-metastore-1.21.2.3.1.4.0-315.jar")
+    // IMPORTANT FOR HIVE SUPPORT!!!
+    sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar")
 
     sparkConf.set("spark.dynamicAllocation.enabled", "true")
     sparkConf.set("spark.dynamicAllocation.minExecutors", "3")
