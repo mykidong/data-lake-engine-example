@@ -26,7 +26,7 @@ parquetDf.write
 
 
 // create delta table with sql.
-spark.sql("CREATE TABLE IF NOT EXISTS test_delta USING DELTA LOCATION '/test-delta-table'")
+spark.sql("CREATE TABLE IF NOT EXISTS test.test_delta USING DELTA LOCATION '/test-delta-table'")
 
 val testDeltaDf = spark.sql("select * from test_delta")
 println("reading from delta table...")
