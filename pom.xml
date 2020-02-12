@@ -319,6 +319,11 @@
 			<version>${spark-hive.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.spark-project.hive</groupId>
+			<artifactId>standalone-metastore</artifactId>
+			<version>1.21.2.3.1.2.0-4</version>
+		</dependency>
+		<dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
