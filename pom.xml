@@ -90,6 +90,9 @@
 
 		<!-- guava -->
 		<guava.version>14.0.1</guava.version>
+
+		<!-- spark hive -->
+		<spark-hive.version>1.2.1.spark2</spark-hive.version>
 	</properties>
 
 	<dependencies>
@@ -290,6 +293,11 @@
             <artifactId>delta-core_${scala.binary.version}</artifactId>
             <version>${delta-lake.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.spark-project.hive</groupId>
+			<artifactId>hive-beeline</artifactId>
+			<version>${spark-hive.version}</version>
+		</dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
