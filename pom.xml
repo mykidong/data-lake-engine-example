@@ -323,7 +323,7 @@
 		<dependency>
 			<groupId>org.spark-project.hive</groupId>
 			<artifactId>standalone-metastore</artifactId>
-			<version>${hive.metastore.version}</version>
+			<version>${hive.metastore.version}-hive3</version>
 		</dependency>
 		<dependency>
             <groupId>com.google.guava</groupId>
@@ -383,7 +383,7 @@
 							<goal>install-file</goal>
 						</goals>
 						<configuration>
-							<groupId>hive</groupId>
+							<groupId>org.spark-project.hive</groupId>
 							<artifactId>standalone-metastore</artifactId>
 							<version>${hive.metastore.version}-hive3</version>
 							<packaging>jar</packaging>
