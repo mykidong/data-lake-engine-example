@@ -90,9 +90,6 @@
 
 		<!-- guava -->
 		<guava.version>14.0.1</guava.version>
-
-		<!-- spark hive -->
-		<spark-hive.version>1.2.1.spark2</spark-hive.version>
 	</properties>
 
 	<dependencies>
