@@ -26,7 +26,7 @@ parquetDfDistinct.write
   .format("delta")
   .option("path", "hdfs://mc/test-delta-table-distinct")
   .mode(SaveMode.Overwrite)
-  .saveAsTable("test.test-delta-distinct")
+  .saveAsTable("test.test_delta_distinct")
 
 
 val deltaTable = DeltaTable.forPath(newSpark, "/test-delta-table-distinct")
