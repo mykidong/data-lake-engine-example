@@ -4,7 +4,7 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 
 // NOTE: variable 'spark' 가 이미 REPL 에 SparkSession instance 로 생성되었기 때문에
 //       개발할때만 uncomment 하고 commit 할 경우는 comment 시킴.
-val spark: SparkSession
+//val spark: SparkSession
 
 
 // TODO: 개발 현재 delta laks 는 Spark 2.4.2 가 필요함으로 지금의 Spark Cluster(2.3.2) 에는 적용을 할수 없음.
