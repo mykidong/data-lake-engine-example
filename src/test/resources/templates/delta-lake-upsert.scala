@@ -47,7 +47,8 @@ deltaTable.toDF.count
 
 // create row list.
 val rowList = List(
-  Row("added-item-id-1000", 100L, 50000L, Row("added-uid-1000", "cart-event", "1.0.0", 1550887585110L))
+  Row("any-item-id4", 200L, 50000L, Row("added-uid-1000", "cart-event", "1.0.0", 1550887585110L)),
+  Row("added-item-id-1000", 400L, 50000L, Row("added-uid-1000", "cart-event", "1.0.0", 1550887585110L))
 )
 
 // create rdd from row list.
