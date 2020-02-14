@@ -16,7 +16,6 @@ val newSpark = spark.newSession
 
 val jdbcDf = newSpark.read.format("jdbc")
   .option("url", "jdbc:hive2://mc-d03.opasnet.io:10016")
-  .option("driver", "org.apache.hive.jdbc.HiveDriver")
   .option("dbtable", "test.test_delta")
   .option("user", "")
   .option("password", "")
