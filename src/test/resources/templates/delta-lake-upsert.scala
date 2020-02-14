@@ -1,5 +1,6 @@
 import io.delta.tables._
-import org.apache.spark.sql.{SaveMode, SparkSession}
+import org.apache.spark.sql.{Row, SaveMode, SparkSession}
+import org.apache.spark.sql.Encoders
 
 
 // NOTE: variable 'spark' 가 이미 REPL 에 SparkSession instance 로 생성되었기 때문에
@@ -19,9 +20,18 @@ val parquetDf = newSpark.read.format("parquet")
 println("reading parquet file..")
 parquetDf.show(5)
 
+// parquet schema.
+val parquetSchema = parquetDf.schema
 
-val parquetDfDistinct = parquetDf.distinct()
+// get distinct rdd.
+val rddDistinct = parquetDf.rdd.map(row => (row.getAs("itemId").asInstanceOf[String], row)).groupByKey().map(t => {
+  t._2.iterator.next()
+})
 
+// create distinct parquet dataframe.
+val parquetDfDistinct = newSpark.createDataFrame(rddDistinct, parquetSchema)
+
+// write distinct delta table.
 parquetDfDistinct.write
   .format("delta")
   .option("path", "hdfs://mc/test-delta-table-distinct")
