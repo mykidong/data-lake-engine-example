@@ -45,11 +45,22 @@ println("before delta table upsert...")
 deltaTable.toDF.show(200)
 deltaTable.toDF.count
 
+// create row list.
+val rowList = List(
+  Row("added-item-id-1000", 100, 50000, Row("added-uid-1000", "cart-event", "1.0.0", 1550887585110L))
+)
+
+// create rdd from row list.
+val addedRdd = newSpark.sparkContext.parallelize(rowList)
+
+// create dataframe for adding row.
+val addedDf = newSpark.createDataFrame(addedRdd, parquetSchema)
+
 // do upsert with merge.
 deltaTable.as("delta")
   .merge(
-    parquetDf.as("parquet"),
-    "delta.itemId = parquet.itemId")
+    addedDf.as("added"),
+    "delta.itemId = added.itemId")
   .whenMatched().updateAll()
   .whenNotMatched().insertAll()
   .execute()
