@@ -9,6 +9,8 @@ import org.apache.spark.sql.types.StructType
 // create new spark session.
 val newSpark = spark.newSession
 
+val driverName = "org.apache.hive.jdbc.HiveDriver"
+Class.forName(driverName)
 
 val jdbcDf = newSpark.read.format("jdbc")
   .option("url", "jdbc:hive2://mc-d03.opasnet.io:10016")
