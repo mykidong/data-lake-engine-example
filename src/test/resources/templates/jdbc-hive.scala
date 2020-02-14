@@ -9,12 +9,14 @@ import org.apache.spark.sql.types.StructType
 // create new spark session.
 val newSpark = spark.newSession
 
-val driverName = "org.apache.hive.jdbc.HiveDriver"
-Class.forName(driverName)
+
+
+// NOTE: Hive via Spark JDBC Not Supported!!!!
+// https://issues.apache.org/jira/browse/SPARK-22113
 
 val jdbcDf = newSpark.read.format("jdbc")
   .option("url", "jdbc:hive2://mc-d03.opasnet.io:10016")
-  //.option("driver", "org.apache.hive.jdbc.HiveDriver")
+  .option("driver", "org.apache.hive.jdbc.HiveDriver")
   .option("dbtable", "test.test_delta")
   .option("user", "")
   .option("password", "")
