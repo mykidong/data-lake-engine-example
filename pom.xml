@@ -25,8 +25,11 @@
 		<confluent.version>5.0.1</confluent.version>
 
 		<!-- scala -->
-		<scala.version>2.11.12</scala.version>
-		<scala.binary.version>2.11</scala.binary.version>
+        <!--
+        <scala.version>2.11.12</scala.version>
+        -->
+		<scala.version>2.12.10</scala.version>
+		<scala.binary.version>2.12</scala.binary.version>
 
 		<!-- spark -->
 		<spark.version>2.4.5</spark.version>

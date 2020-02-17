@@ -11,8 +11,7 @@ val newSpark = spark.newSession
 
 
 
-// NOTE: Hive via Spark JDBC Not Supported!!!!
-// https://issues.apache.org/jira/browse/SPARK-22113
+// NOTE: Spark JDBC for Hive 는 Object, Array Type 을 Support 하지 않음!!!
 
 val jdbcDf = newSpark.read.format("jdbc")
   .option("url", "jdbc:hive2://mc-d03.opasnet.io:10016")
