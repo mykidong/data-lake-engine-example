@@ -25,11 +25,8 @@
 		<confluent.version>5.0.1</confluent.version>
 
 		<!-- scala -->
-        <!--
-        <scala.version>2.11.12</scala.version>
-        -->
-		<scala.version>2.12.8</scala.version>
-		<scala.binary.version>2.12</scala.binary.version>
+		<scala.version>2.11.12</scala.version>
+		<scala.binary.version>2.11</scala.binary.version>
 
 		<!-- spark -->
 		<spark.version>2.4.5</spark.version>
@@ -135,6 +132,11 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-actors</artifactId>
 			<version>${scala.version}</version>
 		</dependency>
 		<dependency>
@@ -271,6 +273,11 @@
 			<groupId>net.liftweb</groupId>
 			<artifactId>lift-json_${scala.binary.version}</artifactId>
 			<version>${lift-json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.springml</groupId>
+			<artifactId>spark-sftp_${scala.binary.version}</artifactId>
+			<version>${spark-sftp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>jline</groupId>
