@@ -28,7 +28,7 @@
         <!--
         <scala.version>2.11.12</scala.version>
         -->
-		<scala.version>2.12.10</scala.version>
+		<scala.version>2.12.8</scala.version>
 		<scala.binary.version>2.12</scala.binary.version>
 
 		<!-- spark -->
@@ -135,11 +135,6 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
-			<version>${scala.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-actors</artifactId>
 			<version>${scala.version}</version>
 		</dependency>
 		<dependency>
