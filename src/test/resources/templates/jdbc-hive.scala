@@ -14,7 +14,7 @@ val newSpark = spark.newSession
 // NOTE: Spark JDBC for Hive 는 Object, Array Type 을 Support 하지 않음!!!
 
 val jdbcDf = newSpark.read.format("jdbc")
-  .option("url", "jdbc:hive2://mc-d03.opasnet.io:10016")
+  .option("url", "jdbc:hive2://mc-d01.opasnet.io:10000")
   .option("dbtable", "mc.crawl_youtube")
   .option("user", "")
   .option("password", "")
