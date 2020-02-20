@@ -15,7 +15,7 @@ val newSpark = spark.newSession
 
 val jdbcDf = newSpark.read.format("jdbc")
   .option("url", "jdbc:hive2://mc-d03.opasnet.io:10016")
-  .option("dbtable", "test.test_delta")
+  .option("dbtable", "mc.crawl_youtube")
   .option("user", "")
   .option("password", "")
   .option("fetchsize", "100")
