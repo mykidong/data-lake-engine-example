@@ -473,6 +473,9 @@
 			<id>default</id>
 			<properties>
 				<data-lake.hive.metastore.uris>thrift://mc-d01.opasnet.io:9083</data-lake.hive.metastore.uris>
+				<data-lake.hadoop.nameservice>mc</data-lake.hadoop.nameservice>
+				<data-lake.hadoop.nn1>mc-m01.opasnet.io:8020</data-lake.hadoop.nn1>
+				<data-lake.hadoop.nn2>mc-m02.opasnet.io:8020</data-lake.hadoop.nn2>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -482,6 +485,9 @@
 			<id>run-interactive-handler-local</id>
 			<properties>
 				<data-lake.hive.metastore.uris>thrift://mc-d01.opasnet.io:9083</data-lake.hive.metastore.uris>
+				<data-lake.hadoop.nameservice>mc</data-lake.hadoop.nameservice>
+				<data-lake.hadoop.nn1>mc-m01.opasnet.io:8020</data-lake.hadoop.nn1>
+				<data-lake.hadoop.nn2>mc-m02.opasnet.io:8020</data-lake.hadoop.nn2>
 			</properties>
 			<activation>
 				<activeByDefault>false</activeByDefault>
