@@ -84,8 +84,9 @@ public class JdbcHiveRelation extends BaseRelation implements Serializable, Tabl
         String hiveJdbcPassword = parametersAsJava.get(JdbcHiveOptions.hiveJdbcPassword);
         int fetchSize = Integer.parseInt(parametersAsJava.get(JdbcHiveOptions.fetchsize));
         String tempPath = parametersAsJava.get(JdbcHiveOptions.tempPath);
-        tempPath = (tempPath != null) ? tempPath : "/jdbc-hive-temp/";
+        tempPath = (tempPath != null) ? tempPath : "/jdbc-hive-temp";
 
+        // TODO: limit 을 걸지 않을 경우 hive server 가 죽는다!!! 왜 그렇지???
         String query = "select * from " + dbTable + " " + conditionClause;
         System.out.println("input query: [" + query + "]");
 

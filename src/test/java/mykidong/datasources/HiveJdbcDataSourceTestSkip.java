@@ -11,7 +11,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.util.Properties;
 
-public class HiveJdbcTestSkip {
+public class HiveJdbcDataSourceTestSkip {
 
     @Test
     public void loadDataFromHive() throws Exception
