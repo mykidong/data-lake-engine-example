@@ -480,7 +480,7 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-		</profile>
+		</profile>hive-metastore.sql
 		<profile>
 			<id>run-interactive-handler-local</id>
 			<properties>
