@@ -97,6 +97,9 @@ public class JdbcHiveRelation extends BaseRelation implements Serializable, Tabl
         properties.setProperty("password", hiveJdbcPassword);
 
 
+        // TODO: hive jdbc connection 을 통해 얻어진 결과들은 temp file path 의 parquet file 에 먼저 저장이 됨.
+        //       그리고  이 parquet file 들은 다시 spark dataframe 으로 loading 이 됨.
+        //       결국 이 temp file path 는 dataframe loading 후 지워져야 함!!!
         String filePath = tempPath + "/" + UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
         System.out.println("temp file path: [" + filePath + "]");
 
