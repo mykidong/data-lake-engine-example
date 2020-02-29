@@ -36,7 +36,7 @@ public class HiveConnectorTestSkip {
         // set hadoop configuration to the current spark session.
         spark = SparkLoader.getSessionWithHadoopProperties(spark, hadoopProps);
 
-        Dataset<Row> hiveDf = spark.read().format("hive")
+        Dataset<Row> hiveDf = spark.read().format("hive-with-jdbc")
                 .option("hiveJdbcUrl", "jdbc:hive2://mc-d01.opasnet.io:10000")
                 .option("hiveJdbcUser", "hdfs")
                 .option("hiveJdbcPassword", "hdfspass")

@@ -10,7 +10,7 @@ public class HiveRelationProvider implements RelationProvider, DataSourceRegiste
 
     @Override
     public String shortName() {
-        return "hive";
+        return "hive-with-jdbc";
     }
 
     @Override
