@@ -136,8 +136,8 @@ object SparkInterpreterMain extends Logging {
 
     val settings = new GenericRunnerSettings(scalaOptionError)
     settings.processArguments(interpArguments, true)
-
     settings.usejavacp.value = true
+
     interp.settings = settings
     interp.createInterpreter()
 
