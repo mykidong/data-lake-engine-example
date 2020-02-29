@@ -40,7 +40,7 @@ public class HiveConnectorTestSkip {
                 .option("hiveJdbcUrl", "jdbc:hive2://mc-d01.opasnet.io:10000")
                 .option("hiveJdbcUser", "hdfs")
                 .option("hiveJdbcPassword", "hdfspass")
-                .option("query", "SELECT * FROM mc.crawl_youtube")
+                .option("query", "SELECT * FROM mc.crawl_youtube limit 100")
                 .option("defaultFs", "")
                 .option("hadoopConfProperties", "hadoop-conf.properties")
                 .option("outputPath", "/temp-hive")

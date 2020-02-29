@@ -64,15 +64,13 @@ public class HiveRelation extends BaseRelation implements Serializable, TableSca
         String hadoopConfProperties = parametersAsJava.get(HiveOptions.hadoopConfProperties);
         String outputPath = parametersAsJava.get(HiveOptions.outputPath);
 
+        outputPath = outputPath + "/" + UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
+        System.out.println("outputPath: [" + outputPath + "]");
+
         String sql = StringUtils.fileToString("/hive-template/hive-query.sql");
         sql = sql.replaceAll("#query#", query);
         sql = sql.replaceAll("#outputPath#", outputPath);
         System.out.println("sql: [" + sql + "]");
-
-        outputPath = outputPath + "/" + UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
-        System.out.println("outputPath: [" + outputPath + "]");
-
-
         try {
             // spark hadoop configuration 을 hive 가 query 실행후 저장하는 file system 으로 변경.
             if(hadoopConfProperties != null) {
