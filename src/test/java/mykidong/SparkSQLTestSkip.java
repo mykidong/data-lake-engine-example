@@ -7,9 +7,6 @@ import mykidong.util.Log4jConfigurer;
 import mykidong.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
@@ -23,10 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-import scala.actors.threadpool.Arrays;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -201,30 +195,30 @@ public class SparkSQLTestSkip {
      *
      * @throws Exception
      */
-    @Test
-    public void createHiveTableWithoutCopyingFile() throws Exception
-    {
-        String path = "/test-event-parquet";
-
-        String tableName = "test.without_copying_file";
-
-        // read parquet.
-        Dataset<Row> parquetDs = spark.read().format("parquet")
-                .load(path);
-
-        String ddl = parquetDs.schema().toDDL();
-        log.info("ddl: [" + ddl + "]");
-
-        String query = "";
-        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + tableName + " (";
-        query += ddl;
-        query += ")    ";
-        query += "STORED AS PARQUET   ";
-        query += "LOCATION 'hdfs://mc" + path + "'";
-
-        spark.sql("drop table if exists " + tableName);
-        spark.sql(query);
-    }
+//    @Test
+//    public void createHiveTableWithoutCopyingFile() throws Exception
+//    {
+//        String path = "/test-event-parquet";
+//
+//        String tableName = "test.without_copying_file";
+//
+//        // read parquet.
+//        Dataset<Row> parquetDs = spark.read().format("parquet")
+//                .load(path);
+//
+//        String ddl = parquetDs.schema().toDDL();
+//        log.info("ddl: [" + ddl + "]");
+//
+//        String query = "";
+//        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + tableName + " (";
+//        query += ddl;
+//        query += ")    ";
+//        query += "STORED AS PARQUET   ";
+//        query += "LOCATION 'hdfs://mc" + path + "'";
+//
+//        spark.sql("drop table if exists " + tableName);
+//        spark.sql(query);
+//    }
 
 
     /**
@@ -287,105 +281,105 @@ public class SparkSQLTestSkip {
      *
      * @throws Exception
      */
-    @Test
-    public void createNewHiveTableForExternalHiveMetastore() throws Exception
-    {
-        String tableName = "another_test.new_event";
-
-        // hive metastore 3.x.
-        String url = "jdbc:hive2://mc-d01.opasnet.io:10000";
-
-        Properties properties = new Properties();
-        properties.put("user", "hive");
-
-        HiveJdbcMetadata hiveJdbcMetadata = new HiveJdbcMetadata(url, properties);
-        HiveJdbcMetadata.HiveMetadataMap hiveMetadataMap = hiveJdbcMetadata.getMetadataFromHive(tableName);
-
-        Map<String, String> ddlMap = hiveMetadataMap.getDdlMap();
-        Map<String, String> extraInfoMap = hiveMetadataMap.getExtraInfoMap();
-
-        log.info("ddl: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(ddlMap)) + "]");
-        log.info("extra: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(extraInfoMap)) + "]");
-
-        // first, read parquet schema from the location path to get DDL.
-
-        // hdfs path.
-        String location = extraInfoMap.get("Location");
-
-        // read parquet.
-        Dataset<Row> parquetDs = spark.read().format("parquet")
-                .load(location);
-
-        String ddlWithCaseSensitive = parquetDs.schema().toDDL();
-        log.info("ddlWithCaseSensitive: [" + ddlWithCaseSensitive + "]");
-
-        String newTableName = "test.new_event_from_another";
-
-        String query = "";
-        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + newTableName + " (";
-        query += ddlWithCaseSensitive;
-        query += ")    ";
-        query += "STORED AS PARQUET   ";
-        query += "LOCATION '" + location + "'";
-
-        log.info("create table sql: [" + query + "]");
-
-        spark.sql("drop table if exists " + newTableName);
-        spark.sql(query);
-    }
-
-
-    /**
-     * JDBC Without Copy DOES NOT WORK!!
-     *
-     * Error: org.apache.spark.sql.catalyst.parser.ParseException:
-     * Operation not allowed: STORED BY(line 13, pos 0)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void createHiveTableForExternalDB() throws Exception
-    {
-        String url = "jdbc:mysql://mc-m02.opasnet.io:3306";
-        String user = "azkaban";
-        String password = "azkabanpass";
-        String table = "azkaban.projects";
-
-        Dataset<Row> jdbcDs = spark.read().format("jdbc")
-                .option("url", url)
-                .option("user", user)
-                .option("password", password)
-                .option("query", "select * from " + table + " limit 1")
-                .load();
-
-        jdbcDs.show();
-
-        String ddlWithCaseSensitive = jdbcDs.schema().toDDL();
-        log.info("ddlWithCaseSensitive: [" + ddlWithCaseSensitive + "]");
-
-        String newTable = "test.azkaban_without_copy";
-
-        String query = "";
-        query += "CREATE EXTERNAL TABLE " + newTable;
-        query += "(";
-        query += ddlWithCaseSensitive;
-        query += ")   ";
-        query += "STORED BY 'org.apache.hive.storage.jdbc.JdbcStorageHandler' ";
-        query += "TBLPROPERTIES (";
-        query += "        \"hive.sql.database.type\" = \"MYSQL\",";
-        query += "        \"hive.sql.jdbc.driver\" = \"com.mysql.jdbc.Driver\",";
-        query += "        \"hive.sql.jdbc.url\" = \"" + url + "\",";
-        query += "        \"hive.sql.dbcp.username\" = \"" + user + "\",";
-        query += "        \"hive.sql.dbcp.password\" = \"" + password + "\",";
-        query += "        \"hive.sql.table\" = \"" + table + "\",";
-        query += "        \"hive.sql.dbcp.maxActive\" = \"1\"";
-        query += ")";
-
-        log.info("create table sql: [" + query + "]");
-
-        spark.sql("drop table if exists " + newTable);
-        spark.sql(query);
-    }
+//    @Test
+//    public void createNewHiveTableForExternalHiveMetastore() throws Exception
+//    {
+//        String tableName = "another_test.new_event";
+//
+//        // hive metastore 3.x.
+//        String url = "jdbc:hive2://mc-d01.opasnet.io:10000";
+//
+//        Properties properties = new Properties();
+//        properties.put("user", "hive");
+//
+//        HiveJdbcMetadata hiveJdbcMetadata = new HiveJdbcMetadata(url, properties);
+//        HiveJdbcMetadata.HiveMetadataMap hiveMetadataMap = hiveJdbcMetadata.getMetadataFromHive(tableName);
+//
+//        Map<String, String> ddlMap = hiveMetadataMap.getDdlMap();
+//        Map<String, String> extraInfoMap = hiveMetadataMap.getExtraInfoMap();
+//
+//        log.info("ddl: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(ddlMap)) + "]");
+//        log.info("extra: [" + JsonWriter.formatJson(new ObjectMapper().writeValueAsString(extraInfoMap)) + "]");
+//
+//        // first, read parquet schema from the location path to get DDL.
+//
+//        // hdfs path.
+//        String location = extraInfoMap.get("Location");
+//
+//        // read parquet.
+//        Dataset<Row> parquetDs = spark.read().format("parquet")
+//                .load(location);
+//
+//        String ddlWithCaseSensitive = parquetDs.schema().toDDL();
+//        log.info("ddlWithCaseSensitive: [" + ddlWithCaseSensitive + "]");
+//
+//        String newTableName = "test.new_event_from_another";
+//
+//        String query = "";
+//        query += "CREATE EXTERNAL TABLE IF NOT EXISTS " + newTableName + " (";
+//        query += ddlWithCaseSensitive;
+//        query += ")    ";
+//        query += "STORED AS PARQUET   ";
+//        query += "LOCATION '" + location + "'";
+//
+//        log.info("create table sql: [" + query + "]");
+//
+//        spark.sql("drop table if exists " + newTableName);
+//        spark.sql(query);
+//    }
+//
+//
+//    /**
+//     * JDBC Without Copy DOES NOT WORK!!
+//     *
+//     * Error: org.apache.spark.sql.catalyst.parser.ParseException:
+//     * Operation not allowed: STORED BY(line 13, pos 0)
+//     *
+//     * @throws Exception
+//     */
+//    @Test
+//    public void createHiveTableForExternalDB() throws Exception
+//    {
+//        String url = "jdbc:mysql://mc-m02.opasnet.io:3306";
+//        String user = "azkaban";
+//        String password = "azkabanpass";
+//        String table = "azkaban.projects";
+//
+//        Dataset<Row> jdbcDs = spark.read().format("jdbc")
+//                .option("url", url)
+//                .option("user", user)
+//                .option("password", password)
+//                .option("query", "select * from " + table + " limit 1")
+//                .load();
+//
+//        jdbcDs.show();
+//
+//        String ddlWithCaseSensitive = jdbcDs.schema().toDDL();
+//        log.info("ddlWithCaseSensitive: [" + ddlWithCaseSensitive + "]");
+//
+//        String newTable = "test.azkaban_without_copy";
+//
+//        String query = "";
+//        query += "CREATE EXTERNAL TABLE " + newTable;
+//        query += "(";
+//        query += ddlWithCaseSensitive;
+//        query += ")   ";
+//        query += "STORED BY 'org.apache.hive.storage.jdbc.JdbcStorageHandler' ";
+//        query += "TBLPROPERTIES (";
+//        query += "        \"hive.sql.database.type\" = \"MYSQL\",";
+//        query += "        \"hive.sql.jdbc.driver\" = \"com.mysql.jdbc.Driver\",";
+//        query += "        \"hive.sql.jdbc.url\" = \"" + url + "\",";
+//        query += "        \"hive.sql.dbcp.username\" = \"" + user + "\",";
+//        query += "        \"hive.sql.dbcp.password\" = \"" + password + "\",";
+//        query += "        \"hive.sql.table\" = \"" + table + "\",";
+//        query += "        \"hive.sql.dbcp.maxActive\" = \"1\"";
+//        query += ")";
+//
+//        log.info("create table sql: [" + query + "]");
+//
+//        spark.sql("drop table if exists " + newTable);
+//        spark.sql(query);
+//    }
 
     @Test
     public void runDynamicCompiledSparkCodes() throws Exception

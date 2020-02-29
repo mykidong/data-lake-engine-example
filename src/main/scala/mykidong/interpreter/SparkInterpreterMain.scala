@@ -15,7 +15,7 @@ import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.StaticSQLConf.CATALOG_IMPLEMENTATION
 
-import scala.tools.nsc.GenericRunnerSettings
+import scala.tools.nsc.Settings
 import scala.tools.nsc.interpreter.{JPrintWriter, SimpleReader}
 
 object SparkInterpreterMain extends Logging {
@@ -38,16 +38,6 @@ object SparkInterpreterMain extends Logging {
    */
   var getBack = GetBack
 
-
-  private var hasErrors = false
-  private var isShellSession = false
-
-  private def scalaOptionError(msg: String): Unit = {
-    hasErrors = true
-    // scalastyle:off println
-    Console.err.println(msg)
-    // scalastyle:on println
-  }
 
   def doRun(sparkConf: SparkConf): Unit = {
       doRun(sparkConf, null)
@@ -134,12 +124,19 @@ object SparkInterpreterMain extends Logging {
 
     println(s"interpArguments: ${interpArguments.toString()}")
 
-    val settings = new GenericRunnerSettings(scalaOptionError)
+    val settings = new Settings()
     settings.processArguments(interpArguments, true)
     settings.usejavacp.value = true
 
     interp.settings = settings
     interp.createInterpreter()
+
+    val in0 = InterpreterUtils.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, replOutput, interactive = true))
+
+    interp.in = reader
+    interp.initializeSynchronous()
+    InterpreterUtils.loopPostInit(interp)
 
     // create spark session and spark context.
     spark2CreateContext()
@@ -159,13 +156,6 @@ object SparkInterpreterMain extends Logging {
     // print pretty spark configurations.
     val json: JObject = "spark confs" -> sparkSession.sparkContext.getConf.getAll.toList
     println("spark configuration: " + prettyRender(json))
-
-    val in0 = InterpreterUtils.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, replOutput, interactive = true))
-
-    interp.in = reader
-    interp.initializeSynchronous()
-    InterpreterUtils.loopPostInit(interp)
   }
 
   private def spark2CreateContext(): Unit = {

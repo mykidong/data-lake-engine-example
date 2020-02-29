@@ -5,6 +5,7 @@ import java.net.URI
 import java.nio.file.{Files, Paths}
 import java.util.{Locale, Properties, UUID}
 
+import mykidong.interpreter.GetBack
 import org.apache.spark._
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
@@ -30,6 +31,12 @@ object ReplMain extends Logging {
 
   private var hasErrors = false
   private var isShellSession = false
+
+  // TODO: Multiple User Session 에서 Concurrency Issue 는 없을까???
+  /**
+   * interpreter 실행후 result dataframe 을 얻기 위한 Instance.
+   */
+  var getBack = GetBack
 
   private def scalaOptionError(msg: String): Unit = {
     hasErrors = true
@@ -76,6 +83,14 @@ object ReplMain extends Logging {
     settings.usejavacp.value = true
     interp.settings = settings
     interp.createInterpreter()
+
+    val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
+
+    interp.in = reader
+    interp.initializeSynchronous()
+    InterpreterHelper.loopPostInit(interp)
+
     interp.initializeSpark()
 
     // local 실행시 hadoop configuratoin 을 설정할때.
@@ -89,14 +104,6 @@ object ReplMain extends Logging {
         }
       }
     }
-
-
-    val in0 = InterpreterHelper.getField(interp, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-    val reader = in0.fold(interp.chooseReader(settings))(r => SimpleReader(r, new JPrintWriter(Console.out, true), interactive = true))
-
-    interp.in = reader
-    interp.initializeSynchronous()
-    InterpreterHelper.loopPostInit(interp)
   }
 
   /**
@@ -178,7 +185,12 @@ object ReplMain extends Logging {
         sparkSession = builder.getOrCreate()
         logInfo("Created Spark session")
       }
+
       sparkContext = sparkSession.sparkContext
+
+      // interpreter 실행후 result dataframe 을 얻기 위한 Instance.
+      interp.bind("getBack", getBack.getClass.getCanonicalName, getBack, List("""@transient"""))
+
       sparkSession
     } catch {
       case e: Exception if isShellSession =>
