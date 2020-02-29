@@ -15,6 +15,6 @@ public class HiveRelationProvider implements RelationProvider, DataSourceRegiste
 
     @Override
     public BaseRelation createRelation(SQLContext sqlContext, Map<String, String> parameters) {
-        return null;
+        return new HiveRelation(sqlContext, parameters);
     }
 }
