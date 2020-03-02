@@ -1,6 +1,7 @@
 package mykidong.connector.hive;
 
 import mykidong.datasources.jdbc.hive.JdbcHiveOptions;
+import mykidong.meta.HiveMetaResolver;
 import mykidong.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.rdd.RDD;
@@ -54,8 +55,41 @@ public class HiveRelation extends BaseRelation implements Serializable, TableSca
         return this.schema;
     }
 
+    @Override
+    public RDD<Row> buildScan() {
+        if(df == null)
+        {
+            execHiveQuery();
+        }
+
+        return df.rdd();
+    }
+
+    private void buildSchema()
+    {
+        String dbTable = parametersAsJava.get(JdbcHiveOptions.dbTable);
+        String hiveJdbcUrl = parametersAsJava.get(JdbcHiveOptions.hiveJdbcUrl);
+        String hiveJdbcUser = parametersAsJava.get(JdbcHiveOptions.hiveJdbcUser);
+        String hiveJdbcPassword = parametersAsJava.get(JdbcHiveOptions.hiveJdbcPassword);
+        String hiveMetastoreUrl = parametersAsJava.get(JdbcHiveOptions.hiveMetastoreUrl);
+        String hiveMetastoreUser = parametersAsJava.get(JdbcHiveOptions.hiveMetastoreUser);
+        String hiveMetastorePassword = parametersAsJava.get(JdbcHiveOptions.hiveMetastorePassword);
+
+        HiveMetaResolver hiveMetaResolver = new HiveMetaResolver(dbTable,
+                hiveJdbcUrl,
+                hiveJdbcUser,
+                hiveJdbcPassword,
+                hiveMetastoreUrl,
+                hiveMetastoreUser,
+                hiveMetastorePassword);
+
+        this.schema = hiveMetaResolver.getSparkSchema();
+    }
+
     private void execHiveQuery()
     {
+        buildSchema();
+
         String hiveJdbcUrl = parametersAsJava.get(HiveOptions.hiveJdbcUrl);
         String hiveJdbcUser = parametersAsJava.get(HiveOptions.hiveJdbcUser);
         String hiveJdbcPassword = parametersAsJava.get(HiveOptions.hiveJdbcPassword);
@@ -96,7 +130,7 @@ public class HiveRelation extends BaseRelation implements Serializable, TableSca
 
             // hive 가 저장한 path 에서 parquet file 을 읽음.
             df = sqlContext.read().format("parquet").load(outputPath);
-            this.schema = df.schema();
+
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -111,15 +145,5 @@ public class HiveRelation extends BaseRelation implements Serializable, TableSca
             String value = hadoopProps.getProperty(key);
             hadoopConfiguration.set(key, value);
         }
-    }
-
-    @Override
-    public RDD<Row> buildScan() {
-        if(df == null)
-        {
-            execHiveQuery();
-        }
-
-        return df.rdd();
     }
 }
