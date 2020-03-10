@@ -90,6 +90,9 @@
 
 		<!-- guava -->
 		<guava.version>14.0.1</guava.version>
+
+        <!-- ozone -->
+        <ozone.version>0.4.1-alpha</ozone.version>
 	</properties>
 
 	<dependencies>
@@ -294,6 +297,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-ozone-filesystem-lib-legacy</artifactId>
+            <version>${ozone.version}</version>
         </dependency>
     </dependencies>
 	<build>
