@@ -66,13 +66,13 @@ public class OzoneFSTestSkip {
 
         // create persistent parquet table with external path.
         parquetDs.write().format("parquet")
-                .option("path", "o3fs://my-volume/my-bucket")
+                .option("path", "o3fs://my-bucket.my-volumne/test-ozone")
                 .mode(SaveMode.Overwrite)
                 .save();
 
 
         Dataset<Row> dfFromOzone = spark.read().format("parquet")
-                .load("o3fs://my-volume/my-bucket");
+                .load("o3fs://my-bucket.my-volumne/test-ozone");
 
         System.out.println("reading from ozone file system...");
 
