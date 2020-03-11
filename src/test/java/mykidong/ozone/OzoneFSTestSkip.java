@@ -66,19 +66,19 @@ public class OzoneFSTestSkip {
 
         // change file system.
         hadoopConfiguration = spark.sparkContext().hadoopConfiguration();
-        hadoopConfiguration.set("fs.defaultFS", "o3fs://my-bucket.my-volumne");
+        hadoopConfiguration.set("fs.defaultFS", "o3fs://mc-m01.opasnet.io:9862");
         hadoopConfiguration.set("fs.o3fs.impl", "org.apache.hadoop.fs.ozone.BasicOzoneFileSystem");
         hadoopConfiguration.set("fs.AbstractFileSystem.o3fs.impl", "org.apache.hadoop.fs.ozone.OzFs");
 
         // create persistent parquet table with external path.
         parquetDs.write().format("parquet")
-                .option("path", "o3fs://my-bucket.my-volumne/test-ozone")
+                .option("path", "o3fs://my-bucket.my-volumne.mc-m01.opasnet.io:9862/test-ozone")
                 .mode(SaveMode.Overwrite)
                 .save();
 
 
         Dataset<Row> dfFromOzone = spark.read().format("parquet")
-                .load("o3fs://my-bucket.my-volumne/test-ozone");
+                .load("o3fs://my-bucket.my-volumne.mc-m01.opasnet.io:9862/test-ozone");
 
         System.out.println("reading from ozone file system...");
 
