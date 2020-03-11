@@ -11,7 +11,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
+import java.io.ByteArrayInputStream;
 import java.util.Properties;
+
+import static mykidong.util.StringUtils.fileToString;
 
 public class OzoneFSTestSkip {
 
@@ -51,6 +54,10 @@ public class OzoneFSTestSkip {
             hadoopConfiguration.set(key, value);
         }
 
+        // ozone configuration.
+        String ozoneConf = fileToString("ozone-site.xml");
+        hadoopConfiguration.addResource(new ByteArrayInputStream(ozoneConf.getBytes()));
+
         // read parquet.
         Dataset<Row> parquetDs = spark.read().format("parquet")
                 .load("/test-event-parquet");
@@ -62,8 +69,6 @@ public class OzoneFSTestSkip {
         hadoopConfiguration.set("fs.defaultFS", "o3fs://mc-m01.opasnet.io:9878");
         hadoopConfiguration.set("fs.o3fs.impl", "org.apache.hadoop.fs.ozone.BasicOzoneFileSystem");
         hadoopConfiguration.set("fs.AbstractFileSystem.o3fs.impl", "org.apache.hadoop.fs.ozone.OzFs");
-        hadoopConfiguration.set("ozone.om.address", "mc-m01.opasnet.io");
-
 
         // create persistent parquet table with external path.
         parquetDs.write().format("parquet")
