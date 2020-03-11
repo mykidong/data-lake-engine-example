@@ -66,7 +66,7 @@ public class OzoneFSTestSkip {
 
         // change file system.
         hadoopConfiguration = spark.sparkContext().hadoopConfiguration();
-        hadoopConfiguration.set("fs.defaultFS", "o3fs://mc-m01.opasnet.io:9878");
+        hadoopConfiguration.set("fs.defaultFS", "o3fs://mc-m01.opasnet.io:9862");
         hadoopConfiguration.set("fs.o3fs.impl", "org.apache.hadoop.fs.ozone.BasicOzoneFileSystem");
         hadoopConfiguration.set("fs.AbstractFileSystem.o3fs.impl", "org.apache.hadoop.fs.ozone.OzFs");
 
