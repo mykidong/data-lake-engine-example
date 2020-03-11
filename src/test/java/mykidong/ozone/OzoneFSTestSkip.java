@@ -77,10 +77,11 @@ public class OzoneFSTestSkip {
                 .save();
 
 
+        System.out.println("reading from ozone file system...");
+
+        // read parquet from ozone file system.
         Dataset<Row> dfFromOzone = spark.read().format("parquet")
                 .load("o3fs://my-bucket.my-volume.mc-m01.opasnet.io:9862/test-ozone");
-
-        System.out.println("reading from ozone file system...");
 
         dfFromOzone.show(10);
     }
