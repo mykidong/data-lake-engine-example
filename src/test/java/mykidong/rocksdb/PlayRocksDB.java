@@ -26,7 +26,7 @@ public class PlayRocksDB {
 
             byte[] value = db.get(key1);
             if (value != null) {
-                System.out.println("value of key1: [" + value + "]");
+                System.out.println("value of key1: [" + new String(value) + "]");
 
                 db.put(key2, value);
 
@@ -38,7 +38,7 @@ public class PlayRocksDB {
                 byte[] value2 = db.get(key2);
                 if(value2 != null)
                 {
-                    System.out.println("value of key2: [" + value2 + "]");
+                    System.out.println("value of key2: [" + new String(value2) + "]");
                 }
 
                 value = "my-value".getBytes();
