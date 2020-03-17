@@ -93,6 +93,9 @@
 
         <!-- ozone -->
         <ozone.version>0.4.1-alpha</ozone.version>
+
+		<!-- rocksdb -->
+		<rocksdb.version>6.6.4</rocksdb.version>
 	</properties>
 
 	<dependencies>
@@ -303,6 +306,11 @@
             <artifactId>hadoop-ozone-filesystem-lib-legacy</artifactId>
             <version>${ozone.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.rocksdb</groupId>
+			<artifactId>rocksdbjni</artifactId>
+			<version>${rocksdb.version}</version>
+		</dependency>
     </dependencies>
 	<build>
 		<pluginManagement>
