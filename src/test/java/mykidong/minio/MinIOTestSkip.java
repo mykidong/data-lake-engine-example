@@ -16,7 +16,7 @@ import java.util.Properties;
 public class MinIOTestSkip {
 
     @Test
-    public void runOnOzoneFs() throws Exception
+    public void run() throws Exception
     {
         SparkConf sparkConf = new SparkConf().setAppName("minio-test");
         sparkConf.setMaster("local[2]");
