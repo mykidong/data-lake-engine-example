@@ -315,6 +315,12 @@
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-aws</artifactId>
 			<version>${hadoop.old.version.for.spark}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fastxml.jackson.core</groupId>
+					<artifactId>jackson-annotation</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
     </dependencies>
 	<build>
