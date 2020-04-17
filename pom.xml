@@ -311,6 +311,11 @@
 			<artifactId>rocksdbjni</artifactId>
 			<version>${rocksdb.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-aws</artifactId>
+			<version>${hadoop.old.version.for.spark}</version>
+		</dependency>
     </dependencies>
 	<build>
 		<pluginManagement>
