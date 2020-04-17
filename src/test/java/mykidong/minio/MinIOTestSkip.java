@@ -67,7 +67,7 @@ public class MinIOTestSkip {
         hadoopConfiguration.set("fs.s3a.path.style.access", "true");
         hadoopConfiguration.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem");
 
-        // create persistent parquet table with external path.
+        // write parquet to minio.
         parquetDs.write().format("parquet")
                 .option("path", "s3a://mybucket/test-minio")
                 .mode(SaveMode.Overwrite)
@@ -81,6 +81,19 @@ public class MinIOTestSkip {
                 .load("s3a://mybucket/test-minio");
 
         dfFromMinio.show(10);
+
+
+        // write parquet to minio.
+        parquetDs.write().format("delta")
+                .option("path", "s3a://mybucket/test-delta")
+                .mode(SaveMode.Overwrite)
+                .save();
+
+        // read delta from minio.
+        Dataset<Row> deltaFromMinio = spark.read().format("delta")
+                .load("s3a://mybucket/test-delta");
+
+        deltaFromMinio.show(10);
     }
 
 }
