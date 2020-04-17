@@ -60,7 +60,7 @@ public class MinIOTestSkip {
 
         // change file system.
         hadoopConfiguration = spark.sparkContext().hadoopConfiguration();
-        hadoopConfiguration.set("fs.defaultFS", "s3a://mybucket");
+        hadoopConfiguration.set("fs.defaultFS", "s3a://mybucket.mc-d01.opasnet.io:9099");
         hadoopConfiguration.set("fs.s3a.endpoint", "http://mc-d01.opasnet.io:9099");
         hadoopConfiguration.set("fs.s3a.access.key", "minio");
         hadoopConfiguration.set("fs.s3a.secret.key", "minio123");
@@ -69,7 +69,7 @@ public class MinIOTestSkip {
 
         // create persistent parquet table with external path.
         parquetDs.write().format("parquet")
-                .option("path", "s3a://mybucket/test-minio")
+                .option("path", "s3a://mybucket.mc-d01.opasnet.io:9099/test-minio")
                 .mode(SaveMode.Overwrite)
                 .save();
 
@@ -78,7 +78,7 @@ public class MinIOTestSkip {
 
         // read parquet from minio.
         Dataset<Row> dfFromMinio = spark.read().format("parquet")
-                .load("s3a://mybucket/test-minio");
+                .load("s3a://mybucket.mc-d01.opasnet.io:9099/test-minio");
 
         dfFromMinio.show(10);
     }
