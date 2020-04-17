@@ -60,6 +60,7 @@ public class MinIOTestSkip {
 
         // change file system.
         hadoopConfiguration = spark.sparkContext().hadoopConfiguration();
+        hadoopConfiguration.set("fs.defaultFS", "s3a://mybucket");
         hadoopConfiguration.set("fs.s3a.endpoint", "http://mc-d01.opasnet.io:9099");
         hadoopConfiguration.set("fs.s3a.access.key", "minio");
         hadoopConfiguration.set("fs.s3a.secret.key", "minio123");
