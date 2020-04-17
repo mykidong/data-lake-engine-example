@@ -24,6 +24,10 @@ public class MinIOTestSkip {
         sparkConf.set("spark.sql.warehouse.dir", "hdfs://mc/spark-warehouse");
         sparkConf.set("spark.sql.hive.metastore.jars", "/usr/hdp/3.1.4.0-315/spark2/standalone-metastore/standalone-metastore-1.21.2.3.1.4.0-315-hive3.jar");
 
+
+        // delta lake log store for s3.
+        sparkConf.set("spark.delta.logStore.class", "org.apache.spark.sql.delta.storage.S3SingleDriverLogStore");
+
         SparkSession spark = SparkSession
                 .builder()
                 .config(sparkConf)
@@ -88,6 +92,7 @@ public class MinIOTestSkip {
                 .option("path", "s3a://mybucket/test-delta")
                 .mode(SaveMode.Overwrite)
                 .save();
+
 
         // read delta from minio.
         Dataset<Row> deltaFromMinio = spark.read().format("delta")
