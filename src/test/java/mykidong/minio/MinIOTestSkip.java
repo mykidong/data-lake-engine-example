@@ -69,7 +69,7 @@ public class MinIOTestSkip {
 
         // create persistent parquet table with external path.
         parquetDs.write().format("parquet")
-                .option("path", "s3a://spark-test/test-minio")
+                .option("path", "s3a://mybucket/test-minio")
                 .mode(SaveMode.Overwrite)
                 .save();
 
@@ -78,7 +78,7 @@ public class MinIOTestSkip {
 
         // read parquet from minio.
         Dataset<Row> dfFromMinio = spark.read().format("parquet")
-                .load("s3a://spark-test/test-minio");
+                .load("s3a://mybucket/test-minio");
 
         dfFromMinio.show(10);
     }
