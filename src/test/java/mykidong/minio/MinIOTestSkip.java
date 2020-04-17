@@ -71,21 +71,21 @@ public class MinIOTestSkip {
         hadoopConfiguration.set("fs.s3a.path.style.access", "true");
         hadoopConfiguration.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem");
 
-        // write parquet to minio.
-        parquetDs.write().format("parquet")
-                .option("path", "s3a://mybucket/test-minio")
-                .mode(SaveMode.Overwrite)
-                .save();
-
-
-        System.out.println("reading from minio...");
-
-        // read parquet from minio.
-        Dataset<Row> dfFromMinio = spark.read().format("parquet")
-                .load("s3a://mybucket/test-minio");
-
-        dfFromMinio.show(10);
-
+//        // write parquet to minio.
+//        parquetDs.write().format("parquet")
+//                .option("path", "s3a://mybucket/test-minio")
+//                .mode(SaveMode.Overwrite)
+//                .save();
+//
+//
+//        System.out.println("reading from minio...");
+//
+//        // read parquet from minio.
+//        Dataset<Row> dfFromMinio = spark.read().format("parquet")
+//                .load("s3a://mybucket/test-minio");
+//
+//        dfFromMinio.show(10);
+//
 
         // write parquet to minio.
         parquetDs.write().format("delta")
