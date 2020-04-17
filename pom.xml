@@ -116,6 +116,11 @@
 			<version>${dremio.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-aws</artifactId>
+			<version>${hadoop.old.version.for.spark}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-avro</artifactId>
 			<version>${jackson.version}</version>
@@ -310,17 +315,6 @@
 			<groupId>org.rocksdb</groupId>
 			<artifactId>rocksdbjni</artifactId>
 			<version>${rocksdb.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-aws</artifactId>
-			<version>${hadoop.old.version.for.spark}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.fastxml.jackson.core</groupId>
-					<artifactId>jackson-annotation</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
     </dependencies>
 	<build>
