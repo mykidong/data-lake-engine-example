@@ -1,24 +1,3 @@
-<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
-<!--
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
--->
-
-<!-- Put site-specific property overrides in this file. -->
-
 <configuration>
     <property>
         <name>ozone.enabled</name>
@@ -43,5 +22,87 @@
     <property>
         <name>ozone.om.address</name>
         <value>mc-m01.opasnet.io</value>
+    </property>
+
+    <!-- =============== security =============== -->
+
+    <property>
+        <name>ozone.security.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hadoop.security.authentication</name>
+        <value>kerberos</value>
+    </property>
+
+    <!-- scm -->
+    <property>
+        <name>hdds.scm.kerberos.principal</name>
+        <value>scm/mc-m02.opasnet.io@OPASNET.IO</value>
+    </property>
+    <property>
+        <name>hdds.scm.kerberos.keytab.file</name>
+        <value>/etc/ozone/ozone.keytab</value>
+    </property>
+
+    <!-- scm http -->
+    <property>
+        <name>hdds.scm.http.kerberos.principal</name>
+        <value>scm_http/mc-m02.opasnet.io@OPASNET.IO</value>
+    </property>
+    <property>
+        <name>hdds.scm.http.kerberos.keytab</name>
+        <value>/etc/ozone/ozone.keytab</value>
+    </property>
+
+
+    <!-- om -->
+    <property>
+        <name>ozone.om.kerberos.principal</name>
+        <value>om/mc-m01.opasnet.io@OPASNET.IO</value>
+    </property>
+    <property>
+        <name>ozone.om.kerberos.keytab.file</name>
+        <value>/etc/ozone/ozone.keytab</value>
+    </property>
+
+    <!-- om http -->
+    <property>
+        <name>ozone.om.http.kerberos.principal</name>
+        <value>om_http/mc-m01.opasnet.io@OPASNET.IO</value>
+    </property>
+    <property>
+        <name>ozone.om.http.kerberos.keytab</name>
+        <value>/etc/ozone/ozone.keytab</value>
+    </property>
+
+    <!-- s3 -->
+    <property>
+        <name>ozone.s3g.authentication.kerberos.principal</name>
+        <value>s3/mc-m01.opasnet.io@OPASNET.IO</value>
+    </property>
+    <property>
+        <name>ozone.s3g.keytab.file</name>
+        <value>/etc/ozone/ozone.keytab</value>
+    </property>
+
+    <!-- data -->
+    <property>
+        <name>dfs.datanode.kerberos.principal</name>
+        <value>data@OPASNET.IO</value>
+    </property>
+    <property>
+        <name>dfs.datanode.keytab.file</name>
+        <value>/etc/ozone/ozone.keytab</value>
+    </property>
+
+    <!-- data http -->
+    <property>
+        <name>hdds.datanode.http.kerberos.principal</name>
+        <value>data_http@OPASNET.IO</value>
+    </property>
+    <property>
+        <name>hdds.datanode.http.kerberos.keytab</name>
+        <value>/etc/ozone/ozone.keytab</value>
     </property>
 </configuration>
