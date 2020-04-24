@@ -2,6 +2,7 @@ package mykidong.kerberos;
 
 import mykidong.SparkSQLTestSkip;
 import mykidong.util.Log4jConfigurer;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,13 +26,17 @@ public class KerberosTestSkip {
             String princiapl = "mykidong/mc-d02.opasnet.io@OPASNET.IO";
             String keytab = "/etc/ozone/ozone.keytab";
 
+            Configuration conf = new Configuration();
+            conf.set("hadoop.security.authentication", "Kerberos");
+            UserGroupInformation.setConfiguration(conf);
+
             UserGroupInformation ugi = UserGroupInformation.getLoginUser();
             if(ugi == null) {
                 UserGroupInformation.loginUserFromKeytab(princiapl, keytab);
                 log.info("login done with kerberos!");
             } else {
                 log.info("ugi: " + ugi.toString());
-                
+
                 ugi.checkTGTAndReloginFromKeytab();
                 log.info("check tgt done with kerberos!");
             }
