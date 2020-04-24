@@ -22,9 +22,15 @@ public class KerberosTestSkip {
     public void login() throws Exception
     {
         try {
-            String princiapl = "mykidong2/mc-d02.opasnet.io@OPASNET.IO";
+            String princiapl = "mykidong/mc-d02.opasnet.io@OPASNET.IO";
             String keytab = "/etc/ozone/ozone.keytab";
-            UserGroupInformation.loginUserFromKeytab(princiapl, keytab);
+
+            UserGroupInformation ugi = UserGroupInformation.getLoginUser();
+            if(ugi == null) {
+                UserGroupInformation.loginUserFromKeytab(princiapl, keytab);
+            } else {
+                ugi.checkTGTAndReloginFromKeytab();
+            }
 
             log.info("login done with kerberos!");
         } catch (Exception e)
