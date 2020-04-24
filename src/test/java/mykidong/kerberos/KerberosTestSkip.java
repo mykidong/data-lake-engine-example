@@ -30,6 +30,8 @@ public class KerberosTestSkip {
                 UserGroupInformation.loginUserFromKeytab(princiapl, keytab);
                 log.info("login done with kerberos!");
             } else {
+                log.info("ugi: " + ugi.toString());
+                
                 ugi.checkTGTAndReloginFromKeytab();
                 log.info("check tgt done with kerberos!");
             }
