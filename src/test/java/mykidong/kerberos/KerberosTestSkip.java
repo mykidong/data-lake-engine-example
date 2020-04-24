@@ -28,11 +28,11 @@ public class KerberosTestSkip {
             UserGroupInformation ugi = UserGroupInformation.getLoginUser();
             if(ugi == null) {
                 UserGroupInformation.loginUserFromKeytab(princiapl, keytab);
+                log.info("login done with kerberos!");
             } else {
                 ugi.checkTGTAndReloginFromKeytab();
+                log.info("check tgt done with kerberos!");
             }
-
-            log.info("login done with kerberos!");
         } catch (Exception e)
         {
             e.printStackTrace();
