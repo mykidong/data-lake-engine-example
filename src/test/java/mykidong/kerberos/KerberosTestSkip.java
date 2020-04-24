@@ -27,12 +27,12 @@ public class KerberosTestSkip {
             String keytab = "/etc/ozone/ozone.keytab";
 
             Configuration conf = new Configuration();
-            conf.set("hadoop.security.authentication", "Kerberos");
+            conf.set("hadoop.security.authentication", "kerberos");
             UserGroupInformation.setConfiguration(conf);
 
-            UserGroupInformation ugi = UserGroupInformation.getLoginUser();
+            UserGroupInformation ugi = UserGroupInformation.loginUserFromKeytabAndReturnUGI(princiapl, keytab);
             if(ugi == null) {
-                UserGroupInformation.loginUserFromKeytab(princiapl, keytab);
+                ugi = UserGroupInformation.loginUserFromKeytabAndReturnUGI(princiapl, keytab);
                 log.info("login done with kerberos!");
             } else {
                 log.info("ugi: " + ugi.toString());
