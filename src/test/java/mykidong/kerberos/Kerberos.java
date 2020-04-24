@@ -13,7 +13,7 @@ public class Kerberos {
             String keytab = "/etc/ozone/ozone.keytab";
             UserGroupInformation.loginUserFromKeytab(princiapl, keytab);
 
-            System.out.println("login done with kerberos!"):
+            System.out.println("login done with kerberos!");
         } catch (Exception e)
         {
             e.printStackTrace();
