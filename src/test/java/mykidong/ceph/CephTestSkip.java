@@ -43,7 +43,7 @@ public class CephTestSkip {
         String lines[] = json.split("\\r?\\n");
         Dataset<Row> df = spark.read().json(new JavaSparkContext(spark.sparkContext()).parallelize(Arrays.asList(lines)));
 
-        // write parquet to ceph.
+        // write delta to ceph.
         df.write().format("delta")
                 .option("path", "s3a://mykidong-bucket/test-delta")
                 .mode(SaveMode.Overwrite)

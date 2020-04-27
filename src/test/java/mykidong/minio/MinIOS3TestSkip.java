@@ -44,13 +44,13 @@ public class MinIOS3TestSkip {
         Dataset<Row> df = spark.read().json(new JavaSparkContext(spark.sparkContext()).parallelize(Arrays.asList(lines)));
 
         // write parquet to ozone.
-        df.write().format("delta")
+        df.write().format("parquet")
                 .option("path", "s3a://ozone-bucket/test-delta")
                 .mode(SaveMode.Overwrite)
                 .save();
 
         // read delta from ozone.
-        Dataset<Row> deltaFromCeph = spark.read().format("delta")
+        Dataset<Row> deltaFromCeph = spark.read().format("parquet")
                 .load("s3a://ozone-bucket/test-delta");
 
         deltaFromCeph.show(10);
