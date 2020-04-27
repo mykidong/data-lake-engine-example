@@ -16,9 +16,6 @@ public class MinIOS3TestSkip {
     @Test
     public void run() throws Exception
     {
-        // aws properties.
-        System.setProperty("com.amazonaws.services.s3.enableV4", "true");
-
         SparkConf sparkConf = new SparkConf().setAppName("minio-s3-test");
         sparkConf.setMaster("local[2]");
         

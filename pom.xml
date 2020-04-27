@@ -98,7 +98,7 @@
 		<rocksdb.version>6.6.4</rocksdb.version>
 
 		<!-- aws sdk -->
-		<aws.sdk.version>1.10.77</aws.sdk.version>
+		<aws.sdk.version>1.9.21</aws.sdk.version>
 	</properties>
 
 	<dependencies>
@@ -136,6 +136,11 @@
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>${aws.sdk.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
