@@ -96,9 +96,6 @@
 
 		<!-- rocksdb -->
 		<rocksdb.version>6.6.4</rocksdb.version>
-
-		<!-- aws sdk -->
-		<aws-sdk.version>1.11.615</aws-sdk.version>
 	</properties>
 
 	<dependencies>
@@ -332,16 +329,6 @@
 			<groupId>org.rocksdb</groupId>
 			<artifactId>rocksdbjni</artifactId>
 			<version>${rocksdb.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-core</artifactId>
-			<version>${aws-sdk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-			<version>${aws-sdk.version}</version>
 		</dependency>
     </dependencies>
 	<build>
