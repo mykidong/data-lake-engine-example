@@ -32,7 +32,7 @@ public class MinIOS3TestSkip {
 
         // set hadoop configuration.
         hadoopConfiguration.set("fs.defaultFS", "s3a://ozone-bucket");
-        hadoopConfiguration.set("fs.s3a.endpoint", "http://mc-m01.opasnet.io:9878"); // MUST IP Address(Not Host Name) !!!!
+        hadoopConfiguration.set("fs.s3a.endpoint", "http://10.41.30.181:9878"); // MUST IP Address(Not Host Name) !!!!
         hadoopConfiguration.set("fs.s3a.access.key", "mykidong/mc-d02.opasnet.io@OPASNET.IO");
         hadoopConfiguration.set("fs.s3a.secret.key", "3b38bbbc22f8c111269b9d3a04a9379a661e10217af332e7e8185f35949983aa");
         hadoopConfiguration.set("fs.s3a.path.style.access", "true");
