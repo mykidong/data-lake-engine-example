@@ -98,7 +98,7 @@
 		<rocksdb.version>6.6.4</rocksdb.version>
 
 		<!-- aws sdk -->
-		<aws.sdk.version>1.11.769</aws.sdk.version>
+		<aws.sdk.version>1.10.77</aws.sdk.version>
 	</properties>
 
 	<dependencies>
